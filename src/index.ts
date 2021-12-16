@@ -162,9 +162,9 @@ app.post('/api/extension/payment/create', async (req, res) => {
               actions: actions,
               errors: [],
             };
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_CREATE, Constants.LOG_INFO, response);
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_INFO, response);
           } else {
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_CREATE, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS);
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS);
             response = paymentService.invalidOperationResponse();
           }
         }
@@ -172,7 +172,7 @@ app.post('/api/extension/payment/create', async (req, res) => {
         response = paymentService.getEmptyResponse();
       }
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_CREATE, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_PAYMENT_DATA);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_PAYMENT_DATA);
       response = paymentService.getEmptyResponse();
     }
   } catch (exception) {
@@ -183,7 +183,7 @@ app.post('/api/extension/payment/create', async (req, res) => {
     } else {
       exceptionData = exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_CREATE, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_ERROR, exceptionData);
     response = paymentService.invalidOperationResponse();
   }
   res.send(response);
@@ -219,7 +219,7 @@ app.post('/api/extension/payment/update', async (req, res) => {
         }
       }
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_UPDATE, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_PAYMENT_DATA);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_UPDATE, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_PAYMENT_DATA);
       updateResponse = paymentService.getEmptyResponse();
     }
   } catch (exception) {
@@ -230,10 +230,37 @@ app.post('/api/extension/payment/update', async (req, res) => {
     } else {
       exceptionData = exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_UPDATE, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_UPDATE, Constants.LOG_ERROR, exceptionData);
     updateResponse = paymentService.invalidOperationResponse();
   }
   res.send(updateResponse);
+});
+
+app.post('/api/extension/customer/update', async (req, res) => {
+  let response: any;
+  let tokensToUpdate: any;
+  let authTokens: any;
+  if (
+    Constants.STRING_BODY in req &&
+    Constants.STRING_RESOURCE in req.body &&
+    Constants.STRING_ID in req.body.resource &&
+    Constants.STRING_OBJ in req.body.resource &&
+    Constants.STRING_CUSTOM in req.body.resource.obj &&
+    Constants.STRING_FIELDS in req.body.resource.obj.custom &&
+    Constants.ISV_TOKENS in req.body.resource.obj.custom.fields
+  ) {
+    tokensToUpdate = req.body.resource.obj.custom.fields.isv_tokens[Constants.VAL_ZERO];
+    authTokens = req.body.resource.obj.custom.fields.isv_tokens;
+    tokensToUpdate = JSON.parse(tokensToUpdate);
+    if (Constants.STRING_DELETE == tokensToUpdate.flag) {
+      response = await paymentHandler.deleteCardHandler(tokensToUpdate, req.body.resource.id);
+    } else if (Constants.STRING_UPDATE == tokensToUpdate.flag) {
+      response = await paymentHandler.updateCardHandler(tokensToUpdate, req.body.resource.id);
+    } else {
+      response = paymentService.getUpdateTokenActions(authTokens);
+    }
+  }
+  res.send(response);
 });
 
 app.get('/capture', async (req, res) => {

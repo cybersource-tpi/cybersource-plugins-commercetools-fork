@@ -116,7 +116,7 @@
   },
   "prettier": {
     "singleQuote": true,
-    "printWidth": 200
+    "printWidth": 275
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",

@@ -263,6 +263,28 @@ const payerAuthActions = (response) => {
   return action;
 };
 
+const getUpdateTokenActions = (actions) => {
+  let returnResponse: any;
+  if (null != actions) {
+    returnResponse = {
+      actions: [
+        {
+          action: Constants.SET_CUSTOM_TYPE,
+          type: {
+            key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+            typeId: Constants.TYPE_ID_TYPE,
+          },
+          fields: {
+            isv_tokens: actions,
+          },
+        },
+      ],
+      errors: [],
+    };
+  }
+  return returnResponse;
+};
+
 const getAuthResponse = (paymentResponse, transactionDetail) => {
   let response: any;
   let actions: any;
@@ -282,10 +304,7 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
         setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_SUCCESS);
         response = createResponse(setTransaction, setCustomField, null);
-      } else if (
-        (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status) ||
-        Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status
-      ) {
+      } else if ((Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status) || Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status) {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
         setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_PENDING);
         response = createResponse(setTransaction, setCustomField, null);
@@ -480,6 +499,41 @@ const getCapturedAmount = (refundPaymentObj) => {
   return pendingCaptureAmount;
 };
 
+const deleteToken = async (tokenResponse, customerObj) => {
+  let isvTokensObj = new Array();
+  let parsedToken: any;
+  if (null != tokenResponse && null != customerObj && null != tokenResponse.httpCode) {
+    if (Constants.HTTP_CODE_TWO_HUNDRED_FOUR == tokenResponse.httpCode) {
+      customerObj.custom.fields.isv_tokens.forEach((element) => {
+        parsedToken = JSON.parse(element);
+        if (tokenResponse.deletedToken != parsedToken.value) {
+          isvTokensObj.push(element);
+        }
+      });
+    } else {
+      customerObj.custom.fields.isv_tokens.forEach((element) => {
+        parsedToken = JSON.parse(element);
+        if (Constants.STRING_FLAG in parsedToken) {
+          if (Constants.STRING_DELETE == parsedToken.flag) {
+            delete parsedToken.flag;
+          }
+        }
+        isvTokensObj.push(element);
+      });
+    }
+  } else {
+    isvTokensObj = customerObj.custom.fields.isv_tokens;
+    logData(path.parse(path.basename(__filename)).name, Constants.FUN_DELETE_TOKEN, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
+  }
+  return isvTokensObj;
+};
+
+const getSubstring = (firstIndex, lastIndex, input) => {
+  let subsString = Constants.STRING_EMPTY;
+  subsString = input.substring(firstIndex, lastIndex);
+  return subsString;
+};
+
 const getEmptyResponse = () => {
   return {
     actions: [],
@@ -524,6 +578,9 @@ export default {
   payerAuthActions,
   getEmptyResponse,
   visaCardDetailsAction,
+  deleteToken,
+  getSubstring,
+  getUpdateTokenActions,
   invalidOperationResponse,
   invalidInputResponse,
 };

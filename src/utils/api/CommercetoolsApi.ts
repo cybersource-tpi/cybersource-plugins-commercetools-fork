@@ -377,7 +377,7 @@ const updateCartbyPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
   return orderResponse;
 };
 
-const setCustomerTokens = async (paymentInstrumentId, updatePaymentObj) => {
+const setCustomerTokens = async (tokenCustomerId, paymentInstrumentId, updatePaymentObj) => {
   let tokenResponse: any;
   let customerInfo: any;
   let client: any;
@@ -397,7 +397,8 @@ const setCustomerTokens = async (paymentInstrumentId, updatePaymentObj) => {
         customerInfo = await getCustomer(customerId);
         tokenData = {
           alias: updatePaymentObj.custom.fields.isv_tokenAlias,
-          value: paymentInstrumentId,
+          value: tokenCustomerId,
+          paymentToken: paymentInstrumentId,
           cardType: updatePaymentObj.custom.fields.isv_cardType,
           cardName: updatePaymentObj.custom.fields.isv_cardType,
           cardNumber: updatePaymentObj.custom.fields.isv_maskedPan,
@@ -496,10 +497,10 @@ const setCustomType = async (customerId, fieldsdata) => {
             version: customerInfo.version,
             actions: [
               {
-                action: 'setCustomType',
+                action: Constants.SET_CUSTOM_TYPE,
                 type: {
-                  key: 'isv_payments_customer_tokens',
-                  typeId: 'type',
+                  key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+                  typeId: Constants.TYPE_ID_TYPE,
                 },
                 fields: {
                   isv_tokens: fieldsdata,
@@ -587,5 +588,6 @@ export default {
   getOrders,
   updateCartbyPaymentId,
   setCustomerTokens,
+  getCustomer,
   updateDecisionSync,
 };
