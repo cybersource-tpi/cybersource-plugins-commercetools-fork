@@ -81,7 +81,7 @@ const authorizationResponse = async (payment, cart, service) => {
         var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
         consumerAuthenticationInformation.authenticationTransactionId = payment.custom.fields.isv_payerAuthenticationTransactionId;
         requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
-      }
+      } 
       requestObj.processingInformation = processingInformation;
 
       totalAmount = paymentService.convertCentToAmount(payment.amountPlanned.centAmount);
