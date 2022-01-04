@@ -11,6 +11,7 @@ const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId) => {
   let j = Constants.VAL_ZERO;
   let unitPrice = Constants.VAL_FLOAT_ZERO;
   let shippingCost = Constants.VAL_FLOAT_ZERO;
+  let runEnvironment: any;
   var enrollmentCheckResponse = {
     httpCode: null,
     transactionId: null,
@@ -19,13 +20,19 @@ const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId) => {
     data: null,
     cardinalReferenceId: null,
   };
+
   try {
     if (null != payment && null != cart && null != cardinalReferenceId) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CheckPayerAuthEnrollmentRequest();
+      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+      }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
-        runEnvironment: process.env.CONFIG_RUN_ENVIRONMENT,
+        runEnvironment: runEnvironment,
         merchantID: process.env.ISV_PAYMENT_MERCHANT_ID,
         merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,

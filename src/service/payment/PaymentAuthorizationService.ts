@@ -11,6 +11,7 @@ const authorizationResponse = async (payment, cart, service) => {
   let unitPrice = Constants.VAL_FLOAT_ZERO;
   let shippingCost = Constants.VAL_FLOAT_ZERO;
   let actionList = new Array();
+  let runEnvironment: any;
   let paymentResponse = {
     httpCode: null,
     transactionId: null,
@@ -22,9 +23,14 @@ const authorizationResponse = async (payment, cart, service) => {
     if (null != payment && null != cart && null != service) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CreatePaymentRequest();
+      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+      }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
-        runEnvironment: process.env.CONFIG_RUN_ENVIRONMENT,
+        runEnvironment: runEnvironment,
         merchantID: process.env.ISV_PAYMENT_MERCHANT_ID,
         merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
@@ -81,7 +87,14 @@ const authorizationResponse = async (payment, cart, service) => {
         var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
         consumerAuthenticationInformation.authenticationTransactionId = payment.custom.fields.isv_payerAuthenticationTransactionId;
         requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
-      } 
+      } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
+        processingInformation.paymentSolution = Constants.ISV_PAYMENT_PAYMENT_SOLUTION_ID;
+        var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
+        var fluidData = new restApi.Ptsv2paymentsPaymentInformationFluidData();
+        fluidData.value = payment.custom.fields.isv_token;
+        paymentInformation.fluidData = fluidData;
+        requestObj.paymentInformation = paymentInformation;
+      }
       requestObj.processingInformation = processingInformation;
 
       totalAmount = paymentService.convertCentToAmount(payment.amountPlanned.centAmount);
@@ -101,7 +114,7 @@ const authorizationResponse = async (payment, cart, service) => {
       orderInformationBillTo.postalCode = cart.billingAddress.postalCode;
       orderInformationBillTo.country = cart.billingAddress.country;
       orderInformationBillTo.email = cart.billingAddress.email;
-      orderInformationBillTo.phoneNumber = cart.billingAddress.phoneNumber;
+      orderInformationBillTo.phoneNumber = cart.billingAddress.phone;
       orderInformation.billTo = orderInformationBillTo;
       requestObj.orderInformation = orderInformation;
 
@@ -150,7 +163,9 @@ const authorizationResponse = async (payment, cart, service) => {
       const instance = new restApi.PaymentsApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.createPayment(requestObj, function (error, data, response) {
+          console.log('RESPONSE : ', JSON.stringify(response));
           if (data) {
+            console.log('data : ', JSON.stringify(data));
             paymentResponse.httpCode = response[Constants.STATUS_CODE];
             paymentResponse.transactionId = data.id;
             paymentResponse.status = data.status;
@@ -158,6 +173,7 @@ const authorizationResponse = async (payment, cart, service) => {
             paymentResponse.data = data;
             resolve(paymentResponse);
           } else {
+            console.log(' inside auth error ');
             errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData.message);
             paymentResponse.httpCode = error.status;

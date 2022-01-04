@@ -72,6 +72,7 @@ export abstract class Constants {
   static readonly ISV_PAYMENT_TOKEN_CREATE = 'TOKEN_CREATE';
   static readonly ISV_PAYMENT_TRANSACTION_MODE = 'S';
   static readonly ISV_PAYMENT_VALIDATE_CONSUMER_AUTHENTICATION = 'VALIDATE_CONSUMER_AUTHENTICATION';
+  static readonly ISV_PAYMENT_PAYMENT_SOLUTION_ID = '012';
 
   static readonly HTTP_METHOD_GET = 'GET';
   static readonly HTTP_METHOD_POST = 'POST';
@@ -105,6 +106,7 @@ export abstract class Constants {
   static readonly CC_PAYER_AUTHENTICATION = 'creditCardWithPayerAuthentication';
   static readonly VISA_CHECKOUT = 'visaCheckout';
   static readonly APPLE_PAY = 'applePay';
+  static readonly GOOGLE_PAY = 'googlePay';
 
   //Strings
   static readonly ACTIVE_CART_STATE = 'cartState="Active"';
@@ -143,6 +145,7 @@ export abstract class Constants {
   static readonly STRING_PAYMENT_TOKEN = 'paymentToken';
   static readonly STRING_SUCCESS = 'success';
   static readonly STRING_VISA = 'visa';
+  static readonly STRING_GOOGLE = 'google';
   static readonly STATUS_CODE = 'statusCode';
   static readonly TOKEN_INFORMATION = 'tokenInformation';
   static readonly VALIDATION = 'validation';
@@ -150,6 +153,12 @@ export abstract class Constants {
   static readonly LOG_ERROR = 'error';
   static readonly LOG_INFO = 'info';
   static readonly LOG_WARN = 'warn';
+  static readonly STRING_ACCEPT = 'accept';
+  static readonly STRING_REJECT = 'reject';
+  static readonly CONFIG_TEST_ENVIRONMENT = 'apitest.cybersource.com';
+  static readonly CONFIG_PRODUCTION_ENVIRONMENT = 'api.cybersource.com';
+  static readonly TEST_ENVIRONMENT = 'Test';
+  static readonly LIVE_ENVIRONMENT = 'Live';
 
   //CT transaction type
   static readonly CT_TRANSACTION_TYPE_AUTHORIZATION = 'Authorization';

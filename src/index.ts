@@ -37,7 +37,6 @@ app.post('/sunriseSpa', (req, res) => {
     'message': '${req.body.TransactionId}'
 }, "*");</script>`);
 });
-
 app.get('/orders', async (req, res) => {
   let orderResult: any;
   let ordersList: any;
@@ -89,6 +88,7 @@ app.get('/paymentDetails', async (req, res) => {
   let authReversalFlag = false;
   orderErrorMessage = Constants.STRING_EMPTY;
   orderSuccessMessage = Constants.STRING_EMPTY;
+  let refundErrorMessage = Constants.ERROR_MSG_REFUND_AMOUNT;
   try {
     if (Constants.STRING_ID in req.query) {
       paymentId = req.query.id;
@@ -123,7 +123,8 @@ app.get('/paymentDetails', async (req, res) => {
       exceptionData = exception;
     }
     paymentService.logData(path.parse(path.parse(path.basename(__filename)).name).name, Constants.GET_PAYMENT_DETAILS, Constants.LOG_ERROR, exceptionData);
-    errorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    res.redirect('/orders');
   }
   res.render('paymentDetails', {
     id: convertedPaymentId,
@@ -133,6 +134,7 @@ app.get('/paymentDetails', async (req, res) => {
     amountConversion: paymentService.convertCentToAmount,
     errorMessage: errorMessage,
     successMessage: successMessage,
+    refundErrorMessage: refundErrorMessage,
   });
 });
 
@@ -301,13 +303,17 @@ app.get('/capture', async (req, res) => {
   } catch (exception) {
     if (typeof exception === 'string') {
       exceptionData = exception.toUpperCase();
+      console.log(exceptionData);
     } else if (exception instanceof Error) {
       exceptionData = exception.message;
+      console.log(exceptionData);
     } else {
       exceptionData = exception;
+      console.log(exceptionData);
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.GET_CAPTURE, Constants.LOG_ERROR, exceptionData);
-    errorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    res.redirect('/orders');
   }
   res.redirect(`/paymentDetails?id=${paymentId}`);
 });
@@ -373,7 +379,8 @@ app.get('/refund', async (req, res) => {
       exceptionData = exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.GET_REFUND, Constants.LOG_ERROR, exceptionData);
-    errorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    res.redirect('/orders');
   }
   res.redirect(`/paymentDetails?id=${paymentId}`);
 });
@@ -426,7 +433,8 @@ app.get('/authReversal', async (req, res) => {
       exceptionData = exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.GET_AUTH_REVERSAL, Constants.LOG_ERROR, exceptionData);
-    errorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
+    res.redirect('/orders');
   }
   res.redirect(`/paymentDetails?id=${req.query.id}`);
 });

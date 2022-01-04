@@ -4,7 +4,7 @@
     <base href="/" />
     <link rel="stylesheet" href="styles.css" />
     <script type="text/javascript" src="javascriptfunctions.js"></script>
-    <% var totalamount=0 %> <% var currencyCode = "" %>
+    <% var currencyCode = "" %>
   </head>
 
   <body>
@@ -134,20 +134,28 @@
           <th>Qty</th>
           <th>Total</th>
         </tr>
+
         <% cart.lineItems.forEach(function(item){ %>
         <tr>
           <td><%=item.name.en %></td>
-          <td><%= item.price.value.currencyCode%><%= amountConversion(item.price.value.centAmount)%></td>
+          <td><%= item.price.value.currencyCode%> <%= amountConversion(item.price.value.centAmount)%></td>
           <td><%= item.quantity%></td>
           <td><%=item.totalPrice.currencyCode%> <%=amountConversion(item.totalPrice.centAmount)%></td>
-          <% totalamount = totalamount+amountConversion(item.totalPrice.centAmount)%><% currencyCode = item.totalPrice.currencyCode %>
+          <% currencyCode = item.totalPrice.currencyCode %>
         </tr>
-        <%})%>
+        <%})%> <% if(cart.shippingInfo) { %>
+        <tr>
+          <td><b>shipping_and_handling</b></td>
+          <td><%=currencyCode%> <%=amountConversion(cart.shippingInfo.price.centAmount)%></td>
+          <td>1</td>
+          <td><%= cart.shippingInfo.price.currencyCode %> <%=amountConversion(cart.shippingInfo.price.centAmount)%></td>
+        </tr>
+        <% } %>
         <tr>
           <td></td>
           <td></td>
           <td><b>Total</b></td>
-          <td><b><%=currencyCode%> <%= totalamount %></b></td>
+          <td><b><%=currencyCode%> <%= amountConversion(cart.totalPrice.centAmount) %></b></td>
         </tr>
       </table>
     </div>
@@ -196,27 +204,27 @@
         <% }) %>
       </table>
 
-      <% if(latestTransaction) { %> <% if((latestTransaction.type=='Authorization' && latestTransaction.state=='Success' ) || (latestTransaction.type=='Charge' && latestTransaction.state=='Initial')
-      || (latestTransaction.type=='CancelAuthorization' && latestTransaction.state=='Initial' )) { %>
+      <% if(latestTransaction) { %> <% if((latestTransaction.type=='Authorization' && latestTransaction.state=='Success' ) || (latestTransaction.type=='Charge' && latestTransaction.state=='Initial') || (latestTransaction.type=='CancelAuthorization' &&
+      (latestTransaction.state=='Initial' || latestTransaction.state == 'Failure')) ) { %>
       <div class="div-padding">
         <a class="button" id="capture" href="/capture?id=<%=id%>" role="button" onclick="showDiv()">Capture </a>
         <a class="button" id="auth" href="/authreversal?id=<%=id%>" role="button" onclick="showDiv()">Reverse </a>
-        <% } %> <% if(("Charge"==latestTransaction.type && "Success"==latestTransaction.state) || ((captureAmount && "Refund"==latestTransaction.type) && (("Success"==latestTransaction.state) ||
-        ("Failure"==latestTransaction.state) || ("Initial"==latestTransaction.state)))) {%> <% if((captureAmount) && (!(latestTransaction.type=="Charge" && latestTransaction.state=="Initial" ))) { %>
+        <% } %> <% if(("Charge"==latestTransaction.type && "Success"==latestTransaction.state) || ((captureAmount && "Refund"==latestTransaction.type) && (("Success"==latestTransaction.state) || ("Failure"==latestTransaction.state) || ("Initial"==latestTransaction.state))))
+        {%> <% if((captureAmount) && (!(latestTransaction.type=="Charge" && latestTransaction.state=="Initial" ))) { %>
         <div class="div-padding">You can refund amount <%= captureAmount%></div>
         <% } %>
         <form action="/refund" class="div-padding">
           <input type="hidden" name="refundId" id="refundId" value="<%=id%>" />
           Refund amount: <input type="text" name="refundAmount" id="refundAmount" size="6" value="" oninput="validateamount(this)" required />
-          <button type="submit" id="refundbutton" class="button" onclick="showDiv()">Refund</button>
+          <button type="submit" id="refundbutton" class="button" onclick="validate()">Refund</button>
         </form>
+        <div id="msg"><%= refundErrorMessage%></div>
         <% } %>
       </div>
       <% } %>
-
-      <div id="msg"></div>
     </div>
     <br />
+    <% if(payments.paymentMethodInfo.method != "googlePay") { %>
     <div class="panel card4 padding16">
       <h2>Payment Card Details</h2>
       <hr />
@@ -234,6 +242,7 @@
       </table>
     </div>
     <br />
+    <% } %>
     <div class="panel card4 padding16">
       <h2>ISV Payment Service Custom Payment Fields</h2>
       <% if (payments.custom.fields.isv_token) { %>
@@ -242,10 +251,12 @@
           <td><b>Token</b></td>
           <td><%= payments.custom.fields.isv_token%></td>
         </tr>
+        <% if(payments.custom.fields.isv_tokenVerificationContext) { %>
         <tr>
           <td><b>Token Verification Context</b></td>
           <td><%= payments.custom.fields.isv_tokenVerificationContext%></td>
         </tr>
+        <% } %>
       </table>
       <% } else { %>
       <table class="paymenttable2">

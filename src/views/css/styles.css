@@ -227,6 +227,7 @@ div.div-font {
 #msg {
   color: red;
   padding-left: 10px;
+  display:none;
 }
 #loading {
   position: fixed;
