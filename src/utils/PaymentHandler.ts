@@ -52,6 +52,13 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
             errorFlag = serviceResponse.errorFlag;
             break;
           }
+          case Constants.GOOGLE_PAY: {
+            serviceResponse = await googlePayRespone(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
+            paymentResponse = serviceResponse.paymentResponse;
+            authResponse = serviceResponse.authResponse;
+            errorFlag = serviceResponse.errorFlag;
+            break;
+          }
           default: {
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_NO_PAYMENT_METHODS);
             errorFlag = true;
@@ -307,7 +314,7 @@ const clickToPayRespone = async (updatePaymentObj, cartObj, updateTransactions) 
         actions.forEach((i) => {
           authResponse.actions.push(i);
         });
-        cartUpdate = await commercetoolsApi.updateCartbyPaymentId(cartObj.results[Constants.VAL_ZERO].id, cartObj.results[Constants.VAL_ZERO].version, visaCheckoutData);
+        cartUpdate = await commercetoolsApi.updateCartbyPaymentId(cartObj.id, cartObj.version, visaCheckoutData);
         if (null != cartUpdate) {
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_HANDLER, Constants.LOG_INFO, Constants.SUCCESS_MSG_UPDATE_CLICK_TO_PAY_CARD_DETAILS);
         }
@@ -327,6 +334,25 @@ const clickToPayRespone = async (updatePaymentObj, cartObj, updateTransactions) 
   return returnResponse;
 };
 
+const googlePayRespone = async (updatePaymentObj, cartObj, updateTransactions) => {
+  let authResponse: any;
+  let paymentResponse: any;
+  let returnResponse = {
+    paymentResponse: null,
+    authResponse: null,
+    errorFlag: false,
+  };
+  paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_GOOGLE);
+  if (null != paymentResponse) {
+    authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+    returnResponse.errorFlag = true;
+  }
+  returnResponse.paymentResponse = paymentResponse;
+  returnResponse.authResponse = authResponse;
+  return returnResponse;
+};
 const setCustomerTokenData = async (paymentResponse, authResponse, errorFlag, paymentMethod, updatePaymentObj) => {
   let customerTokenResponse: any;
   if (
@@ -522,6 +548,7 @@ const deleteCardHandler = async (updateCustomerObj, cutsomerId) => {
   if (null != cutsomerId && null != updateCustomerObj) {
     customerObj = await commercetoolsApi.getCustomer(cutsomerId);
     tokenManagementResponse = await deleteToken.deleteCustomerToken(updateCustomerObj);
+    console.log('tokenManagmentResponse : ', tokenManagementResponse);
     fieldsData = await paymentService.deleteToken(tokenManagementResponse, customerObj);
     customerTokenHandlerResponse = paymentService.getUpdateTokenActions(fieldsData);
   } else {
@@ -541,6 +568,7 @@ const reportHandler = async () => {
     version: null,
     transactionId: null,
     state: Constants.STRING_EMPTY,
+    message: Constants.STRING_EMPTY,
   };
   let decisionsyncResponse = {
     message: Constants.STRING_EMPTY,
@@ -562,10 +590,12 @@ const reportHandler = async () => {
               decisionUpdateObject.transactionId = latestTransaction.id;
               if (Constants.HTTP_STATUS_DECISION_ACCEPT == element.newDecision) {
                 decisionUpdateObject.state = Constants.CT_TRANSACTION_STATE_SUCCESS;
+                decisionUpdateObject.message = Constants.STRING_ACCEPT;
                 await commercetoolsApi.updateDecisionSync(decisionUpdateObject);
               }
               if (Constants.HTTP_STATUS_DECISION_REJECT == element.newDecision) {
                 decisionUpdateObject.state = Constants.CT_TRANSACTION_STATE_FAILURE;
+                decisionUpdateObject.message = Constants.STRING_REJECT;
                 await commercetoolsApi.updateDecisionSync(decisionUpdateObject);
               }
             }

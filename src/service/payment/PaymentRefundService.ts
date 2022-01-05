@@ -12,13 +12,19 @@ const refundResponse = async (payment, captureId, updateTransactions) => {
     status: null,
     message: null,
   };
+  let runEnvironment: any;
   try {
     if (null != captureId && null != payment && null != updateTransactions) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.RefundPaymentRequest();
+      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+      }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
-        runEnvironment: process.env.CONFIG_RUN_ENVIRONMENT,
+        runEnvironment: runEnvironment,
         merchantID: process.env.ISV_PAYMENT_MERCHANT_ID,
         merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
@@ -36,6 +42,10 @@ const refundResponse = async (payment, captureId, updateTransactions) => {
         var processingInformation = new restApi.Ptsv2paymentsidrefundsProcessingInformation();
         processingInformation.paymentSolution = payment.paymentMethodInfo.method;
         processingInformation.visaCheckoutId = payment.custom.fields.isv_token;
+        requestObj.processingInformation = processingInformation;
+      } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
+        var processingInformation = new restApi.Ptsv2paymentsidrefundsProcessingInformation();
+        processingInformation.paymentSolution = Constants.ISV_PAYMENT_PAYMENT_SOLUTION_ID;
         requestObj.processingInformation = processingInformation;
       }
 
@@ -58,6 +68,7 @@ const refundResponse = async (payment, captureId, updateTransactions) => {
             paymentResponse.transactionId = data.id;
             paymentResponse.status = data.status;
             paymentResponse.message = data.message;
+            console.log(paymentResponse);
             resolve(paymentResponse);
           } else {
             errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));

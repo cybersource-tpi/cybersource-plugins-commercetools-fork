@@ -502,6 +502,7 @@ const getCapturedAmount = (refundPaymentObj) => {
 const deleteToken = async (tokenResponse, customerObj) => {
   let isvTokensObj = new Array();
   let parsedToken: any;
+  //tokenResponse = null;
   if (null != tokenResponse && null != customerObj && null != tokenResponse.httpCode) {
     if (Constants.HTTP_CODE_TWO_HUNDRED_FOUR == tokenResponse.httpCode) {
       customerObj.custom.fields.isv_tokens.forEach((element) => {
