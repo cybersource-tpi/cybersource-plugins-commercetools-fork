@@ -4,53 +4,60 @@ export abstract class Constants {
   static readonly GET_CAPTURE = 'getCapture';
   static readonly GET_DECISION_SYNC = 'getDecisionSync';
   static readonly GET_ORDERS = 'getOrders';
+  static readonly GET_REFUND = 'refund';
   static readonly GET_PAYMENT_DETAILS = 'getPaymentDetails';
   static readonly POST_CUSTOMER_UPDATE = 'postCustomerUpdate';
   static readonly POST_PAYMENT_CREATE = 'postPaymentCreate';
   static readonly POST_PAYMENT_UPDATE = 'postPaymentUpdate';
-  static readonly GET_REFUND = 'refund';
 
   static readonly FUNC_ADD_TRANSACTION = 'FuncAddTransaction';
+  static readonly FUNC_APPLE_PAY_SESSION_HANDLER = 'FuncApplePaySessionHandler';
   static readonly FUNC_AUTHORIZATION_HANDLER = 'FuncAuthorizationHandler';
   static readonly FUNC_AUTHORIZATION_RESPONSE = 'FuncAuthorizationResponse';
   static readonly FUNC_AUTH_REVERSAL_RESPONSE = 'FuncAuthReversalResponse';
   static readonly FUNC_CAPTURE_RESPONSE = 'FuncCaptureResponse';
   static readonly FUNC_CHANGE_STATE = 'FuncChangeState ';
+  static readonly FUNC_CLICK_TO_PAY = 'FUncClickToPayRespone';
   static readonly FUNC_CONVERSION_DETAILS = 'FuncConversionDetails';
   static readonly FUNC_CREATE_RESPONSE = 'FuncCreateResponse';
+  static readonly FUNC_DELETE_CARD_HANDLER = 'FuncDeleteCardHandler';
   static readonly FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE = 'FuncDeleteCustomerTokenResponse';
   static readonly FUN_CUSTOMER_TOKEN_HANDLER = 'FunCustomerTokenHandler';
   static readonly FUN_DELETE_TOKEN = 'FunDeleteToken';
-  static readonly FUNC_ENROLLMENT_CHECK_RESPONSE = 'payerAuthEnrollmentCheck';
-  static readonly FUNC_FAILURE_RESPONSE = 'failureResponse';
-  static readonly FUNC_FIELD_MAPPER = 'fieldMapper';
-  static readonly FUNC_GET_AUTH_RESPONSE = 'getAuthResponse';
-  static readonly FUNC_GET_CAPTURED_AMOUNT = 'getCapturedAmount';
-  static readonly FUNC_GET_CLIENT = 'getClient';
-  static readonly FUNC_GET_ORDERS = 'getOrders';
-  static readonly FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE = 'getPayerAuthEnrollResponse';
-  static readonly FUNC_GET_PAYER_AUTH_SETUP_RESPONSE = 'getPayerAuthSetUpResponse';
-  static readonly FUNC_GET_SERVICE_RESPONSE = 'getOMServiceResponse';
-  static readonly FUNC_GET_VISA_CHEKOUT_DATA = 'getVisaCheckoutData';
-  static readonly FUNC_KEYS = 'keys';
-  static readonly FUNC_PAYER_AUTH_ACTIONS = 'payerAuthActions';
-  static readonly FUNC_PAYMENT_RESPONSE = 'paymentResponse';
-  static readonly FUNC_ORDER_MANAGEMENT_HANDLER = 'orderManagementHandler';
-  static readonly FUNC_REFUND_RESPONSE = 'refundResponse';
-  static readonly FUNC_REPORT_HANDLER = 'reportHandler';
-  static readonly FUNC_RETRIEVE_CART_BY_ANONYMOUS_ID = 'retrieveCartByAnonymousId';
-  static readonly FUNC_RETRIEVE_CART_BY_CUSTOMER_ID = 'retrieveCartByCustomerId';
-  static readonly FUNC_RETRIEVE_CART_BY_PAYMENT_ID = 'retrieveCartByPaymentId';
-  static readonly FUNC_RETRIEVE_PAYMENT = 'retrievePayment';
-  static readonly FUNC_GET_CUSTOMER = 'getCustomer';
-  static readonly FUNC_SET_CUSTOMER_TOKENS = 'setCustomerTokens';
-  static readonly FUNC_SET_CUTSOM_TYPE = 'setCustomType';
-  static readonly FUNC_SET_TRANSACTION_ID = 'setTransactionId';
-  static readonly FUNC_UPDATE_CART_BY_PAYMENT_ID = 'updateCartbyPaymentId';
-  static readonly FUNC_UPDATE_CARD_HANDLER = 'updateCardHandler';
-  static readonly FUNC_UPDATE_DECISION_SYNC = 'updateDecisionSync';
-  static readonly FUNC_UPDATE_TOKEN_RESPONSE = 'updateTokenResponse';
-  static readonly FUNC_VISA_CARD_DETAILS_ACTION = 'visaCardDetailsAction';
+  static readonly FUNC_ENROLLMENT_CHECK_RESPONSE = 'FuncPayerAuthEnrollmentCheck';
+  static readonly FUNC_FAILURE_RESPONSE = 'FuncFailureResponse';
+  static readonly FUNC_FIELD_MAPPER = 'FuncFieldMapper';
+  static readonly FUNC_GET_AUTH_RESPONSE = 'FuncGetAuthResponse';
+  static readonly FUNC_GET_CAPTURED_AMOUNT = 'FuncGetCapturedAmount';
+  static readonly FUNC_GET_CARD_WITH_3DS_RESPONSE = 'FuncGetCardWith3dsRespone';
+  static readonly FUNC_GET_CARD_WITHOUT_3DS_RESPONSE = 'FuncGetCardWithout3dsRespone';
+  static readonly FUNC_GET_CLIENT = 'FuncGetClient';
+  static readonly FUNC_GET_CUSTOMER = 'FuncGetCustomer';
+  static readonly FUNC_GET_ORDERS = 'FuncGetOrders';
+  static readonly FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE = 'FuncGetPayerAuthEnrollResponse';
+  static readonly FUNC_GET_PAYER_AUTH_SETUP_RESPONSE = 'FuncGetPayerAuthSetUpResponse';
+  static readonly FUNC_GET_SERVICE_RESPONSE = 'FuncGetOMServiceResponse';
+  static readonly FUNC_GET_VISA_CHEKOUT_DATA = 'FuncGetVisaCheckoutData';
+  static readonly FUNC_GOOGLE_PAY_RESPONSE = 'FuncGooglePayRespone';
+  static readonly FUNC_KEYS = 'FuncKeys';
+  static readonly FUNC_PAYER_AUTH_ACTIONS = 'FuncPayerAuthActions';
+  static readonly FUNC_PAYMENT_RESPONSE = 'FuncPaymentResponse';
+  static readonly FUNC_ORDER_MANAGEMENT_HANDLER = 'FuncOrderManagementHandler';
+  static readonly FUNC_REFUND_RESPONSE = 'FuncRefundResponse';
+  static readonly FUNC_REPORT_HANDLER = 'FuncReportHandler';
+  static readonly FUNC_RETRIEVE_CART_BY_ANONYMOUS_ID = 'FuncRetrieveCartByAnonymousId';
+  static readonly FUNC_RETRIEVE_CART_BY_CUSTOMER_ID = 'FuncRetrieveCartByCustomerId';
+  static readonly FUNC_RETRIEVE_CART_BY_PAYMENT_ID = 'FuncRetrieveCartByPaymentId';
+  static readonly FUNC_RETRIEVE_PAYMENT = 'FuncRetrievePayment';
+  static readonly FUNC_SET_CUSTOMER_TOKEN_DATA = 'FuncSetCustomerTokenData';
+  static readonly FUNC_SET_CUSTOMER_TOKENS = 'FuncSetCustomerTokens';
+  static readonly FUNC_SET_CUTSOM_TYPE = 'FuncSetCustomType';
+  static readonly FUNC_SET_TRANSACTION_ID = 'FuncSetTransactionId';
+  static readonly FUNC_UPDATE_CART_BY_PAYMENT_ID = 'FuncUpdateCartbyPaymentId';
+  static readonly FUNC_UPDATE_CARD_HANDLER = 'FuncUpdateCardHandler';
+  static readonly FUNC_UPDATE_DECISION_SYNC = 'FuncUpdateDecisionSync';
+  static readonly FUNC_UPDATE_TOKEN_RESPONSE = 'FuncUpdateTokenResponse';
+  static readonly FUNC_VISA_CARD_DETAILS_ACTION = 'FuncVisaCardDetailsAction';
 
   //Numbers
   static readonly VAL_NEGATIVE_ONE = -1;
@@ -63,16 +70,18 @@ export abstract class Constants {
   static readonly VAL_HUNDRED = 100;
 
   //Payments data
+  static readonly ISV_PAYMENT_APPLE_PAY_INITIATIVE = 'web';
+  static readonly ISV_PAYMENT_APPLE_PAY_PAYMENT_SOLUTION = '001';
   static readonly ISV_PAYMENT_AUTHENTICATION_TYPE = 'http_signature';
   static readonly ISV_PAYMENT_DECISION_SKIP = 'DECISION_SKIP';
   static readonly ISV_PAYMENT_ENCRYPTION_TYPE = 'RsaOaep';
+  static readonly ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION = '012';
   static readonly ISV_PAYMENT_JWT_FORMAT = 'JWT';
   static readonly ISV_PAYMENT_PARTNER_SOLUTION_ID = '0RX6X1BO';
   static readonly ISV_PAYMENT_TOKEN_ACTION_TYPES = 'customer,paymentInstrument,instrumentIdentifier';
   static readonly ISV_PAYMENT_TOKEN_CREATE = 'TOKEN_CREATE';
   static readonly ISV_PAYMENT_TRANSACTION_MODE = 'S';
   static readonly ISV_PAYMENT_VALIDATE_CONSUMER_AUTHENTICATION = 'VALIDATE_CONSUMER_AUTHENTICATION';
-  static readonly ISV_PAYMENT_PAYMENT_SOLUTION_ID = '012';
 
   static readonly HTTP_METHOD_GET = 'GET';
   static readonly HTTP_METHOD_POST = 'POST';
@@ -95,11 +104,12 @@ export abstract class Constants {
   static readonly HTTP_STATUS_DECISION_REJECT = 'REJECT';
 
   //Regex
-  static readonly CLICK_TO_PAY_CARD_MASK = '...';
+  static readonly CLICK_TO_PAY_CARD_MASK = 'XXXXXX';
   static readonly REGEX_DOUBLE_SLASH = '//';
   static readonly REGEX_DOT = '.';
   static readonly STRING_EMPTY = '';
   static readonly STRING_HYPHEN = ' - ';
+  static readonly DOMAIN_REGEX = /^[^:/.]*[:/]+/i;
 
   //Payment methods
   static readonly CREDIT_CARD = 'creditCard';
@@ -153,12 +163,10 @@ export abstract class Constants {
   static readonly LOG_ERROR = 'error';
   static readonly LOG_INFO = 'info';
   static readonly LOG_WARN = 'warn';
-  static readonly STRING_ACCEPT = 'accept';
-  static readonly STRING_REJECT = 'reject';
   static readonly CONFIG_TEST_ENVIRONMENT = 'apitest.cybersource.com';
   static readonly CONFIG_PRODUCTION_ENVIRONMENT = 'api.cybersource.com';
-  static readonly TEST_ENVIRONMENT = 'Test';
-  static readonly LIVE_ENVIRONMENT = 'Live';
+  static readonly TEST_ENVIRONMENT = 'TEST';
+  static readonly LIVE_ENVIRONMENT = 'PRODUCTION';
 
   //CT transaction type
   static readonly CT_TRANSACTION_TYPE_AUTHORIZATION = 'Authorization';
@@ -197,6 +205,7 @@ export abstract class Constants {
   static readonly ISV_MDD_16 = 'isv_merchantDefinedData_mddField_16';
   static readonly ISV_MDD_17 = 'isv_merchantDefinedData_mddField_17';
   static readonly ISV_MDD_18 = 'isv_merchantDefinedData_mddField_18';
+  static readonly ISV_MDD_22 = 'isv_merchantDefinedData_mddField_22';
   static readonly ISV_PAREQ = 'isv_payerAuthenticationPaReq';
   static readonly ISV_PAYER_AUTHENTICATION_REQUIRED = 'isv_payerAuthenticationRequired';
   static readonly ISV_PAYER_AUTHETICATION_TRANSACTION_ID = 'isv_payerAuthenticationTransactionId';

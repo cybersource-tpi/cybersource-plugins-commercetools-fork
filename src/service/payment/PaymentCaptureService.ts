@@ -19,9 +19,9 @@ const captureResponse = async (payment, cart, authId) => {
     if (null != authId && null != payment && null != cart) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CapturePaymentRequest();
-      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
         runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
-      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
         runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
@@ -47,7 +47,11 @@ const captureResponse = async (payment, cart, authId) => {
         requestObj.processingInformation = processingInformation;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidcapturesProcessingInformation();
-        processingInformation.paymentSolution = Constants.ISV_PAYMENT_PAYMENT_SOLUTION_ID;
+        processingInformation.paymentSolution = Constants.ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION;
+        requestObj.processingInformation = processingInformation;
+      } else if (Constants.APPLE_PAY == payment.paymentMethodInfo.method) {
+        var processingInformation = new restApi.Ptsv2paymentsidcapturesProcessingInformation();
+        processingInformation.paymentSolution = Constants.ISV_PAYMENT_APPLE_PAY_PAYMENT_SOLUTION;
         requestObj.processingInformation = processingInformation;
       }
 

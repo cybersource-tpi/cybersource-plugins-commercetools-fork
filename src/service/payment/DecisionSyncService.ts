@@ -20,9 +20,9 @@ const conversionDetails = async () => {
   let runEnvironment: any;
   try {
     const apiClient = new restApi.ApiClient();
-    if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+    if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
       runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
-    } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+    } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
       runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
     }
     const configObject = {
@@ -45,7 +45,7 @@ const conversionDetails = async () => {
     return await new Promise(function (resolve, reject) {
       instance.getConversionDetail(startTime, endTime, opts, function (error, data, response) {
         if (data) {
-          conversionDetailResponse.data = response[Constants.STATUS_CODE];
+          conversionDetailResponse.httpCode = response[Constants.STATUS_CODE];
           conversionDetailResponse.data = data.conversionDetails;
           conversionDetailResponse.status = response[Constants.STRING_RESPONSE_STATUS];
           resolve(conversionDetailResponse);

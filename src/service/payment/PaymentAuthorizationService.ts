@@ -23,9 +23,9 @@ const authorizationResponse = async (payment, cart, service) => {
     if (null != payment && null != cart && null != service) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CreatePaymentRequest();
-      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
         runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
-      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
         runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
@@ -88,11 +88,18 @@ const authorizationResponse = async (payment, cart, service) => {
         consumerAuthenticationInformation.authenticationTransactionId = payment.custom.fields.isv_payerAuthenticationTransactionId;
         requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
-        processingInformation.paymentSolution = Constants.ISV_PAYMENT_PAYMENT_SOLUTION_ID;
+        processingInformation.paymentSolution = Constants.ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION;
         var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
         var fluidData = new restApi.Ptsv2paymentsPaymentInformationFluidData();
         fluidData.value = payment.custom.fields.isv_token;
         paymentInformation.fluidData = fluidData;
+        requestObj.paymentInformation = paymentInformation;
+      } else if (Constants.APPLE_PAY == payment.paymentMethodInfo.method) {
+        processingInformation.paymentSolution = Constants.ISV_PAYMENT_APPLE_PAY_PAYMENT_SOLUTION;
+        var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
+        var paymentInformationFluidData = new restApi.Ptsv2paymentsPaymentInformationFluidData();
+        paymentInformationFluidData.value = payment.custom.fields.isv_token;
+        paymentInformation.fluidData = paymentInformationFluidData;
         requestObj.paymentInformation = paymentInformation;
       }
       requestObj.processingInformation = processingInformation;
@@ -163,9 +170,7 @@ const authorizationResponse = async (payment, cart, service) => {
       const instance = new restApi.PaymentsApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.createPayment(requestObj, function (error, data, response) {
-          console.log('RESPONSE : ', JSON.stringify(response));
           if (data) {
-            console.log('data : ', JSON.stringify(data));
             paymentResponse.httpCode = response[Constants.STATUS_CODE];
             paymentResponse.transactionId = data.id;
             paymentResponse.status = data.status;
@@ -173,7 +178,6 @@ const authorizationResponse = async (payment, cart, service) => {
             paymentResponse.data = data;
             resolve(paymentResponse);
           } else {
-            console.log(' inside auth error ');
             errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData.message);
             paymentResponse.httpCode = error.status;

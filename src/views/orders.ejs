@@ -33,8 +33,7 @@
       </tr>
       <% if (JSON.stringify(count)==(JSON.stringify(0)) ) { %>
       <h2>No orders count = <%= count %></h2>
-      <% } else{ %> <% orderlist.forEach(function(list){ %> <% if(list.transactions.length!=0) { %> <% var latestTransaction = list.transactions[list.transactions.length-1]%> <% if(list.transactions.length==1 && latestTransaction.type == "Authorization" &&
-      (latestTransaction.state =="Failure" || latestTransaction.state == "Initial") && (list.custom.fields.isv_merchantDefinedData_mddField_3 != "reject")){ return;%> <% }else{%>
+      <% } else{ %> <% orderlist.forEach(function(list){ %> <% if(list.transactions.length!=0) { %> <% var latestTransaction = list.transactions[list.transactions.length-1]%>
       <tr id="cell-<%= i++ %>" class="row" onclick="window.location='/paymentdetails?id=<%=list.id %>'">
         <td><%=list.id %></td>
         <td><%= list.amountPlanned.currencyCode%> <%=amountConversion(list.amountPlanned.centAmount) %></td>
@@ -46,7 +45,7 @@
         <td><%= moment(list.createdAt).format('DD/MM/YYYY HH:mm:ss') %></td>
         <td><%= moment(list.lastModifiedAt).format('DD/MM/YYYY HH:mm:ss') %></td>
       </tr>
-      <% }}%> <% }) %> <% } %>
+      <% }%> <% }) %> <% } %>
     </table>
     <b>Most recent <%=count%> of <%=total%></b>
     <div id="loading"><span> Loading... </span></div>
