@@ -8,17 +8,17 @@ import paymentService from '../../utils/PaymentService';
 const keys = async () => {
   let errorData: any;
   let exceptionData: any;
-  let isv_tokenCaptureContextSignature = '';
-  let isv_tokenVerificationContext = null;
+  let isv_tokenCaptureContextSignature = Constants.STRING_EMPTY;
+  let isv_tokenVerificationContext = Constants.STRING_EMPTY;
   let contextWithoutSignature: string;
   let parsedContext: string;
   let runEnvironment: any;
   const format = Constants.ISV_PAYMENT_JWT_FORMAT;
   try {
     const apiClient = new restApi.ApiClient();
-    if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+    if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
       runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
-    } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+    } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
       runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
     }
     const configObject = {
@@ -48,7 +48,7 @@ const keys = async () => {
           errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_KEYS, Constants.LOG_ERROR, Constants.ERROR_MSG_FLEX_TOKEN_KEYS + Constants.STRING_HYPHEN + errorData.message);
           isv_tokenCaptureContextSignature = Constants.STRING_EMPTY;
-          isv_tokenVerificationContext = null;
+          isv_tokenVerificationContext = Constants.STRING_EMPTY;
           reject({
             isv_tokenCaptureContextSignature,
             isv_tokenVerificationContext,

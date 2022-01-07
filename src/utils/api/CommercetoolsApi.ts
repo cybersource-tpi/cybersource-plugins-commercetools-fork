@@ -557,11 +557,6 @@ const updateDecisionSync = async (decisionUpdateObject) => {
                 transactionId: decisionUpdateObject.transactionId,
                 state: decisionUpdateObject.state,
               },
-              {
-                action: Constants.SET_CUSTOM_FIELD,
-                name: Constants.ISV_MDD_3,
-                value: decisionUpdateObject.message,
-              },
             ],
           }),
         };

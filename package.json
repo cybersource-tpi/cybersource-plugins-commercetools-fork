@@ -49,6 +49,7 @@
     "@commercetools/api-request-builder": "^5.6.3",
     "@commercetools/platform-sdk": "^1.18.1",
     "@commercetools/sdk-auth": "^3.0.12",
+    "axios": "^0.24.0",
     "cors": "^2.8.5",
     "cybersource-rest-client": "0.0.31",
     "dotenv": "^10.0.0",

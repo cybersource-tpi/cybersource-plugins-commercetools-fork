@@ -440,22 +440,6 @@ const getOMServiceResponse = (paymentResponse, transactionDetail) => {
   return response;
 };
 
-const convertCentToAmount = (num) => {
-  let amount = Constants.VAL_ZERO;
-  if (null != num) {
-    amount = Number((num / Constants.VAL_HUNDRED).toFixed(Constants.VAL_TWO)) * Constants.VAL_ONE;
-  }
-  return amount;
-};
-
-const convertAmountToCent = (amount) => {
-  let cent = Constants.VAL_ZERO;
-  if (null != amount) {
-    cent = Number((amount.toFixed(Constants.VAL_TWO) * Constants.VAL_HUNDRED).toFixed(Constants.VAL_TWO));
-  }
-  return cent;
-};
-
 const getCapturedAmount = (refundPaymentObj) => {
   let refundTransaction: any;
   let indexValue: any;
@@ -502,7 +486,6 @@ const getCapturedAmount = (refundPaymentObj) => {
 const deleteToken = async (tokenResponse, customerObj) => {
   let isvTokensObj = new Array();
   let parsedToken: any;
-  //tokenResponse = null;
   if (null != tokenResponse && null != customerObj && null != tokenResponse.httpCode) {
     if (Constants.HTTP_CODE_TWO_HUNDRED_FOUR == tokenResponse.httpCode) {
       customerObj.custom.fields.isv_tokens.forEach((element) => {
@@ -527,6 +510,22 @@ const deleteToken = async (tokenResponse, customerObj) => {
     logData(path.parse(path.basename(__filename)).name, Constants.FUN_DELETE_TOKEN, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
   }
   return isvTokensObj;
+};
+
+const convertCentToAmount = (num) => {
+  let amount = Constants.VAL_ZERO;
+  if (null != num) {
+    amount = Number((num / Constants.VAL_HUNDRED).toFixed(Constants.VAL_TWO)) * Constants.VAL_ONE;
+  }
+  return amount;
+};
+
+const convertAmountToCent = (amount) => {
+  let cent = Constants.VAL_ZERO;
+  if (null != amount) {
+    cent = Number((amount.toFixed(Constants.VAL_TWO) * Constants.VAL_HUNDRED).toFixed(Constants.VAL_TWO));
+  }
+  return cent;
 };
 
 const getSubstring = (firstIndex, lastIndex, input) => {
@@ -571,17 +570,17 @@ export default {
   fieldMapper,
   changeState,
   failureResponse,
+  visaCardDetailsAction,
+  payerAuthActions,
+  getUpdateTokenActions,
   getAuthResponse,
   getOMServiceResponse,
+  getCapturedAmount,
+  deleteToken,
   convertCentToAmount,
   convertAmountToCent,
-  getCapturedAmount,
-  payerAuthActions,
-  getEmptyResponse,
-  visaCardDetailsAction,
-  deleteToken,
   getSubstring,
-  getUpdateTokenActions,
+  getEmptyResponse,
   invalidOperationResponse,
   invalidInputResponse,
 };

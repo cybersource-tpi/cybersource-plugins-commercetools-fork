@@ -16,9 +16,9 @@ const deleteCustomerToken = async (customerTokenObj) => {
   try {
     if (null != customerTokenObj) {
       var customerTokenId = customerTokenObj.value;
-      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.TEST_ENVIRONMENT) {
+      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
         runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
-      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT == Constants.LIVE_ENVIRONMENT) {
+      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
         runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
