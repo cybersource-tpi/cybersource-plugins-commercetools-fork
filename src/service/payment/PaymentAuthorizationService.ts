@@ -58,14 +58,16 @@ const authorizationResponse = async (payment, cart, service) => {
         processingInformation.actionTokenTypes = Constants.ISV_PAYMENT_TOKEN_ACTION_TYPES;
       }
       processingInformation.actionList = actionList;
+      var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
+      var paymentInformationCard = new restApi.Ptsv2paymentsPaymentInformationCard();
+      paymentInformationCard.typeSelectionIndicator = Constants.VAL_ONE;
+      paymentInformation.card = paymentInformationCard;
       var tokenInformation = new restApi.Ptsv2paymentsTokenInformation();
       if (Constants.CREDIT_CARD == payment.paymentMethodInfo.method || (Constants.CC_PAYER_AUTHENTICATION == payment.paymentMethodInfo.method && Constants.STRING_CARD == service)) {
         if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
-          var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
           var paymentInformationCustomer = new restApi.Ptsv2paymentsPaymentInformationCustomer();
           paymentInformationCustomer.id = payment.custom.fields.isv_savedToken;
           paymentInformation.customer = paymentInformationCustomer;
-          requestObj.paymentInformation = paymentInformation;
         } else {
           tokenInformation.transientTokenJwt = payment.custom.fields.isv_token;
           requestObj.tokenInformation = tokenInformation;
@@ -75,34 +77,30 @@ const authorizationResponse = async (payment, cart, service) => {
         processingInformation.visaCheckoutId = payment.custom.fields.isv_token;
       } else if (Constants.CC_PAYER_AUTHENTICATION == payment.paymentMethodInfo.method && Constants.VALIDATION == service) {
         if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
-          var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
           var paymentInformationCustomer = new restApi.Ptsv2paymentsPaymentInformationCustomer();
           paymentInformationCustomer.id = payment.custom.fields.isv_savedToken;
           paymentInformation.customer = paymentInformationCustomer;
-          requestObj.paymentInformation = paymentInformation;
         } else {
           tokenInformation.transientTokenJwt = payment.custom.fields.isv_token;
           requestObj.tokenInformation = tokenInformation;
         }
         var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
         consumerAuthenticationInformation.authenticationTransactionId = payment.custom.fields.isv_payerAuthenticationTransactionId;
+        consumerAuthenticationInformation.signedPares = payment.custom.fields.isv_payerAuthenticationPaReq;
         requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         processingInformation.paymentSolution = Constants.ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION;
-        var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
         var fluidData = new restApi.Ptsv2paymentsPaymentInformationFluidData();
         fluidData.value = payment.custom.fields.isv_token;
         paymentInformation.fluidData = fluidData;
-        requestObj.paymentInformation = paymentInformation;
       } else if (Constants.APPLE_PAY == payment.paymentMethodInfo.method) {
         processingInformation.paymentSolution = Constants.ISV_PAYMENT_APPLE_PAY_PAYMENT_SOLUTION;
-        var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
         var paymentInformationFluidData = new restApi.Ptsv2paymentsPaymentInformationFluidData();
         paymentInformationFluidData.value = payment.custom.fields.isv_token;
         paymentInformation.fluidData = paymentInformationFluidData;
-        requestObj.paymentInformation = paymentInformation;
       }
       requestObj.processingInformation = processingInformation;
+      requestObj.paymentInformation = paymentInformation;
 
       totalAmount = paymentService.convertCentToAmount(payment.amountPlanned.centAmount);
 

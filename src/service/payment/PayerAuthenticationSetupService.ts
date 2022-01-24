@@ -78,7 +78,7 @@ const payerAuthSetupResponse = async (payment) => {
           }
         });
       }).catch((error) => {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYMENT_RESPONSE, Constants.LOG_INFO, error.message);
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYMENT_RESPONSE, Constants.LOG_ERROR, error.message);
         return paymentResponse;
       });
     } else {

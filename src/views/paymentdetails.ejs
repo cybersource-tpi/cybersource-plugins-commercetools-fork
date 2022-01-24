@@ -3,7 +3,7 @@
     <title>ISV Commercetools Plugin</title>
     <base href="/" />
     <link rel="stylesheet" href="styles.css" />
-    <script type="text/javascript" src="javascriptfunctions.js"></script>
+    <script type="text/javascript" src="orders.js"></script>
     <% var currencyCode = "" %>
   </head>
 
@@ -36,7 +36,7 @@
           <div class="div-padding">
             <div>
               <b>Name: </b>
-              <%= cart.shippingAddress.firstName%> <%= cart.billingAddress.lastName%>
+              <%= cart.shippingAddress.firstName%> <%= cart.shippingAddress.lastName%>
             </div>
             <div>
               <b>Address: </b>
@@ -215,7 +215,7 @@
         <% } %>
         <form action="/refund" class="div-padding">
           <input type="hidden" name="refundId" id="refundId" value="<%=id%>" />
-          Refund amount: <input type="text" name="refundAmount" id="refundAmount" size="6" value="" oninput="validateamount(this)" required />
+          Refund amount: <input type="text" name="refundAmount" id="refundAmount" size="6" value="" oninput="validateAmount(this)" required />
           <button type="submit" id="refundbutton" class="button" onclick="validate()">Refund</button>
         </form>
         <div id="msg"><%= refundErrorMessage%></div>
@@ -232,11 +232,13 @@
         <tr>
           <th>Masked Card Number</th>
           <th>Card Type</th>
+          <th>Card Expiry Month</th>
           <th>Card Expiry Year</th>
         </tr>
         <tr>
           <td><%= payments.custom.fields.isv_maskedPan%></td>
           <td><%= payments.custom.fields.isv_cardType%></td>
+          <td><%= payments.custom.fields.isv_cardExpiryMonth%></td>
           <td><%= payments.custom.fields.isv_cardExpiryYear%></td>
         </tr>
       </table>

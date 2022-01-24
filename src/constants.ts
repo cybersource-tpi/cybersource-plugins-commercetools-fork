@@ -17,7 +17,7 @@ export abstract class Constants {
   static readonly FUNC_AUTH_REVERSAL_RESPONSE = 'FuncAuthReversalResponse';
   static readonly FUNC_CAPTURE_RESPONSE = 'FuncCaptureResponse';
   static readonly FUNC_CHANGE_STATE = 'FuncChangeState ';
-  static readonly FUNC_CLICK_TO_PAY = 'FUncClickToPayRespone';
+  static readonly FUNC_CLICK_TO_PAY = 'FUncclickToPayResponse';
   static readonly FUNC_CONVERSION_DETAILS = 'FuncConversionDetails';
   static readonly FUNC_CREATE_RESPONSE = 'FuncCreateResponse';
   static readonly FUNC_DELETE_CARD_HANDLER = 'FuncDeleteCardHandler';
@@ -29,15 +29,15 @@ export abstract class Constants {
   static readonly FUNC_FIELD_MAPPER = 'FuncFieldMapper';
   static readonly FUNC_GET_AUTH_RESPONSE = 'FuncGetAuthResponse';
   static readonly FUNC_GET_CAPTURED_AMOUNT = 'FuncGetCapturedAmount';
-  static readonly FUNC_GET_CARD_WITH_3DS_RESPONSE = 'FuncGetCardWith3dsRespone';
-  static readonly FUNC_GET_CARD_WITHOUT_3DS_RESPONSE = 'FuncGetCardWithout3dsRespone';
+  static readonly FUNC_GET_CARD_WITH_3DS_RESPONSE = 'FuncgetCardWith3dsResponse';
+  static readonly FUNC_GET_CARD_WITHOUT_3DS_RESPONSE = 'FuncgetCardWithout3dsResponse';
   static readonly FUNC_GET_CLIENT = 'FuncGetClient';
   static readonly FUNC_GET_CUSTOMER = 'FuncGetCustomer';
   static readonly FUNC_GET_ORDERS = 'FuncGetOrders';
   static readonly FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE = 'FuncGetPayerAuthEnrollResponse';
   static readonly FUNC_GET_PAYER_AUTH_SETUP_RESPONSE = 'FuncGetPayerAuthSetUpResponse';
   static readonly FUNC_GET_SERVICE_RESPONSE = 'FuncGetOMServiceResponse';
-  static readonly FUNC_GET_VISA_CHEKOUT_DATA = 'FuncGetVisaCheckoutData';
+  static readonly FUNC_GET_VISA_CHECKOUT_DATA = 'FuncGetVisaCheckoutData';
   static readonly FUNC_GOOGLE_PAY_RESPONSE = 'FuncGooglePayRespone';
   static readonly FUNC_KEYS = 'FuncKeys';
   static readonly FUNC_PAYER_AUTH_ACTIONS = 'FuncPayerAuthActions';
@@ -81,6 +81,7 @@ export abstract class Constants {
   static readonly ISV_PAYMENT_TOKEN_ACTION_TYPES = 'customer,paymentInstrument,instrumentIdentifier';
   static readonly ISV_PAYMENT_TOKEN_CREATE = 'TOKEN_CREATE';
   static readonly ISV_PAYMENT_TRANSACTION_MODE = 'S';
+  static readonly ISV_PAYMENT_ACS_WINDOW_SIZE = '01';
   static readonly ISV_PAYMENT_VALIDATE_CONSUMER_AUTHENTICATION = 'VALIDATE_CONSUMER_AUTHENTICATION';
 
   static readonly HTTP_METHOD_GET = 'GET';
@@ -199,12 +200,6 @@ export abstract class Constants {
   static readonly ISV_MDD_3 = 'isv_merchantDefinedData_mddField_3';
   static readonly ISV_MDD_11 = 'isv_merchantDefinedData_mddField_11';
   static readonly ISV_MDD_12 = 'isv_merchantDefinedData_mddField_12';
-  static readonly ISV_MDD_13 = 'isv_merchantDefinedData_mddField_13';
-  static readonly ISV_MDD_14 = 'isv_merchantDefinedData_mddField_14';
-  static readonly ISV_MDD_15 = 'isv_merchantDefinedData_mddField_15';
-  static readonly ISV_MDD_16 = 'isv_merchantDefinedData_mddField_16';
-  static readonly ISV_MDD_17 = 'isv_merchantDefinedData_mddField_17';
-  static readonly ISV_MDD_18 = 'isv_merchantDefinedData_mddField_18';
   static readonly ISV_MDD_22 = 'isv_merchantDefinedData_mddField_22';
   static readonly ISV_PAREQ = 'isv_payerAuthenticationPaReq';
   static readonly ISV_PAYER_AUTHENTICATION_REQUIRED = 'isv_payerAuthenticationRequired';
@@ -279,6 +274,7 @@ export abstract class Constants {
   static readonly ERROR_MSG_REVERSAL_FAILURE = 'Cannot process authorization reversal as there are no transaction id available';
   static readonly ERROR_MSG_REVERSAL_SERVICE = 'Error in triggering authorization reversal service';
   static readonly ERROR_MSG_SERVICE_PROCESS = 'Unable to process your request';
+  static readonly ERROR_MSG_SYNC_PAYMENT_DETAILS = 'An error occurred while trying to sync the payments details';
   static readonly ERROR_MSG_TOKEN_UPDATE = 'Failed to update card tokens';
   static readonly ERROR_MSG_UPDATE_CLICK_TO_PAY_DATA = 'Unable to update click to pay card deatils';
 }

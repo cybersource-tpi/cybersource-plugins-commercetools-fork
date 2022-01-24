@@ -36,21 +36,21 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
         paymentMethod = updatePaymentObj.paymentMethodInfo.method;
         switch (paymentMethod) {
           case Constants.CREDIT_CARD: {
-            serviceResponse = await getCardWithout3dsRespone(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
+            serviceResponse = await getCardWithout3dsResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
             paymentResponse = serviceResponse.paymentResponse;
             authResponse = serviceResponse.authResponse;
             errorFlag = serviceResponse.errorFlag;
             break;
           }
           case Constants.CC_PAYER_AUTHENTICATION: {
-            serviceResponse = await getCardWith3dsRespone(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
+            serviceResponse = await getCardWith3dsResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
             paymentResponse = serviceResponse.paymentResponse;
             authResponse = serviceResponse.authResponse;
             errorFlag = serviceResponse.errorFlag;
             break;
           }
           case Constants.VISA_CHECKOUT: {
-            serviceResponse = await clickToPayRespone(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
+            serviceResponse = await clickToPayResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
             paymentResponse = serviceResponse.paymentResponse;
             authResponse = serviceResponse.authResponse;
             errorFlag = serviceResponse.errorFlag;
@@ -64,7 +64,7 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
             break;
           }
           case Constants.APPLE_PAY: {
-            serviceResponse = await getCardWithout3dsRespone(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
+            serviceResponse = await getCardWithout3dsResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions);
             paymentResponse = serviceResponse.paymentResponse;
             authResponse = serviceResponse.authResponse;
             errorFlag = serviceResponse.errorFlag;
@@ -197,7 +197,7 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
   return enrollResponse;
 };
 
-const getCardWithout3dsRespone = async (updatePaymentObj, cartObj, updateTransactions) => {
+const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransactions) => {
   let authResponse: any;
   let paymentResponse: any;
   let cardDetails: any;
@@ -257,7 +257,7 @@ const getCardWithout3dsRespone = async (updatePaymentObj, cartObj, updateTransac
   return returnResponse;
 };
 
-const getCardWith3dsRespone = async (updatePaymentObj, cartObj, updateTransactions) => {
+const getCardWith3dsResponse = async (updatePaymentObj, cartObj, updateTransactions) => {
   let authResponse: any;
   let paymentResponse: any;
   let returnResponse = {
@@ -332,7 +332,7 @@ const getCardWith3dsRespone = async (updatePaymentObj, cartObj, updateTransactio
   return returnResponse;
 };
 
-const clickToPayRespone = async (updatePaymentObj, cartObj, updateTransactions) => {
+const clickToPayResponse = async (updatePaymentObj, cartObj, updateTransactions) => {
   let authResponse: any;
   let paymentResponse: any;
   let cartUpdate: any;
@@ -376,6 +376,10 @@ const clickToPayRespone = async (updatePaymentObj, cartObj, updateTransactions) 
 const googlePayRespone = async (updatePaymentObj, cartObj, updateTransactions) => {
   let authResponse: any;
   let paymentResponse: any;
+  let cardDetails = {
+    cardFieldGroup: null,
+  };
+  let actions: any;
   let returnResponse = {
     paymentResponse: null,
     authResponse: null,
@@ -384,6 +388,18 @@ const googlePayRespone = async (updatePaymentObj, cartObj, updateTransactions) =
   paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_GOOGLE);
   if (null != paymentResponse) {
     authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
+    if (paymentResponse.data.paymentInformation.tokenizedCard.hasOwnProperty(Constants.STRING_EXPIRATION_MONTH)) {
+      cardDetails.cardFieldGroup = paymentResponse.data.paymentInformation.tokenizedCard;
+    } else {
+      cardDetails.cardFieldGroup = paymentResponse.data.paymentInformation.card;
+    }
+    if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && null != cardDetails.cardFieldGroup) {
+      actions = paymentService.visaCardDetailsAction(cardDetails);
+
+      actions.forEach((i) => {
+        authResponse.actions.push(i);
+      });
+    }
   } else {
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GOOGLE_PAY_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
     returnResponse.errorFlag = true;
@@ -657,6 +673,7 @@ const reportHandler = async () => {
   let paymentDetails: any;
   let conversionDetailsData: any;
   let exceptionData: any;
+  let conversionPresent = false;
   var decisionUpdateObject = {
     id: null,
     version: null,
@@ -671,13 +688,13 @@ const reportHandler = async () => {
     if (Constants.STRING_TRUE == process.env.ISV_PAYMENT_DECISION_SYNC) {
       conversionDetails = await conversion.conversionDetails();
       if (null != conversionDetails && Constants.HTTP_CODE_TWO_HUNDRED == conversionDetails.status) {
-        decisionsyncResponse.message = Constants.SUCCESS_MSG_DECISION_SYNC_SERVICE;
         conversionDetailsData = conversionDetails.data;
         for (let element of conversionDetailsData) {
           paymentDetails = await commercetoolsApi.retrievePayment(element.merchantReferenceNumber);
           if (null != paymentDetails) {
             latestTransaction = paymentDetails.transactions.pop();
             if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == latestTransaction.type && Constants.CT_TRANSACTION_STATE_PENDING == latestTransaction.state) {
+              conversionPresent = true;
               decisionUpdateObject.id = paymentDetails.id;
               decisionUpdateObject.version = paymentDetails.version;
               decisionUpdateObject.transactionId = latestTransaction.id;
@@ -691,6 +708,11 @@ const reportHandler = async () => {
               }
             }
           }
+        }
+        if (conversionPresent) {
+          decisionsyncResponse.message = Constants.SUCCESS_MSG_DECISION_SYNC_SERVICE;
+        } else {
+          decisionsyncResponse.error = Constants.ERROR_MSG_NO_CONVERSION_DETAILS;
         }
       } else {
         decisionsyncResponse.error = Constants.ERROR_MSG_NO_CONVERSION_DETAILS;
@@ -706,6 +728,7 @@ const reportHandler = async () => {
     } else {
       exceptionData = Constants.EXCEPTION_MSG_CONVERSION_DETAILS + Constants.STRING_HYPHEN + exception;
     }
+    decisionsyncResponse.error = Constants.ERROR_MSG_SYNC_PAYMENT_DETAILS;
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_REPORT_HANDLER, Constants.LOG_ERROR, exceptionData);
   }
   return decisionsyncResponse;

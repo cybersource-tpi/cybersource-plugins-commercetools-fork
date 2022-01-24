@@ -109,7 +109,7 @@ const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId) => {
 
       var consumerAuthenticationInformation = new restApi.Riskv1decisionsConsumerAuthenticationInformation();
       consumerAuthenticationInformation.referenceId = cardinalReferenceId;
-      consumerAuthenticationInformation.transactionMode = Constants.ISV_PAYMENT_TRANSACTION_MODE;
+      consumerAuthenticationInformation.acsWindowSize = Constants.ISV_PAYMENT_ACS_WINDOW_SIZE;
       consumerAuthenticationInformation.returnUrl = process.env.CONFIG_3DS_RETURN_URL + '/sunriseSpa';
       requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
       const instance = new restApi.PayerAuthenticationApi(configObject, apiClient);

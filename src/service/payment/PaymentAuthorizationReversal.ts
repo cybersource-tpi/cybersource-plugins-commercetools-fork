@@ -44,7 +44,7 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
       if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidreversalsProcessingInformation();
         processingInformation.paymentSolution = payment.paymentMethodInfo.method;
-        processingInformation.visaCheckoutId = null;
+        processingInformation.visaCheckoutId = payment.custom.fields.isv_token;
         requestObj.processingInformation = processingInformation;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidreversalsProcessingInformation();
