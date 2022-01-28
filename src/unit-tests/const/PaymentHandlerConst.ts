@@ -1385,3 +1385,12 @@ export const deleteCardHandlerUpdateCustomerObj = {
   }
 
   export const deleteCardHandlerCutsomerId = unit.customerId
+
+  export const applePaySessionHandlerFields = 
+  {
+      "isv_deviceFingerprintId":"4fa71486-5416-4037-a7eb-c2d82ae60da5",
+      "isv_acceptHeader":"*/*",
+      "isv_merchantDefinedData_mddField_12":"Sunrise",
+      "isv_merchantDefinedData_mddField_11":"https://apple-pay-gateway-cert.apple.com/paymentservices/startSession",
+      "isv_userAgentHeader":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15"
+  }
