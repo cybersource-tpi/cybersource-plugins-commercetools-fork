@@ -46,7 +46,7 @@ const keys = async () => {
           });
         } else {
           errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_KEYS, Constants.LOG_ERROR, Constants.ERROR_MSG_FLEX_TOKEN_KEYS + Constants.STRING_HYPHEN + errorData.message);
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_KEYS, Constants.LOG_ERROR, Constants.ERROR_MSG_FLEX_TOKEN_KEYS + Constants.STRING_HYPHEN + errorData.responseStatus.message);
           isv_tokenCaptureContextSignature = Constants.STRING_EMPTY;
           isv_tokenVerificationContext = Constants.STRING_EMPTY;
           reject({

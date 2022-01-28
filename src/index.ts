@@ -165,7 +165,6 @@ app.post('/api/extension/payment/create', async (req, res) => {
               actions: actions,
               errors: [],
             };
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_INFO, response);
           } else {
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS);
             response = paymentService.invalidOperationResponse();
@@ -243,7 +242,6 @@ app.post('/api/extension/payment/update', async (req, res) => {
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_UPDATE, Constants.LOG_ERROR, exceptionData);
     updateResponse = paymentService.invalidOperationResponse();
   }
-  console.log(updateResponse);
   res.send(updateResponse);
 });
 

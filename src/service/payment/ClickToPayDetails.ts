@@ -42,22 +42,22 @@ const getVisaCheckoutData = async (paymentResponse) => {
               resolve(visaCheckoutData);
             } else {
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHEKOUT_DATA, Constants.LOG_INFO, errorData.message);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, errorData.message);
               visaCheckoutData.httpCode = error.status;
               visaCheckoutData.message = errorData.message;
               reject(visaCheckoutData);
             }
           });
         }).catch((error) => {
-          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHEKOUT_DATA, Constants.LOG_INFO, error.message);
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, error.message);
           return visaCheckoutData;
         });
       } else {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHEKOUT_DATA, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
         return visaCheckoutData;
       }
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHEKOUT_DATA, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
       return visaCheckoutData;
     }
   } catch (exception) {
@@ -68,7 +68,7 @@ const getVisaCheckoutData = async (paymentResponse) => {
     } else {
       exceptionData = exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHEKOUT_DATA, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_ERROR, exceptionData);
     return paymentResponse;
   }
 };
