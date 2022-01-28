@@ -3,9 +3,8 @@ function showDiv() {
 }
 
 function validateAmount(amount) {
-  var msg = document.getElementById('msg');
   var button = document.getElementById('refundbutton');
-  var validAmount = new RegExp(/^[+]?([1-9][0-9]*(?:[\.][0-9]*)?|0*\.0*[1-9][0-9]*)(?:[eE][+-][0-9]+)?$/);
+  var validAmount = new RegExp(/^\d*\.?\d*$/);
   if (amount.value.length > 0) {
     if (validAmount.test(amount.value)) {
       document.getElementById('msg').style.display = 'none';
