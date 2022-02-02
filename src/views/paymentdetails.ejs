@@ -159,6 +159,7 @@
         </tr>
       </table>
     </div>
+    <br />
     <div class="panel card4 padding16">
       <h2>Payment Details</h2>
       <hr />
@@ -204,18 +205,18 @@
         <% }) %>
       </table>
 
-      <% if(latestTransaction) { %> <% if((latestTransaction.type=='Authorization' && latestTransaction.state=='Success' ) || (latestTransaction.type=='Charge' && latestTransaction.state=='Initial') || (latestTransaction.type=='CancelAuthorization' &&
-      (latestTransaction.state=='Initial' || latestTransaction.state == 'Failure')) ) { %>
+      <% if(latestTransaction) { %> <% if(('Authorization' == latestTransaction.type && 'Success' == latestTransaction.state) || ('Charge' == latestTransaction.type && (latestTransaction.state=='Initial' || 'Failure' == latestTransaction.state)) || ('CancelAuthorization' ==
+      latestTransaction.type && ('Initial' == latestTransaction.state || 'Failure' == latestTransaction.state)) ) { %>
       <div class="div-padding">
         <a class="button" id="capture" href="/capture?id=<%=id%>" role="button" onclick="showDiv()">Capture </a>
         <a class="button" id="auth" href="/authreversal?id=<%=id%>" role="button" onclick="showDiv()">Reverse </a>
-        <% } %> <% if(("Charge"==latestTransaction.type && "Success"==latestTransaction.state) || ((captureAmount && "Refund"==latestTransaction.type) && (("Success"==latestTransaction.state) || ("Failure"==latestTransaction.state) || ("Initial"==latestTransaction.state))))
-        {%> <% if((captureAmount) && (!(latestTransaction.type=="Charge" && latestTransaction.state=="Initial" ))) { %>
+        <% } %> <% if(('Charge' == latestTransaction.type && 'Success' == latestTransaction.state) || ((captureAmount && 'Refund' == latestTransaction.type) && (('Success' == latestTransaction.state) || ('Failure' == latestTransaction.state) || ('Initial' ==
+        latestTransaction.state)))) {%> <% if((captureAmount) && (!('Charge' == latestTransaction.type && 'Initial' == latestTransaction.state))) { %>
         <div class="div-padding">You can refund amount <%= captureAmount%></div>
         <% } %>
         <form action="/refund" class="div-padding">
           <input type="hidden" name="refundId" id="refundId" value="<%=id%>" />
-          Refund amount: <input type="text" name="refundAmount" id="refundAmount" size="6" value="" oninput="validateAmount(this)" required />
+          Refund amount: <input type="text" name="refundAmount" id="refundAmount" size="6" value="" autocomplete="off" oninput="validateAmount(this)" required />
           <button type="submit" id="refundbutton" class="button" onclick="validate()">Refund</button>
         </form>
         <div id="msg"><%= refundErrorMessage%></div>
@@ -224,7 +225,6 @@
       <% } %>
     </div>
     <br />
-    <% if(payments.paymentMethodInfo.method != "googlePay") { %>
     <div class="panel card4 padding16">
       <h2>Payment Card Details</h2>
       <hr />
@@ -244,7 +244,6 @@
       </table>
     </div>
     <br />
-    <% } %>
     <div class="panel card4 padding16">
       <h2>ISV Payment Service Custom Payment Fields</h2>
       <% if (payments.custom.fields.isv_token) { %>
