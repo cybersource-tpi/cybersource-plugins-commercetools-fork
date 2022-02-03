@@ -238,7 +238,7 @@ const payerAuthActions = (response) => {
         },
         {
           action: Constants.SET_CUSTOM_FIELD,
-          name: Constants.ISV_MDD_3,
+          name: Constants.ISV_STEPUP_URL,
           value: response.stepUpUrl,
         },
         {
@@ -296,8 +296,8 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
   let isv_payerAuthenticationTransactionId = Constants.STRING_EMPTY;
   let isv_payerAuthenticationRequired = false;
   let isv_requestJwt = Constants.STRING_EMPTY;
-  let isv_merchantDefinedData_mddField_1 = Constants.STRING_EMPTY;
-  let isv_merchantDefinedData_mddField_2 = Constants.STRING_EMPTY;
+  let isv_cardinalReferenceId = Constants.STRING_EMPTY;
+  let isv_deviceDataCollectionUrl = Constants.STRING_EMPTY;
   try {
     if (null != paymentResponse) {
       if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHORIZED == paymentResponse.status) {
@@ -310,12 +310,12 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
         response = createResponse(setTransaction, setCustomField, null);
       } else if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_COMPLETED == paymentResponse.status) {
         isv_requestJwt = paymentResponse.accessToken;
-        isv_merchantDefinedData_mddField_1 = paymentResponse.referenceId;
-        isv_merchantDefinedData_mddField_2 = paymentResponse.deviceDataCollectionUrl;
+        isv_cardinalReferenceId = paymentResponse.referenceId;
+        isv_deviceDataCollectionUrl = paymentResponse.deviceDataCollectionUrl;
         actions = fieldMapper({
           isv_requestJwt,
-          isv_merchantDefinedData_mddField_1,
-          isv_merchantDefinedData_mddField_2,
+          isv_cardinalReferenceId,
+          isv_deviceDataCollectionUrl,
         });
         response = {
           actions: actions,
@@ -490,7 +490,7 @@ const deleteToken = async (tokenResponse, customerObj) => {
     if (Constants.HTTP_CODE_TWO_HUNDRED_FOUR == tokenResponse.httpCode) {
       customerObj.custom.fields.isv_tokens.forEach((element) => {
         parsedToken = JSON.parse(element);
-        if (tokenResponse.deletedToken != parsedToken.value) {
+        if (tokenResponse.deletedToken != parsedToken.paymentToken) {
           isvTokensObj.push(element);
         }
       });

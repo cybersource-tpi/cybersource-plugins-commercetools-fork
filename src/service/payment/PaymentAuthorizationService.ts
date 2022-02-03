@@ -3,7 +3,7 @@ import path from 'path';
 import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
-const authorizationResponse = async (payment, cart, service) => {
+const authorizationResponse = async (payment, cart, service, cardTokens) => {
   let errorData: any;
   let exceptionData: any;
   let j = Constants.VAL_ZERO;
@@ -55,39 +55,44 @@ const authorizationResponse = async (payment, cart, service) => {
       }
       if (null == payment.custom.fields.isv_savedToken && Constants.ISV_TOKEN_ALIAS in payment.custom.fields) {
         actionList.push(Constants.ISV_PAYMENT_TOKEN_CREATE);
-        processingInformation.actionTokenTypes = Constants.ISV_PAYMENT_TOKEN_ACTION_TYPES;
+        if (null != cardTokens && null != cardTokens.customerTokenId) {
+          processingInformation.actionTokenTypes = Constants.ISV_PAYMENT_TOKEN_ACTION_TYPES_CUSTOMER_EXISTS;
+        } else {
+          processingInformation.actionTokenTypes = Constants.ISV_PAYMENT_TOKEN_ACTION_TYPES;
+        }
       }
       processingInformation.actionList = actionList;
       var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
-      var paymentInformationCard = new restApi.Ptsv2paymentsPaymentInformationCard();
-      paymentInformationCard.typeSelectionIndicator = Constants.VAL_ONE;
-      paymentInformation.card = paymentInformationCard;
       var tokenInformation = new restApi.Ptsv2paymentsTokenInformation();
-      if (Constants.CREDIT_CARD == payment.paymentMethodInfo.method || (Constants.CC_PAYER_AUTHENTICATION == payment.paymentMethodInfo.method && Constants.STRING_CARD == service)) {
+      if (Constants.CREDIT_CARD == payment.paymentMethodInfo.method || Constants.CC_PAYER_AUTHENTICATION == payment.paymentMethodInfo.method) {
         if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
           var paymentInformationCustomer = new restApi.Ptsv2paymentsPaymentInformationCustomer();
-          paymentInformationCustomer.id = payment.custom.fields.isv_savedToken;
+          paymentInformationCustomer.id = cardTokens.customerTokenId;
           paymentInformation.customer = paymentInformationCustomer;
+          var paymentInformatioPaymentInstrument = new restApi.Ptsv2paymentsPaymentInformationPaymentInstrument();
+          paymentInformatioPaymentInstrument.id = cardTokens.paymentInstrumentId;
+          paymentInformation.paymentInstrument = paymentInformatioPaymentInstrument;
         } else {
+          if (null != cardTokens && null != cardTokens.customerTokenId) {
+            var paymentInformationCustomer = new restApi.Ptsv2paymentsPaymentInformationCustomer();
+            paymentInformationCustomer.id = cardTokens.customerTokenId;
+            paymentInformation.customer = paymentInformationCustomer;
+          }
+          var paymentInformationCard = new restApi.Ptsv2paymentsPaymentInformationCard();
+          paymentInformationCard.typeSelectionIndicator = Constants.VAL_ONE;
+          paymentInformation.card = paymentInformationCard;
           tokenInformation.transientTokenJwt = payment.custom.fields.isv_token;
           requestObj.tokenInformation = tokenInformation;
+        }
+        if (Constants.VALIDATION == service) {
+          var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
+          consumerAuthenticationInformation.authenticationTransactionId = payment.custom.fields.isv_payerAuthenticationTransactionId;
+          consumerAuthenticationInformation.signedPares = payment.custom.fields.isv_payerAuthenticationPaReq;
+          requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
       } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
         processingInformation.paymentSolution = payment.paymentMethodInfo.method;
         processingInformation.visaCheckoutId = payment.custom.fields.isv_token;
-      } else if (Constants.CC_PAYER_AUTHENTICATION == payment.paymentMethodInfo.method && Constants.VALIDATION == service) {
-        if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
-          var paymentInformationCustomer = new restApi.Ptsv2paymentsPaymentInformationCustomer();
-          paymentInformationCustomer.id = payment.custom.fields.isv_savedToken;
-          paymentInformation.customer = paymentInformationCustomer;
-        } else {
-          tokenInformation.transientTokenJwt = payment.custom.fields.isv_token;
-          requestObj.tokenInformation = tokenInformation;
-        }
-        var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
-        consumerAuthenticationInformation.authenticationTransactionId = payment.custom.fields.isv_payerAuthenticationTransactionId;
-        consumerAuthenticationInformation.signedPares = payment.custom.fields.isv_payerAuthenticationPaReq;
-        requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         processingInformation.paymentSolution = Constants.ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION;
         var fluidData = new restApi.Ptsv2paymentsPaymentInformationFluidData();
@@ -164,7 +169,6 @@ const authorizationResponse = async (payment, cart, service) => {
       var deviceInformation = new restApi.Ptsv2paymentsDeviceInformation();
       deviceInformation.fingerprintSessionId = payment.custom.fields.isv_deviceFingerprintId;
       requestObj.deviceInformation = deviceInformation;
-
       const instance = new restApi.PaymentsApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.createPayment(requestObj, function (error, data, response) {

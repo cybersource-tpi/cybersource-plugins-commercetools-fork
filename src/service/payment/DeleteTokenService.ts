@@ -16,6 +16,7 @@ const deleteCustomerToken = async (customerTokenObj) => {
   try {
     if (null != customerTokenObj) {
       var customerTokenId = customerTokenObj.value;
+      var paymentInstrumentTokenId = customerTokenObj.paymentToken;
       if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
         runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
       } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
@@ -29,12 +30,12 @@ const deleteCustomerToken = async (customerTokenObj) => {
         merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
       };
       const apiClient = new restApi.ApiClient();
-      var instance = new restApi.CustomerApi(configObject, apiClient);
+      var instance = new restApi.CustomerPaymentInstrumentApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
-        instance.deleteCustomer(customerTokenId, opts, function (error, data, response) {
+        instance.deleteCustomerPaymentInstrument(customerTokenId, paymentInstrumentTokenId, opts, function (error, data, response) {
           if (Constants.HTTP_CODE_TWO_HUNDRED_FOUR == response.status) {
             customerTokenDeleteResponse.httpCode = response.status;
-            customerTokenDeleteResponse.deletedToken = customerTokenId;
+            customerTokenDeleteResponse.deletedToken = paymentInstrumentTokenId;
             resolve(customerTokenDeleteResponse);
           } else {
             errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));

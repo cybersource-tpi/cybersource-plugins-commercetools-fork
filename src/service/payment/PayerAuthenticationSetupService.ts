@@ -4,7 +4,7 @@ import jwtDecode from 'jwt-decode';
 import { Constants } from '../../constants';
 import paymentService from '../../utils/PaymentService';
 
-const payerAuthSetupResponse = async (payment) => {
+const payerAuthSetupResponse = async (payment, cardTokens) => {
   let jtiToken: any;
   let errorData: any;
   let exceptionData: any;
@@ -46,7 +46,7 @@ const payerAuthSetupResponse = async (payment) => {
       if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
         var paymentInformation = new restApi.Riskv1authenticationsetupsPaymentInformation();
         var paymentInformationCustomer = new restApi.Riskv1authenticationsetupsPaymentInformationCustomer();
-        paymentInformationCustomer.id = payment.custom.fields.isv_savedToken;
+        paymentInformationCustomer.id = cardTokens.customerTokenId;
         paymentInformation.customer = paymentInformationCustomer;
         requestObj.paymentInformation = paymentInformation;
       } else {

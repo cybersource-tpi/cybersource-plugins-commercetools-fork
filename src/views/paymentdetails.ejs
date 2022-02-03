@@ -25,7 +25,7 @@
     <div class="buttonright">
       <a class="button" href="/orders" role="button">Back</a>
     </div>
-    <% if(payments){%>
+    <% if(cart){%>
     <div class="panel card4 padding16">
       <h2>Customer Details</h2>
       <hr />
@@ -122,7 +122,6 @@
         </div>
       </div>
     </div>
-    <%} %>
     <br />
     <div class="panel card4 padding16">
       <h2>Order Items</h2>
@@ -160,6 +159,7 @@
       </table>
     </div>
     <br />
+    <% } %>
     <div class="panel card4 padding16">
       <h2>Payment Details</h2>
       <hr />

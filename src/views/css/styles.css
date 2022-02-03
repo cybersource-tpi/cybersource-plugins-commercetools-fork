@@ -241,3 +241,6 @@ div.div-font {
   float: left;
   font-size: 0.9rem;
 }
+td.text-align {
+  text-align: center;
+}

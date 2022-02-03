@@ -69,7 +69,7 @@ const getVisaCheckoutData = async (paymentResponse) => {
       exceptionData = exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_ERROR, exceptionData);
-    return paymentResponse;
+    return visaCheckoutData;
   }
 };
 

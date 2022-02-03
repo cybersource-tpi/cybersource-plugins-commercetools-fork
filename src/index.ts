@@ -209,9 +209,9 @@ app.post('/api/extension/payment/update', async (req, res) => {
       updatePaymentObj = req.body.resource.obj;
       paymentMethod = updatePaymentObj.paymentMethodInfo.method;
       if (Constants.CC_PAYER_AUTHENTICATION == paymentMethod && Constants.VAL_ZERO == updatePaymentObj.transactions.length) {
-        if (!(Constants.ISV_MDD_1 in updatePaymentObj.custom.fields)) {
+        if (!(Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields)) {
           updateResponse = await paymentHandler.getPayerAuthSetUpResponse(updatePaymentObj);
-        } else if (!(Constants.ISV_PAYER_AUTHETICATION_TRANSACTION_ID in updatePaymentObj.custom.fields) && Constants.ISV_MDD_1 in updatePaymentObj.custom.fields) {
+        } else if (!(Constants.ISV_PAYER_AUTHETICATION_TRANSACTION_ID in updatePaymentObj.custom.fields) && Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields) {
           updateResponse = await paymentHandler.getPayerAuthEnrollResponse(updatePaymentObj);
         }
       }
