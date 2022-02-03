@@ -79,6 +79,7 @@ export abstract class Constants {
   static readonly ISV_PAYMENT_JWT_FORMAT = 'JWT';
   static readonly ISV_PAYMENT_PARTNER_SOLUTION_ID = '0RX6X1BO';
   static readonly ISV_PAYMENT_TOKEN_ACTION_TYPES = 'customer,paymentInstrument,instrumentIdentifier';
+  static readonly ISV_PAYMENT_TOKEN_ACTION_TYPES_CUSTOMER_EXISTS = 'paymentInstrument,instrumentIdentifier';
   static readonly ISV_PAYMENT_TOKEN_CREATE = 'TOKEN_CREATE';
   static readonly ISV_PAYMENT_TRANSACTION_MODE = 'S';
   static readonly ISV_PAYMENT_ACS_WINDOW_SIZE = '01';
@@ -136,6 +137,7 @@ export abstract class Constants {
   static readonly STRING_CARD_EXPIRY_YEAR = 'cardExpiryYear';
   static readonly STRING_CUSTOM = 'custom';
   static readonly STRING_CUSTOMER = 'customer';
+  static readonly STRING_CUSTOMER_TOKEN_ID = 'customerTokenId';
   static readonly STRING_DELETE = 'delete';
   static readonly STRING_EXPIRATION_MONTH = 'expirationMonth';
   static readonly STRING_EXPIRATION_YEAR = 'expirationYear';
@@ -186,6 +188,7 @@ export abstract class Constants {
   static readonly ADD_TRANSACTION = 'addTransaction';
   static readonly CHANGE_TRANSACTION_INTERACTION_ID = 'changeTransactionInteractionId';
   static readonly CHANGE_TRANSACTION_STATE = 'changeTransactionState';
+  static readonly ISV_DDC_URL = 'isv_deviceDataCollectionUrl';
   static readonly INVALID_OPERATION = 'InvalidOperation';
   static readonly INVALID_INPUT = 'InvalidInput';
   static readonly ISV_ACS_URL = 'isv_payerAuthenticationAcsUrl';
@@ -195,19 +198,17 @@ export abstract class Constants {
   static readonly ISV_CARD_TYPE = 'isv_cardType';
   static readonly ISV_ENROLLMENT_CHECK = 'isv_payments_payer_authentication_enrolment_check';
   static readonly ISV_MASKED_PAN = 'isv_maskedPan';
-  static readonly ISV_MDD_1 = 'isv_merchantDefinedData_mddField_1';
-  static readonly ISV_MDD_2 = 'isv_merchantDefinedData_mddField_2';
-  static readonly ISV_MDD_3 = 'isv_merchantDefinedData_mddField_3';
-  static readonly ISV_MDD_11 = 'isv_merchantDefinedData_mddField_11';
-  static readonly ISV_MDD_12 = 'isv_merchantDefinedData_mddField_12';
-  static readonly ISV_MDD_22 = 'isv_merchantDefinedData_mddField_22';
   static readonly ISV_PAREQ = 'isv_payerAuthenticationPaReq';
+  static readonly ISV_PAYMENT_APPLE_PAY_SESSION_DATA = 'isv_applePaySessionData';
   static readonly ISV_PAYER_AUTHENTICATION_REQUIRED = 'isv_payerAuthenticationRequired';
   static readonly ISV_PAYER_AUTHETICATION_TRANSACTION_ID = 'isv_payerAuthenticationTransactionId';
+  static readonly ISV_PAYER_AUTHENTICATION_VALIDATE_RESULT = 'isv_payments_payer_authentication_validate_result';
   static readonly ISV_PAYMENTS_CUSTOMER_TOKENS = 'isv_payments_customer_tokens';
   static readonly ISV_PAYMENT_FAILURE = 'isv_payment_failure';
+  static readonly ISV_CARDINAL_REFERENCE_ID = 'isv_cardinalReferenceId';
   static readonly ISV_RESPONSE_JWT = 'isv_responseJwt';
   static readonly ISV_SAVED_TOKEN = 'isv_savedToken';
+  static readonly ISV_STEPUP_URL = 'isv_stepUpUrl';
   static readonly ISV_TOKEN = 'isv_token';
   static readonly ISV_TOKEN_ALIAS = 'isv_tokenAlias';
   static readonly ISV_TOKEN_VERIFICATION_CONTEXT = 'isv_tokenVerificationContext';
@@ -216,7 +217,6 @@ export abstract class Constants {
   static readonly SET_CUSTOM_FIELD = 'setCustomField';
   static readonly SET_CUSTOM_TYPE = 'setCustomType';
   static readonly TYPE_ID_TYPE = 'type';
-  static readonly ISV_PAYER_AUTHENTICATION_VALIDATE_RESULT = 'isv_payments_payer_authentication_validate_result';
 
   //Success messages
   static readonly SUCCESS_MSG_CAPTURE_SERVICE = 'Capture is completed successfully';

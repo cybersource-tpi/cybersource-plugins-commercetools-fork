@@ -19,8 +19,8 @@ let paymentResponse = {
   data: null,
 };
 
-test.serial('Authorizing a payment',async (t) => {
-  const result:any = await auth.authorizationResponse(payment, cart, service);
+test.serial('Authorizing a payment', async (t) => {
+  const result: any = await auth.authorizationResponse(payment, cart, service, null);
   paymentResponse.httpCode = result.httpCode;
   paymentResponse.transactionId = result.transactionId;
   paymentResponse.status = result.status;
@@ -29,32 +29,24 @@ test.serial('Authorizing a payment',async (t) => {
   t.is(paymentResponse.httpCode, 201);
 });
 
-test.serial('Check status for authorization ', async(t)=>{
-  if(paymentResponse.status=='AUTHORIZED')
-  {
+test.serial('Check status for authorization ', async (t) => {
+  if (paymentResponse.status == 'AUTHORIZED') {
     t.is(paymentResponse.status, 'AUTHORIZED');
-  }
-  else if(paymentResponse.status=='AUTHORIZED_PENDING_REVIEW')
-  {
+  } else if (paymentResponse.status == 'AUTHORIZED_PENDING_REVIEW') {
     t.is(paymentResponse.status, 'AUTHORIZED_PENDING_REVIEW');
   }
-})
+});
 
-test.serial('Authorizing a payment using invalid token', async(t)=>{
-  const result:any = await auth.authorizationResponse(payments, cart, service);
+test.serial('Authorizing a payment using invalid token', async (t) => {
+  const result: any = await auth.authorizationResponse(payments, cart, service, null);
   paymentResponse.httpCode = result.httpCode;
   paymentResponse.transactionId = result.transactionId;
   paymentResponse.status = result.status;
   paymentResponse.message = result.message;
   paymentResponse.data = result.data;
   t.not(paymentResponse.httpCode, 201);
-})
+});
 
-test.serial('Check status for invalid auth', async(t)=>{
-  
-    t.not(paymentResponse.status, 'AUTHORIZED');
-  
-})
-
-
-
+test.serial('Check status for invalid auth', async (t) => {
+  t.not(paymentResponse.status, 'AUTHORIZED');
+});

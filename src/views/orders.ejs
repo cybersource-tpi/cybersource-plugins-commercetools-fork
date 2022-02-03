@@ -22,7 +22,10 @@
     <% } %>
 
     <div id="left"><h2>Orders</h2></div>
+    <% if(total != 0) { %>
     <div class="buttonright"><a class="button" href="/decisionsync" role="button" onclick="showDiv()">Run Decision Sync</a></div>
+    <div class="buttonright"><a class="button" href="/runsync" role="button" onclick="showDiv()">Run Sync</a></div>
+    <% } %>
     <table class="order">
       <tr>
         <th>Payment Id</th>
@@ -32,7 +35,9 @@
         <th>Date Modified</th>
       </tr>
       <% if (JSON.stringify(count)==(JSON.stringify(0)) ) { %>
-      <h2>No orders count = <%= count %></h2>
+      <tr>
+        <td colspan="6" class="text-align">There are no orders</td>
+      </tr>
       <% } else{ %> <% orderlist.forEach(function(list){ %> <% if(list.transactions.length!=0) { %> <% var latestTransaction = list.transactions[list.transactions.length-1]%>
       <tr id="cell-<%= i++ %>" class="row" onclick="window.location='/paymentdetails?id=<%=list.id %>'">
         <td><%=list.id %></td>

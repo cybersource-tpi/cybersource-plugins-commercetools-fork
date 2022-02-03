@@ -4,7 +4,7 @@ import jwtDecode from 'jwt-decode';
 import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
-const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId) => {
+const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId, cardTokens) => {
   let jtiToken: any;
   let errorData: any;
   let exceptionData: any;
@@ -94,11 +94,14 @@ const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId) => {
       }
       requestObj.orderInformation = orderInformation;
 
-      if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
+      if (Constants.ISV_SAVED_TOKEN in payment.custom.fields && null != cardTokens) {
         var paymentInformation = new restApi.Riskv1authenticationsPaymentInformation();
         var paymentInformationCustomer = new restApi.Ptsv2paymentsPaymentInformationCustomer();
-        paymentInformationCustomer.id = payment.custom.fields.isv_savedToken;
+        paymentInformationCustomer.id = cardTokens.customerTokenId;
         paymentInformation.customer = paymentInformationCustomer;
+        var paymentInformatioPaymentInstrument = new restApi.Ptsv2paymentsPaymentInformationPaymentInstrument();
+        paymentInformatioPaymentInstrument.id = cardTokens.paymentInstrumentId;
+        paymentInformation.paymentInstrument = paymentInformatioPaymentInstrument;
         requestObj.paymentInformation = paymentInformation;
       } else {
         jtiToken = jwtDecode(payment.custom.fields.isv_token);

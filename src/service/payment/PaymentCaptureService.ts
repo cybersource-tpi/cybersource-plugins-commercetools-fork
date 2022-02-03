@@ -15,7 +15,6 @@ const captureResponse = async (payment, cart, authId) => {
   };
   let runEnvironment: any;
   try {
-    //authId = null;
     if (null != authId && null != payment && null != cart) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CapturePaymentRequest();
