@@ -10,24 +10,19 @@ import refundResponse from '../../../service/payment/PaymentRefundService';
 
 let paymentResponse = {
     httpCode: null,
-    transactionId: null,
     status: null,
-    message: null,
-  };
+    };
 
-test.serial('Refunding a payment', async(t)=>{
+let paymentResponseObject = {
+    httpCode: null,
+    status: null,
+    };
+
+test.serial('Refunding a payment and check http code', async(t)=>{
     const result:any = await refundResponse.refundResponse(payment, captureId, updateTransaction);
     paymentResponse.httpCode = result.httpCode;
-    paymentResponse.transactionId = result.transactionId;
     paymentResponse.status = result.status;
-    paymentResponse.message = result.message;
-    t.pass();
-})
-
-test.serial('Check http code for payment refund', async(t)=>{
-    
     t.is(paymentResponse.httpCode, 201);
-
 })
 
 test.serial('Check status for payment refund', async(t)=>{
@@ -36,23 +31,15 @@ test.serial('Check status for payment refund', async(t)=>{
 
 })
 
-test.serial('Refunding an invalid payment ', async(t)=>{
+test.serial('Refunding an invalid payment and check http code', async(t)=>{
     const result:any = await refundResponse.refundResponse(payment, captureID, updateTransaction);
-    paymentResponse.httpCode = result.httpCode;
-    paymentResponse.transactionId = result.transactionId;
-    paymentResponse.status = result.status;
-    paymentResponse.message = result.message;
-    t.pass();
-})
-
-test.serial('Check http code of an invalid refund', async(t)=>{
-    
-    t.not(paymentResponse.httpCode, 201);
-
+    paymentResponseObject.httpCode = result.httpCode;
+    paymentResponseObject.status = result.status;
+    t.not(paymentResponseObject.httpCode, 201);
 })
 
 test.serial('Check status of an invalid refund', async(t)=>{
     
-    t.not(paymentResponse.status, 'PENDING');
+    t.not(paymentResponseObject.status, 'PENDING');
 
 })

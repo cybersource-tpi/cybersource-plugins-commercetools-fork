@@ -16,6 +16,7 @@ import {updateCardHandlerCustomerId,updateCardHandlerTokens} from '../const/Paym
 import {orderManagementHandlerPaymentId,  orderManagementHandlerUpdateTransactions} from '../const/PaymentHandlerConst'
 import {deleteCardHandlerUpdateCustomerObj, deleteCardHandlerCutsomerId} from '../const/PaymentHandlerConst';
 import {applePaySessionHandlerFields} from '../const/PaymentHandlerConst';
+import { authorizationHandlerAPUpdatePaymentObject,authorizationHandler3DSUpdatePaymentObject,authorizationHandlerCCUpdatePaymentObject, authoriationHandlerGPUpdatePaymentObject,authorizationHandlerVSUpdatePaymentObject, authorizationHandlerUpdateTransactions } from '../const/PaymentHandlerConst';
 import CommercetoolsApi from '../../utils/api/CommercetoolsApi';
 
 
@@ -39,7 +40,7 @@ test.serial('Check for report handller ', async (t)=>{
     }
 })
 
-test.serial('update card', async(t)=>{
+test.serial('Get update card handller data', async(t)=>{
     const result = await paymentHandler.updateCardHandler(updateCardHandlerTokens, updateCardHandlerCustomerId);
     t.is(result.actions[0].action, "setCustomType");
 })
@@ -61,5 +62,107 @@ test.serial('Get delete card handler data ', async (t)=>{
 test.serial('Get apple Pay Session Handler response ', async(t)=>{
     const result = await paymentHandler.applePaySessionHandler(applePaySessionHandlerFields);
     t.is(result.actions[0].action, 'setCustomField')
-    t.is(result.actions[0].name, 'isv_merchantDefinedData_mddField_22');
+    t.is(result.actions[0].name, 'isv_applePaySessionData');
+})
+
+test.serial('get authorization handller for google pay', async(t)=>{
+    const result = await paymentHandler.authorizationHandler(authoriationHandlerGPUpdatePaymentObject, authorizationHandlerUpdateTransactions);
+    if(result.actions[0]==undefined)
+    {
+        t.deepEqual(result.actions, []);
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'changeTransactionInteractionId');
+        t.is(result.actions[1].action, 'changeTransactionState');
+    
+    }
+})
+
+test.serial('get authorization handller for click to pay', async(t)=>{
+    const result = await paymentHandler.authorizationHandler(authorizationHandlerVSUpdatePaymentObject, authorizationHandlerUpdateTransactions);
+    if(result.actions[0]==undefined)
+    {
+        t.deepEqual(result.actions, []);
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'changeTransactionInteractionId');
+        t.is(result.actions[1].action, 'changeTransactionState');
+    
+    }
+})
+
+test.serial('get authorization handller for credit card', async(t)=>{
+    const result = await paymentHandler.authorizationHandler(authorizationHandlerCCUpdatePaymentObject, authorizationHandlerUpdateTransactions);
+    if(result.actions[0]==undefined)
+    {
+        t.deepEqual(result.actions, []);
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'changeTransactionInteractionId');
+        t.is(result.actions[1].action, 'changeTransactionState');
+    
+    }})
+
+test.serial('get authorization handller for payer auth', async(t)=>{
+    const result = await paymentHandler.authorizationHandler(authorizationHandler3DSUpdatePaymentObject, authorizationHandlerUpdateTransactions);
+    if(result.actions[0]==undefined)
+    {
+        t.deepEqual(result.actions, []);
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'changeTransactionInteractionId');
+        t.is(result.actions[1].action, 'changeTransactionState');
+    
+    }
+})
+
+test.serial('get authorization handller for apple pay', async(t)=>{
+    const result = await paymentHandler.authorizationHandler(authorizationHandlerAPUpdatePaymentObject, authorizationHandlerUpdateTransactions);
+    if(result.actions[0]==undefined)
+    {
+        t.deepEqual(result.actions, []);
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'changeTransactionInteractionId');
+        t.is(result.actions[1].action, 'changeTransactionState');
+    
+    }
+   })
+
+test.serial('get payer auth set up response ', async(t)=>{
+    const result = await paymentHandler.getPayerAuthSetUpResponse(authorizationHandler3DSUpdatePaymentObject);
+   if(result.actions[0]==undefined)
+    {
+        t.deepEqual(result.actions, []);
+        t.deepEqual(result.errors, []);
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'setCustomField');
+        t.is(result.action[0].name,  'isv_requestJwt');
+        t.is(result.actions[1].action, 'setCustomField');
+        t.is(result.action[1].name,   'isv_cardinalReferenceId');
+        t.is(result.actions[1].action, 'setCustomField');
+        t.is(result.action[1].name,   'isv_deviceDataCollectionUrl');
+    }
+})
+
+test.serial('get payer auth enroll response ', async(t)=>{
+    const result = await paymentHandler.getPayerAuthEnrollResponse(authorizationHandler3DSUpdatePaymentObject);
+    if(result.actions[0]== undefined)
+    {
+        t.deepEqual(result.actions, []);
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'setCustomField');
+        t.is(result.action[0].name,  'isv_payerAuthenticationTransactionId');
+        t.is(result.actions[1].action, 'setCustomField');
+        t.is(result.action[1].name,  'isv_payerAuthenticationRequired');
+    }
 })

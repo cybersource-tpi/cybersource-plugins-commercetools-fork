@@ -61,7 +61,6 @@ export var payment =
             "isv_deviceFingerprintId":"7bc64688-fc8d-46e9-8377-2816c0410d98",
             "isv_cardExpiryYear":"2030",
             "isv_token":creditCard.isv_token,
-            "isv_tokenAlias":"sp3",
             "isv_maskedPan":"411111XXXXXX1111",
             "isv_cardExpiryMonth":"01",
             "isv_acceptHeader":"*/*",
@@ -408,7 +407,21 @@ export var cart = {
     "itemShippingAddresses": []
 }
 
+export const cardTokens = {
+    customerTokenId: creditCard.savedTokenId,
+    paymentInstrumentId: creditCard.savedToken
+  } 
 
+  export const cardTokensObject = {
+    customerTokenId: 'D605360941117CECE053AF598E0A6E',
+    paymentInstrumentId: creditCard.savedToken
+  } 
+
+  export const cardTokenInvalidObject = {
+      customerTokenId: creditCard.savedTokenId,
+      paymentInstrumentId: 'D76C84878E06B607E053A2598D0AAC'
+  }
+  
 export const service = "card";
 
 export var paymentToken=
@@ -468,17 +481,16 @@ export var paymentToken=
         },
         "fields":
         {
-            isv_tokenCaptureContextSignature: 'eyJraWQiOiJ6dSIsImFsZyI6IlJTMjU2In0.eyJmbHgiOnsicGF0aCI6Ii9mbGV4L3YyL3Rva2VucyIsImRhdGEiOiJ6d3ZMZ1lDSXpXcjRscFBQWXhRcGRSQUFFQnUvbUluYWlLRTczSkE1RHR3elJHR2JGTDIzdmJVT2hNaVIrMjhDYjRsY1hFbWxqR3krQSsyYjFhYVRaZklDTEtEV1d6djhxSmZLN3RWNlVQbHN1NzZ0WjFWbEwzbDdjVUFQTy9FcDRKdVoiLCJvcmlnaW4iOiJodHRwczovL3Rlc3RmbGV4LmN5YmVyc291cmNlLmNvbSIsImp3ayI6eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6ImVuYyIsIm4iOiJ1YXdYQjl6bGRfUmxqbUwyN0dTbWgzdGI5VnpkeFh0UGFVRE9UTlh0WDduaDZLX1ljOWdkOGdxcDVaV1ZQQzhVLWhtRjdlN3pkSXZnZlZwNzE5N25jcHdNdXZIV2tqRGhGRkJySGx0UmhNWjI5dTZ6VV9xT0NZMUprSk5aYS1XNDRYS2lpWkZXT2Z6RmJnNEZkVXdXYWhiRWtsT29VRW9VSlYyQ3dkUURuUnhpOG84Z0lhbjFBTl9hTjlLS0JYYUVpMlRQekxDcUh2SHBsZ2x2M0lGV09rOUpPenZjZ0VLMEFNUllEMm0wLWMtX3ZpcnhGLW0wQnpzVVUxR2pETFE5aW16al9jZkFGMF9VMFNRLUJxaWp2dlJrVWg1ZFlfMEdELTY1cGV3M2JyMld4Tmdvd2xPbzdhSEVNWWE4VjZBTkRDcjVyWmR1YkhEZU5OOEs2cEtrbVEiLCJraWQiOiIwOFF4cHlBbUJxR0Eyc3VwRFNST0E3d2FlQlhidmVpaSJ9fSwiY3R4IjpbeyJkYXRhIjp7InRhcmdldE9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIl0sIm1mT3JpZ2luIjoiaHR0cHM6Ly90ZXN0ZmxleC5jeWJlcnNvdXJjZS5jb20ifSwidHlwZSI6Im1mLTAuMTEuMCJ9XSwiaXNzIjoiRmxleCBBUEkiLCJleHAiOjE2Mzg3OTU3MjgsImlhdCI6MTYzODc5NDgyOCwianRpIjoiamhBQ0VuSVN4ajZWb29CSyJ9.C3kcQ2u2Uwmv1zDEU_jyYCNlTzj1B9siEhkB_qrmsxxGK6kn9AtQTGcZ2lz5E6e4lEFcTmb9IFYijXTCrWxAaRezUGcbc-rtZMmVBCzuqS2UDIqe7xtpTrbLUW5gjlOPXjujTdcQhCWHjf8ISRgiyh2nRu_MTAyvhtVCo5Z7-GZgK28xao_AcK8VDSwv1CofEJYav0EoFxrzT-rJ_Z6OMt25-DTxV5HmO9eR8wD4HP89TbFjpwDl6HI-dR9SgJvFtDwudUrwfeWIRUrKIXHHZC0TuWDUBBMGihuo5ZDuIaOOhH5opjM7g6HDU36DtHCILfxeJX1aEKNgManT0S9Vjw',
-            isv_deviceFingerprintId: '5286820c-b9d2-4d08-8c1b-c871bfe16dcf',
-            isv_cardExpiryYear: '2030',
-            isv_tokenAlias: 'sp3',
-            isv_maskedPan: '411111XXXXXX1111',
-            isv_savedToken: 'D34345851D67F454E053AF598E0AB4E9',
-            isv_cardExpiryMonth: '01',
-            isv_acceptHeader: '*/*',
-            isv_cardType: '001',
-            isv_userAgentHeader: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
-            isv_tokenVerificationContext: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbHgiOnsicGF0aCI6Ii9mbGV4L3YyL3Rva2VucyIsImRhdGEiOiJ6d3ZMZ1lDSXpXcjRscFBQWXhRcGRSQUFFQnUvbUluYWlLRTczSkE1RHR3elJHR2JGTDIzdmJVT2hNaVIrMjhDYjRsY1hFbWxqR3krQSsyYjFhYVRaZklDTEtEV1d6djhxSmZLN3RWNlVQbHN1NzZ0WjFWbEwzbDdjVUFQTy9FcDRKdVoiLCJvcmlnaW4iOiJodHRwczovL3Rlc3RmbGV4LmN5YmVyc291cmNlLmNvbSIsImp3ayI6eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6ImVuYyIsIm4iOiJ1YXdYQjl6bGRfUmxqbUwyN0dTbWgzdGI5VnpkeFh0UGFVRE9UTlh0WDduaDZLX1ljOWdkOGdxcDVaV1ZQQzhVLWhtRjdlN3pkSXZnZlZwNzE5N25jcHdNdXZIV2tqRGhGRkJySGx0UmhNWjI5dTZ6VV9xT0NZMUprSk5aYS1XNDRYS2lpWkZXT2Z6RmJnNEZkVXdXYWhiRWtsT29VRW9VSlYyQ3dkUURuUnhpOG84Z0lhbjFBTl9hTjlLS0JYYUVpMlRQekxDcUh2SHBsZ2x2M0lGV09rOUpPenZjZ0VLMEFNUllEMm0wLWMtX3ZpcnhGLW0wQnpzVVUxR2pETFE5aW16al9jZkFGMF9VMFNRLUJxaWp2dlJrVWg1ZFlfMEdELTY1cGV3M2JyMld4Tmdvd2xPbzdhSEVNWWE4VjZBTkRDcjVyWmR1YkhEZU5OOEs2cEtrbVEiLCJraWQiOiIwOFF4cHlBbUJxR0Eyc3VwRFNST0E3d2FlQlhidmVpaSJ9fSwiY3R4IjpbeyJkYXRhIjp7InRhcmdldE9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIl0sIm1mT3JpZ2luIjoiaHR0cHM6Ly90ZXN0ZmxleC5jeWJlcnNvdXJjZS5jb20ifSwidHlwZSI6Im1mLTAuMTEuMCJ9XSwiaXNzIjoiRmxleCBBUEkiLCJleHAiOjE2Mzg3OTU3MjgsImlhdCI6MTYzODc5NDgyOCwianRpIjoiamhBQ0VuSVN4ajZWb29CSyJ9.LljR5M8fitZEdD-H4jmdjNT1swwMjUI_ou5dIIXaXC8'
+            "isv_tokenCaptureContextSignature":"eyJraWQiOiJ6dSIsImFsZyI6IlJTMjU2In0.eyJmbHgiOnsicGF0aCI6Ii9mbGV4L3YyL3Rva2VucyIsImRhdGEiOiI0V01SbnRsejRZaTY3UVY5Q2lHbFFCQUFFQWYwd3NhVDB4QTFkeVo1aDYzSHN1QmY4dzhmUjZlUzk3bVpFaXJHNHMvL0Rack4xZFAyT1Y2TVY3TmVnNngzcmw4VG9JelpGVmI1aDVOK0p1dXN3RUREcncvS0xvWElDYlA5eG1YZEVUWS8iLCJvcmlnaW4iOiJodHRwczovL3Rlc3RmbGV4LmN5YmVyc291cmNlLmNvbSIsImp3ayI6eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6ImVuYyIsIm4iOiJraWx1cXNBTnE2TGtWc0xudnpVd1Y4MHZHby1DejdZSEZWM0NJZk5Jc1ZJaHR3MGludlVCTTJLYm9fMGhNRXJreVFGYldyYjJjbjRYX0tROXd1Yzh3emNEM2ZYTVE5SE9mRmRnTkw3cDN6eXV0MWdXZTlEVnNMS0NlN045YkllbHlqWVhGY3dyR1pZUnlYOE1nbHpWZWhrUkFTSmhaSUZQT1lIbG4ydHhLb1RsWi1nYWhhbnJfbnRHTjlfWUZSdUh4cDhxX2VlYlZ3aGVucXpiM1pDQVc0bXN0MzJfSGJkTEJGWjBLbWhYWXROSmI1X1dEaG9BdV8wYXRSaDN3cGpzR1FhY05jT3pJT0RtbUMxM0F5MDdSbDNKNmdyZ2pmYzJyQm9RdlVIVUFBcDN6aG13dnN1ZHZfWFdnc2xEbUMxbjg0a3J6ZEcxR2JDVlVvdGl6WnhMZ1EiLCJraWQiOiIwOEtmRU5PeVJjOFJpV3BWVFluMHRQTW5RNks2cEwxZyJ9fSwiY3R4IjpbeyJkYXRhIjp7InRhcmdldE9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIl0sIm1mT3JpZ2luIjoiaHR0cHM6Ly90ZXN0ZmxleC5jeWJlcnNvdXJjZS5jb20ifSwidHlwZSI6Im1mLTAuMTEuMCJ9XSwiaXNzIjoiRmxleCBBUEkiLCJleHAiOjE2Mzg3ODY4NjMsImlhdCI6MTYzODc4NTk2MywianRpIjoiaENpZmRhN0U2SFJWZGI3VyJ9.dEJgV4KzdxAQMkeidm9kg1zH-P7_9SrWAd-7WYonjmYjjyOY5wMJXxd5slRuQp3uYGJzFtBIZAju2rKc-BBZg79Gg7vtJa_DWKRTHaGOwlXu1VhYFqIrNRQt4ciJ6WDBX3YU0WeZsF8-_fmQ3sKfnCZYGhdvIrnJWBbVGUZOj7I0fNbThAsJ7HKxHnX_nAUxx8eBGfKZUeg6wALCWtsI9o46xlCUFDv-qXeadAM-Gh4R0jjcydp3ctXmADcsdpq_F7JpEOq35GV1Lg8DthXXBoqtD6dqzhMe1dRKkmeII-eTgzkk33PuMFo5J4qXNaOwL0xkhMvijkgiRQCr_xkoTw",
+            "isv_deviceFingerprintId":"7bc64688-fc8d-46e9-8377-2816c0410d98",
+            "isv_cardExpiryYear":"2030",
+            "isv_token":"eyJraWQiOiIwODVQTEpYRFF6VVFLRncyc0tqSjdVQkhoRlBwZk9rViIsImFsZyI6IlJTMjU2In0.eyJkYXRhIjp7ImV4cGlyYXRpb25ZZWFyIjoiMjAyNCIsIm51bWJlciI6IjQxMTExMVhYWFhYWDExMTEiLCJleHBpcmF0aW9uTW9udGgiOiIwMSIsInR5cGUiOiIwMDEifSwiaXNzIjoiRmxleC8wNyIsImV4cCI6MTY0Mzk3ODYxMCwidHlwZSI6Im1mLTAuMTEuMCIsImlhdCI6MTY0Mzk3NzcxMCwianRpIjoiMUU1QkU2SEE3NkZTR0FNVjJIUEpZRDlHRTFTWjA4Q1RNNkVNWDk2OEpaM1RPSk5YQ1RMNDYxRkQxRjcyNUMzMyIsImNvbnRlbnQiOnsicGF5bWVudEluZm9ybWF0aW9uIjp7ImNhcmQiOnsiZXhwaXJhdGlvblllYXIiOnsidmFsdWUiOiIyMDI0In0sIm51bWJlciI6eyJtYXNrZWRWYWx1ZSI6IlhYWFhYWFhYWFhYWDExMTEiLCJiaW4iOiI0MTExMTEifSwic2VjdXJpdHlDb2RlIjp7fSwiZXhwaXJhdGlvbk1vbnRoIjp7InZhbHVlIjoiMDEifSwidHlwZSI6eyJ2YWx1ZSI6IjAwMSJ9fX19fQ.YKG7uKwwpJ3cHSvU5HUcgAwiY-8qttYJ9ehlIRzwaNRjmwlHK-Ljc8ztglGN0OJvX6r0hJqLrkzmFveAWjbmP1F6HWvh4_ZSz9Zt_29nkmKicKtpIDv3xgtgHFxqiJPDwifiivvdhE5W92e_TGDmqkLpokOfvxc9RAem4FPkbP59YqwXLc2u6jzkw3oD3uVjbN1ZIDfc45IDJNOTZ6x1_jwwpAgtBLL-QoYOgZbRnwwpFeaEZM0oRzO6DNy5hAzRezzx-FLJMMdr6OOJKOKmfZPok8k6KGZs2khaydL-p-R_PcI3niFOO4PTMG8y_Oqyn4QVrUJKh-DFDzXdWbrIaA",
+            "isv_maskedPan":"411111XXXXXX1111",
+            "isv_cardExpiryMonth":"01",
+            "isv_acceptHeader":"*/*",
+            "isv_cardType":"001",
+            "isv_userAgentHeader":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+            "isv_tokenVerificationContext":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbHgiOnsicGF0aCI6Ii9mbGV4L3YyL3Rva2VucyIsImRhdGEiOiI0V01SbnRsejRZaTY3UVY5Q2lHbFFCQUFFQWYwd3NhVDB4QTFkeVo1aDYzSHN1QmY4dzhmUjZlUzk3bVpFaXJHNHMvL0Rack4xZFAyT1Y2TVY3TmVnNngzcmw4VG9JelpGVmI1aDVOK0p1dXN3RUREcncvS0xvWElDYlA5eG1YZEVUWS8iLCJvcmlnaW4iOiJodHRwczovL3Rlc3RmbGV4LmN5YmVyc291cmNlLmNvbSIsImp3ayI6eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6ImVuYyIsIm4iOiJraWx1cXNBTnE2TGtWc0xudnpVd1Y4MHZHby1DejdZSEZWM0NJZk5Jc1ZJaHR3MGludlVCTTJLYm9fMGhNRXJreVFGYldyYjJjbjRYX0tROXd1Yzh3emNEM2ZYTVE5SE9mRmRnTkw3cDN6eXV0MWdXZTlEVnNMS0NlN045YkllbHlqWVhGY3dyR1pZUnlYOE1nbHpWZWhrUkFTSmhaSUZQT1lIbG4ydHhLb1RsWi1nYWhhbnJfbnRHTjlfWUZSdUh4cDhxX2VlYlZ3aGVucXpiM1pDQVc0bXN0MzJfSGJkTEJGWjBLbWhYWXROSmI1X1dEaG9BdV8wYXRSaDN3cGpzR1FhY05jT3pJT0RtbUMxM0F5MDdSbDNKNmdyZ2pmYzJyQm9RdlVIVUFBcDN6aG13dnN1ZHZfWFdnc2xEbUMxbjg0a3J6ZEcxR2JDVlVvdGl6WnhMZ1EiLCJraWQiOiIwOEtmRU5PeVJjOFJpV3BWVFluMHRQTW5RNks2cEwxZyJ9fSwiY3R4IjpbeyJkYXRhIjp7InRhcmdldE9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIl0sIm1mT3JpZ2luIjoiaHR0cHM6Ly90ZXN0ZmxleC5jeWJlcnNvdXJjZS5jb20ifSwidHlwZSI6Im1mLTAuMTEuMCJ9XSwiaXNzIjoiRmxleCBBUEkiLCJleHAiOjE2Mzg3ODY4NjMsImlhdCI6MTYzODc4NTk2MywianRpIjoiaENpZmRhN0U2SFJWZGI3VyJ9.rQ0KsROqA77rRz14U3VTu_pwcjMlWB4sqOpMdTlHySc"
         }
     },
     "paymentStatus":{},
@@ -486,7 +498,7 @@ export var paymentToken=
     "interfaceInteractions":[]
 }
 
-export var paymentInvalidToken=
+export var paymentInvalidToken =
 {
     "id":"a29b662f-49a8-49e7-a391-3d51bcb9fb26",
     "version":13,
@@ -546,9 +558,9 @@ export var paymentInvalidToken=
             isv_tokenCaptureContextSignature: 'eyJraWQiOiJ6dSIsImFsZyI6IlJTMjU2In0.eyJmbHgiOnsicGF0aCI6Ii9mbGV4L3YyL3Rva2VucyIsImRhdGEiOiJ6d3ZMZ1lDSXpXcjRscFBQWXhRcGRSQUFFQnUvbUluYWlLRTczSkE1RHR3elJHR2JGTDIzdmJVT2hNaVIrMjhDYjRsY1hFbWxqR3krQSsyYjFhYVRaZklDTEtEV1d6djhxSmZLN3RWNlVQbHN1NzZ0WjFWbEwzbDdjVUFQTy9FcDRKdVoiLCJvcmlnaW4iOiJodHRwczovL3Rlc3RmbGV4LmN5YmVyc291cmNlLmNvbSIsImp3ayI6eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6ImVuYyIsIm4iOiJ1YXdYQjl6bGRfUmxqbUwyN0dTbWgzdGI5VnpkeFh0UGFVRE9UTlh0WDduaDZLX1ljOWdkOGdxcDVaV1ZQQzhVLWhtRjdlN3pkSXZnZlZwNzE5N25jcHdNdXZIV2tqRGhGRkJySGx0UmhNWjI5dTZ6VV9xT0NZMUprSk5aYS1XNDRYS2lpWkZXT2Z6RmJnNEZkVXdXYWhiRWtsT29VRW9VSlYyQ3dkUURuUnhpOG84Z0lhbjFBTl9hTjlLS0JYYUVpMlRQekxDcUh2SHBsZ2x2M0lGV09rOUpPenZjZ0VLMEFNUllEMm0wLWMtX3ZpcnhGLW0wQnpzVVUxR2pETFE5aW16al9jZkFGMF9VMFNRLUJxaWp2dlJrVWg1ZFlfMEdELTY1cGV3M2JyMld4Tmdvd2xPbzdhSEVNWWE4VjZBTkRDcjVyWmR1YkhEZU5OOEs2cEtrbVEiLCJraWQiOiIwOFF4cHlBbUJxR0Eyc3VwRFNST0E3d2FlQlhidmVpaSJ9fSwiY3R4IjpbeyJkYXRhIjp7InRhcmdldE9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIl0sIm1mT3JpZ2luIjoiaHR0cHM6Ly90ZXN0ZmxleC5jeWJlcnNvdXJjZS5jb20ifSwidHlwZSI6Im1mLTAuMTEuMCJ9XSwiaXNzIjoiRmxleCBBUEkiLCJleHAiOjE2Mzg3OTU3MjgsImlhdCI6MTYzODc5NDgyOCwianRpIjoiamhBQ0VuSVN4ajZWb29CSyJ9.C3kcQ2u2Uwmv1zDEU_jyYCNlTzj1B9siEhkB_qrmsxxGK6kn9AtQTGcZ2lz5E6e4lEFcTmb9IFYijXTCrWxAaRezUGcbc-rtZMmVBCzuqS2UDIqe7xtpTrbLUW5gjlOPXjujTdcQhCWHjf8ISRgiyh2nRu_MTAyvhtVCo5Z7-GZgK28xao_AcK8VDSwv1CofEJYav0EoFxrzT-rJ_Z6OMt25-DTxV5HmO9eR8wD4HP89TbFjpwDl6HI-dR9SgJvFtDwudUrwfeWIRUrKIXHHZC0TuWDUBBMGihuo5ZDuIaOOhH5opjM7g6HDU36DtHCILfxeJX1aEKNgManT0S9Vjw',
             isv_deviceFingerprintId: '5286820c-b9d2-4d08-8c1b-c871bfe16dcf',
             isv_cardExpiryYear: '2030',
-            isv_tokenAlias: 'sp3',
+            isv_tokenAlias: 'a12',
             isv_maskedPan: '411111XXXXXX1111',
-            isv_savedToken: 'D34345851D67F454E053AF598E0AB4E9',
+            isv_savedToken: 'D76C84878E06B607E053A2598D0AA',
             isv_cardExpiryMonth: '01',
             isv_acceptHeader: '*/*',
             isv_cardType: '001',
@@ -560,6 +572,10 @@ export var paymentInvalidToken=
     "transactions":[],
     "interfaceInteractions":[]
 }
+
+
+
+
 
 
            

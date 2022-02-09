@@ -8,7 +8,9 @@ export const tokens = {
     cardExpiryMonth: updateToken.oldExpiryMonth,
     cardExpiryYear: updateToken.oldExpiryYear,
     paymentToken: updateToken.paymentToken,
-    flag: 'update'
+    flag: 'update',
+    oldExpiryMonth: updateToken.oldExpiryMonth,
+    oldExpiryYear: updateToken.oldExpiryYear
   }
 
   export const tokenObject = {
@@ -20,5 +22,7 @@ export const tokens = {
     cardExpiryMonth: '01',
     cardExpiryYear: '2024',
     paymentToken: 'D3CD8A8C0904A730E053AF598E0A08',
-    flag: 'update'
+    flag: 'update',
+    oldExpiryMonth: '03',
+    oldExpiryYear: '2029'
   }

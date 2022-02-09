@@ -2,11 +2,14 @@ import deleteToken from '../JSON/deleteToken.json';
 export const customerTokenObj = {
   alias: deleteToken.alias,
   value: deleteToken.value,
+  paymentToken: deleteToken.paymentToken,
+  instrumentIdentifier: deleteToken.instrumentIdentifier,
   cardType: deleteToken.cardType,
   cardName: deleteToken.cardName,
   cardNumber: deleteToken.cardNumber,
-  cardExpiryMonth: deleteToken.cardExpiryMonth+'delete',
-  cardExpiryYear: deleteToken.cardExpiryYear
+  cardExpiryMonth: deleteToken.cardExpiryMonth,
+  cardExpiryYear: deleteToken.cardExpiryYear,
+  flag: "delete"
   }
 
   export const customerTokenObject = {

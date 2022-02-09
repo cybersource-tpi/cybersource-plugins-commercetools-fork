@@ -2,58 +2,76 @@
 /* eslint-disable functional/immutable-data */
 /* eslint-disable import/order */
 import test from 'ava';
-import dotenv from 'dotenv';
+import dotenv from  'dotenv';
 
 dotenv.config();
-import { payments, paymentObject } from '../const/PayerAuthenticationSetupServiceConst';
+import {cardTokensObjects,  cardTokensInvalidCustomerObjects,payments, paymentObject, paymentSavedTokens } from '../const/PayerAuthenticationSetupServiceConst';
 import setupService from '../../service/payment/PayerAuthenticationSetupService';
 
 const paymentResponse = {
-  accessToken: null,
-  referenceId: null,
-  deviceDataCollectionUrl: null,
-  httpCode: null,
-  transactionId: null,
-  status: null,
-  message: null,
-};
+    httpCode: null,
+    status: null,
+  };
 
-test.serial('Setting set up service for payer auth', async (t) => {
-  const result: any = await setupService.payerAuthSetupResponse(payments, null);
-  paymentResponse.accessToken = result.accessToken;
-  paymentResponse.referenceId = result.refernceId;
-  paymentResponse.deviceDataCollectionUrl = result.deviceDataCollectionUrl;
-  paymentResponse.httpCode = result.httpCode;
-  paymentResponse.transactionId = result.transactionId;
-  paymentResponse.status = result.status;
-  paymentResponse.message = result.messsage;
-  t.pass();
-});
+const paymentResponseObject = {
+    httpCode: null,
+    status: null,
+  };
 
-test.serial('Check http code for payer auth set up', async (t) => {
-  t.is(paymentResponse.httpCode, 201);
-});
+  test.serial('Check http code for payer auth set up', async(t)=>{
+      const result:any = await setupService.payerAuthSetupResponse(payments, cardTokensObjects);
+      paymentResponse.httpCode = result.httpCode;
+      paymentResponse.status = result.status;
+      t.is(paymentResponse.httpCode, 201);
+  })
 
-test.serial('Check status fo payer auth set up', async (t) => {
-  t.is(paymentResponse.status, 'COMPLETED');
-});
+test.serial('Check status foR payer auth set up' , async (t)=>{
+    
+    t.is(paymentResponse.status, 'COMPLETED');
+    
+})
 
-test.serial('Payer auth enroll  with invalid token ', async (t) => {
-  const result: any = await setupService.payerAuthSetupResponse(paymentObject, null);
-  paymentResponse.accessToken = result.accessToken;
-  paymentResponse.referenceId = result.refernceId;
-  paymentResponse.deviceDataCollectionUrl = result.deviceDataCollectionUrl;
-  paymentResponse.httpCode = result.httpCode;
-  paymentResponse.transactionId = result.transactionId;
-  paymentResponse.status = result.status;
-  paymentResponse.message = result.messsage;
-  t.pass();
-});
+test.serial('Check http code for Payer auth set up with invalid token ', async(t)=>{
+      const result:any = await setupService.payerAuthSetupResponse(paymentObject, cardTokensObjects);
+      paymentResponseObject.httpCode = result.httpCode;
+      paymentResponseObject.status = result.status;
+      t.not(paymentResponseObject.httpCode, 201);
+})
+  
+  test.serial('Check status for payer auth enroll with ivalid token' , async (t)=>{
+    
+    t.not(paymentResponseObject.status, 'COMPLETED');
 
-test.serial('Check http code for payer auth enroll for invalid token', async (t) => {
-  t.not(paymentResponse.httpCode, 201);
-});
+  })
 
-test.serial('Check status for payer auth enroll for ivalid token', async (t) => {
-  t.not(paymentResponse.status, 'COMPLETED');
-});
+  test.serial('Check http code for Payer auth set up with saved token ', async(t)=>{
+    
+      const result:any = await setupService.payerAuthSetupResponse(paymentSavedTokens, cardTokensObjects);
+      paymentResponseObject.httpCode = result.httpCode;
+      paymentResponseObject.status = result.status;
+      t.is(paymentResponseObject.httpCode, 201);
+})
+
+test.serial('Check status for payer auth enroll with saved token' , async (t)=>{
+    
+  t.is(paymentResponseObject.status, 'COMPLETED');
+
+})
+
+  
+test.serial('Check http code for Payer auth set up with invalid customer', async(t)=>{
+    
+  const result:any = await setupService.payerAuthSetupResponse(paymentSavedTokens, cardTokensInvalidCustomerObjects);
+  paymentResponseObject.httpCode = result.httpCode;
+  paymentResponseObject.status = result.status;
+  t.not(paymentResponseObject.httpCode, 201);
+})
+
+test.serial('Check status for payer auth enroll with invalid customer' , async (t)=>{
+
+t.not(paymentResponseObject.status, 'COMPLETED');
+
+})
+
+
+

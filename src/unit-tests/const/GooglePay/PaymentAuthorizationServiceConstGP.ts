@@ -1,4 +1,5 @@
 import googlePay from '../../JSON/googlePay.json';
+import creditCard from '../../JSON/creditCard.json'
 export const payment = {
     "id":"33e68f3d-8143-4d07-ac13-2314c7039251",
     "version":2,
@@ -313,3 +314,8 @@ export const payments = {
         "interfaceInteractions":[],
         "anonymousId":"ad175f34-543f-4a33-956a-39c30cd0aa61"
     }
+
+    export const cardTokens = {
+        customerTokenId: creditCard.savedTokenId,
+        paymentInstrumentId: creditCard.savedToken
+      } 
