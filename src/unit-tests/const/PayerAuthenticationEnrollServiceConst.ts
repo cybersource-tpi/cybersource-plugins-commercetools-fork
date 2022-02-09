@@ -52,6 +52,73 @@ export const payment = {
     interfaceInteractions: [],
     anonymousId: '3e8d96e4-2ebb-4c72-b554-7669efcb5d5a'
   }
+
+  export const cardTokensObject = {
+    customerTokenId: creditCard.savedTokenId,
+    paymentInstrumentId: creditCard.savedToken
+  } 
+
+  export const cardTokensInvalidCustomerObject = {
+    customerTokenId: 'D605360941117CECE053AF598E0A6E',
+    paymentInstrumentId: creditCard.savedToken
+  } 
+
+  export const cardTokenInvalidObject = {
+      customerTokenId: creditCard.savedTokenId,
+      paymentInstrumentId: 'D76C84878E06B607E053A2598D0AAC'
+  }
+
+  export const paymentSavedToken = {
+    id: 'f421e2ca-de6a-4a5d-b2c0-1c9ccbd3cdc1',
+    version: 14,
+    lastMessageSequenceNumber: 1,
+    createdAt: '2021-11-18T11:16:18.831Z',
+    lastModifiedAt: '2021-11-18T11:16:36.439Z',
+    lastModifiedBy: {
+      clientId: 'iFOAd29Lew5ADrpakIhQkz_N',
+      isPlatformClient: false,
+      anonymousId: '3e8d96e4-2ebb-4c72-b554-7669efcb5d5a'
+    },
+    createdBy: {
+      clientId: 'iFOAd29Lew5ADrpakIhQkz_N',
+      isPlatformClient: false,
+      anonymousId: '3e8d96e4-2ebb-4c72-b554-7669efcb5d5a'
+    },
+    amountPlanned: {
+      type: 'centPrecision',
+      currencyCode: 'USD',
+      centAmount: 5980,
+      fractionDigits: 2
+    },
+    paymentMethodInfo: {
+      paymentInterface: 'cybersource',
+      method: 'creditCardWithPayerAuthentication',
+      name: { en: 'Credit Card Payer Authentication' }
+    },
+    custom: {
+      type: { typeId: 'type', id: '87b9d9db-74a3-45d7-8e60-dde669866808' },
+      fields: {
+        isv_deviceFingerprintId: 'ecdce16c-7eee-45bc-8809-978623fb1272',
+        isv_cardExpirygYear: '2030',
+        isv_tokenAlias: creditCard.tokenAlias,
+        isv_maskedPan: '411111XXXXXX1111',
+        isv_cardExpiryMonth: '01',
+        isv_savedToken:creditCard.savedToken,
+        isv_deviceDataCollectionUrl:"https://centinelapistag.cardinalcommerce.com/V1/Cruise/Collect",
+        isv_cardinalReferenceId:"3de728ad-b985-4620-bb2c-8d34792bc9f2",
+        isv_requestJwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZDFjYjc4Ny0wZjJiLTQ0MDQtYWM3MC0wMjZmODk0OWY0N2YiLCJpYXQiOjE2MzcyMzQxOTYsImlzcyI6IjVkZDgzYmYwMGU0MjNkMTQ5OGRjYmFjYSIsImV4cCI6MTYzNzIzNzc5NiwiT3JnVW5pdElkIjoiNWEzZDAxZmU2ZmUzZDExMjdjZGJjOTFlIiwiUmVmZXJlbmNlSWQiOiIzMTU3MmI5My05YjVjLTRlZmItOTViNC1kN2U1ZGY1ZjBlODYifQ.ffGYKCzcFXKtm9QuEOHRcnVeJgns-VkADRD6H9mb_Wo',
+        isv_tokenCaptureContextSignature: 'eyJraWQiOiJ6dSIsImFsZyI6IlJTMjU2In0.eyJmbHgiOnsicGF0aCI6Ii9mbGV4L3YyL3Rva2VucyIsImRhdGEiOiJxUC9kSU5ZcFozTmIzcjhnNlgzckpSQUFFTHY4VHRrTC9xdzE1RC9jcktJOWIzdERGbnpnZ01yMEk5OTJrUVdnSWFRU0VKTzRpQ0JiZERBN1RNMmd2VHZnUGgwdW80Q2dETG5xU25qQmYxTzh5cVltQXI2VGFTR2VxR1NickdHRXpaZ0IiLCJvcmlnaW4iOiJodHRwczovL3Rlc3RmbGV4LmN5YmVyc291cmNlLmNvbSIsImp3ayI6eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6ImVuYyIsIm4iOiJnNmZyWlZSTHJ2bnNsdm9SX2ktM2FadThkWGM1UEhZZU5iN3J0aC1UQW11d2pLVWl4cnBfdkloSGs2VTRGREpWY0xIc2k2ZlNYT1VQeno5SzY1WnRqWGlnd3hDeTVQelBBRVFKNzRxZllKeG1qalhWUXVWdmthZUpiRDdVSU0xWXc5OGl2Y3Y0c09KRnpvS2Zvc00ySFdJVjJjbkVpaGJVbmVtekJwSDNsRXh1UFU1S0R5LXVyZzJzeWpLRjQ4aExXcGpxYnRHemVkV1VfWnp1QW9EU3pqcUtaTHoxb2RUdnoyNFVWcW1NMVZjLWhBcEIyWXdUam1vVE9MdnVPVkdrelY0cXRIUi1ULXFOLVRwRVRKLTJJbDJoU1Y0OHJkSjRiM1FWU0VHTzJzUm5nLWpHQmtlX2dMbmVNNjAxR1ZHVHZYc2lJZnN2V2xXZ1piUFowSnRZT3ciLCJraWQiOiIwODhlczJHVVpRN1I4WkU0WlBESDJoZnRCMFQwekM0UyJ9fSwiY3R4IjpbeyJkYXRhIjp7InRhcmdldE9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIl0sIm1mT3JpZ2luIjoiaHR0cHM6Ly90ZXN0ZmxleC5jeWJlcnNvdXJjZS5jb20ifSwidHlwZSI6Im1mLTAuMTEuMCJ9XSwiaXNzIjoiRmxleCBBUEkiLCJleHAiOjE2MzcyMzUwNzgsImlhdCI6MTYzNzIzNDE3OCwianRpIjoiOGRVbk1lNTNndUVlZXRPMSJ9.SHGohwgLRbk3AiRLSKQz0-NOLBwheay1Y9nSc7K-IctK6AHbTbTSG1d0yFa_PNUo_bLawyvwpvnJgFlccI1rgJR9VoBJhL8BZmwK2nBIrQyoKJyuAuIet0BZjzJ_0PWu9fr7mDdAJ5OAqtvw6AW4pFIri_1mV4AhAwBYSThlQOFFcGuRAsSFdK29TRMsqa31lkQ9tTUsXEteEHhHFGATXgTHqv3_wwWYoPx1IF--BpiCFE_tbkEldaQt6shemv69Y2mdGjskdm_KR1zKk0B7pwchZlzl4y5DhgVHxHcd1W1ej8flFuVvEI8EhVQ8zuOVE4zabUXGS6mdTv_8Pwp0gA',
+        isv_acceptHeader: '*/*',
+        isv_cardType: '001',
+        isv_userAgentHeader: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
+        isv_tokenVerificationContext: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbHgiOnsicGF0aCI6Ii9mbGV4L3YyL3Rva2VucyIsImRhdGEiOiJxUC9kSU5ZcFozTmIzcjhnNlgzckpSQUFFTHY4VHRrTC9xdzE1RC9jcktJOWIzdERGbnpnZ01yMEk5OTJrUVdnSWFRU0VKTzRpQ0JiZERBN1RNMmd2VHZnUGgwdW80Q2dETG5xU25qQmYxTzh5cVltQXI2VGFTR2VxR1NickdHRXpaZ0IiLCJvcmlnaW4iOiJodHRwczovL3Rlc3RmbGV4LmN5YmVyc291cmNlLmNvbSIsImp3ayI6eyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsInVzZSI6ImVuYyIsIm4iOiJnNmZyWlZSTHJ2bnNsdm9SX2ktM2FadThkWGM1UEhZZU5iN3J0aC1UQW11d2pLVWl4cnBfdkloSGs2VTRGREpWY0xIc2k2ZlNYT1VQeno5SzY1WnRqWGlnd3hDeTVQelBBRVFKNzRxZllKeG1qalhWUXVWdmthZUpiRDdVSU0xWXc5OGl2Y3Y0c09KRnpvS2Zvc00ySFdJVjJjbkVpaGJVbmVtekJwSDNsRXh1UFU1S0R5LXVyZzJzeWpLRjQ4aExXcGpxYnRHemVkV1VfWnp1QW9EU3pqcUtaTHoxb2RUdnoyNFVWcW1NMVZjLWhBcEIyWXdUam1vVE9MdnVPVkdrelY0cXRIUi1ULXFOLVRwRVRKLTJJbDJoU1Y0OHJkSjRiM1FWU0VHTzJzUm5nLWpHQmtlX2dMbmVNNjAxR1ZHVHZYc2lJZnN2V2xXZ1piUFowSnRZT3ciLCJraWQiOiIwODhlczJHVVpRN1I4WkU0WlBESDJoZnRCMFQwekM0UyJ9fSwiY3R4IjpbeyJkYXRhIjp7InRhcmdldE9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgwIl0sIm1mT3JpZ2luIjoiaHR0cHM6Ly90ZXN0ZmxleC5jeWJlcnNvdXJjZS5jb20ifSwidHlwZSI6Im1mLTAuMTEuMCJ9XSwiaXNzIjoiRmxleCBBUEkiLCJleHAiOjE2MzcyMzUwNzgsImlhdCI6MTYzNzIzNDE3OCwianRpIjoiOGRVbk1lNTNndUVlZXRPMSJ9.ldSihdIQRJf7ukEacugVNiNWdOvV4o17MPU8S26J0A8'
+      }
+    },
+    paymentStatus: {},
+    transactions: [],
+    interfaceInteractions: [],
+    anonymousId: '3e8d96e4-2ebb-4c72-b554-7669efcb5d5a'
+  }
   export const paymentObjects = {
     id: 'f421e2ca-de6a-4a5d-b2c0-1c9ccbd3cdc1',
     version: 14,

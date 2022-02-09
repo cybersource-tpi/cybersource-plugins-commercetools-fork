@@ -1,4 +1,5 @@
 import applePay from '../../JSON/applePay.json';
+import creditCard from '../../JSON/creditCard.json';
 export var payment =
 {
     "id":"274232a7-6d5e-4904-88d2-97e6d2fa8798",
@@ -316,6 +317,11 @@ export var cart = {
 
 
 export const service = "card";
+
+export const cardTokens = {
+    customerTokenId: creditCard.savedTokenId,
+    paymentInstrumentId: creditCard.savedToken
+  } 
 
 
 export var payments =

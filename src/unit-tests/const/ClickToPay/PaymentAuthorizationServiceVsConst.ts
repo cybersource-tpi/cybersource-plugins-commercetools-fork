@@ -1,4 +1,5 @@
 import clickToPay from '../../JSON/clickToPay.json';
+import creditCard from '../../JSON/creditCard.json';
 export const payment = {
     id: '779f9ebb-27f8-45af-b966-56fc7c54c340',
     version: 2,
@@ -327,3 +328,13 @@ export const payment = {
 }
 
 export const service = "visa";
+
+export const cardTokens = {
+    customerTokenId: creditCard.savedTokenId,
+    paymentInstrumentId: creditCard.savedToken
+  } 
+
+  export const cardTokensObject = {
+    customerTokenId: 'D605360941117CECE053AF598E0A6E',
+    paymentInstrumentId: 'D7688E8C36CCE10FE053A2598D0AC0'
+  } 

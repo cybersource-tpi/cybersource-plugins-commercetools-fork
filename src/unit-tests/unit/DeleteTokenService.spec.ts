@@ -13,19 +13,18 @@ var result = {
     message:null
 }
 
-test.serial('Deleting a token', async (t)=>{
+var resultObject = {
+    httpCode:null,
+    deletedToken:null,
+    message:null
+}
+
+test.serial('Deleting a token and check http code', async (t)=>{
     const response:any = await deleteToken.deleteCustomerToken(customerTokenObj);
     result.httpCode=response.httpCode;
     result.deletedToken=response.deletedToken;
     result.message=response.message;
-    t.pass()
-})
-
-
-test.serial('Check http code for token deletion', async(t)=>{
-    
     t.is(result.httpCode, 204);
-
 })
 
 test.serial('Check returned message after token deletion', async(t)=>{
@@ -34,22 +33,15 @@ test.serial('Check returned message after token deletion', async(t)=>{
 
  })
 
- test.serial('Deleting an invalid token', async (t)=>{
+ test.serial('Deleting an invalid token and check http code', async (t)=>{
     const response:any = await deleteToken.deleteCustomerToken(customerTokenObject);
-    result.httpCode=response.httpCode;
-    result.deletedToken = response.deletedToken;
-     result.message=response.message;
-    t.pass()
+    resultObject.httpCode=response.httpCode;
+    resultObject.deletedToken = response.deletedToken;
+    resultObject.message=response.message;
+    t.not(resultObject.httpCode, 204);
 })
 
-
-test.serial('Check http code for deleting invalid token', async(t)=>{
+test.serial('Check status for deleting invalid token', async(t)=>{
     
-    t.not(result.httpCode, 204);
-
-})
-
-test.serial('Check for value of deleted token for deleting invalid token', async(t)=>{
-    
-    t.is(result.deletedToken, '');
+    t.is(resultObject.deletedToken, '');
  })

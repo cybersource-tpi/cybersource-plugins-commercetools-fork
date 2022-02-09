@@ -5,13 +5,12 @@ import test from 'ava';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import {customerId, paymentId, visaCheckoutData} from '../const/CommercetoolsApiConst';
+import {anonymousId, customerId, paymentId} from '../const/CommercetoolsApiConst';
 import commercetoolsApi  from '../../utils/api/CommercetoolsApi';
 
 
 test.serial('Retrieving cart using customerid ', async(t)=>{
     const result = await commercetoolsApi.retrieveCartByCustomerId(customerId);
-    t.pass();
     if(result.count>0)
     {
         t.is(result.count, 1);
@@ -27,7 +26,6 @@ test.serial('Retrieving cart using customerid ', async(t)=>{
 
 test.serial('Retrieving cart using paymentid ', async(t)=>{
     const result = await commercetoolsApi.retrieveCartByPaymentId(paymentId);
-    t.pass();
     t.is(result.count, 1);
     t.is(result.results[0].type, 'Cart');
     if(result.results[0].cartState=='Active')
@@ -46,7 +44,6 @@ test.serial('Retrieving cart using paymentid ', async(t)=>{
 
 test.serial('Retrieving payment using paymentid ', async(t)=>{
     const result = await commercetoolsApi.retrievePayment(paymentId);
-    t.pass();
     var i =0;
     if('amountPlanned' in result  && 'paymentMethodInfo' in result && 'paymentStatus' in result)
     {
@@ -57,7 +54,6 @@ test.serial('Retrieving payment using paymentid ', async(t)=>{
 
 test.serial('Get all orders ', async(t)=>{
     const result = await commercetoolsApi.getOrders();
-    t.pass();
     var i=0;
     if('limit' in result && 'offset' in result && 'count' in result && 'total' in result)
     {
@@ -66,27 +62,6 @@ test.serial('Get all orders ', async(t)=>{
     t.is(i,1);
 })
 
-test.serial('Update cart', async(t)=>{
-    const cartObj:any =await commercetoolsApi.retrieveCartByCustomerId(customerId);
-    if(cartObj.count>0)
-    {
-        const result = await commercetoolsApi.updateCartbyPaymentId(cartObj.results[0].id, cartObj.results[0].version, visaCheckoutData);
-        var i=0;
-        if('billingAddress' in result)
-        {
-            i++;
-        }
-        t.pass();
-        t.is(i, 1);
-   }
-   else
-   {
-       t.pass();
-   }
-
-})
-
-
 test.serial('get customer using customer id', async(t)=>{
     const result = await commercetoolsApi.getCustomer(customerId);
     var i=0;
@@ -94,6 +69,22 @@ test.serial('get customer using customer id', async(t)=>{
     {
         i++;
     }
-    t.pass();
     t.is(i,1);
 })
+
+test.serial('Retrieving cart by anonymous id ', async(t)=>{
+    const result  =await commercetoolsApi.retrieveCartByAnonymousId(anonymousId);
+    if(result.count>0)
+    {
+        t.is(result.count, 1);
+        t.is(result.results[0].type, 'Cart');
+        t.is(result.results[0].cartState, 'Active');
+    }
+    else
+    {
+        t.is(result.count, 0);
+        t.is(result.total, 0);
+    }
+})
+
+

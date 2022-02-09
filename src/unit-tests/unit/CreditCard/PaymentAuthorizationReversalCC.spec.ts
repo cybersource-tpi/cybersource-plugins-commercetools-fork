@@ -11,45 +11,37 @@ import reverse from '../../../service/payment/PaymentAuthorizationReversal';
 // eslint-disable-next-line prefer-const
 var paymentResponse = {
     httpCode: null,
-    transactionId: null,
     status: null,
-    message: null,
-  };
+    };
 
-  test.serial('Reversing an order with invalid auth reversal amount', async(t)=>{
+  var paymentResponseObject = {
+    httpCode: null,
+    status: null,
+    };
+
+  var paymentResponseObjects = {
+    httpCode: null,
+    status: null,
+    };
+
+  test.serial('Reversing an order with invalid auth reversal amount and check http code', async(t)=>{
     const result:any = await reverse.authReversalResponse(payments, carts, authId);
-    paymentResponse.httpCode = result.httpCode;
-    paymentResponse.transactionId = result.transactionId;
-    paymentResponse.status = result.status;
-    paymentResponse.message = result.message;
-    t.pass();
-})
-
-test.serial('Çheck http code after auth reversal with invalid amount', async(t)=>{
-
-  t.not(paymentResponse.httpCode, 201);
-
+    paymentResponseObject.httpCode = result.httpCode;
+    paymentResponseObject.status = result.status;
+    t.not(paymentResponseObject.httpCode, 201);
 })
 
 test.serial('Çheck status after auth reversal with invalid amount', async(t)=>{
 
-  t.not(paymentResponse.status, 'REVERSED');
+  t.not(paymentResponseObject.status, 'REVERSED');
 
 })
 
-test.serial('Reversing a payment',async (t)=>{
-    const result:any = await reverse.authReversalResponse(payment, carts, authId);
-    paymentResponse.httpCode = result.httpCode;
-  paymentResponse.transactionId = result.transactionId;
+test.serial('Reversing a payment and check http code',async (t)=>{
+  const result:any = await reverse.authReversalResponse(payment, carts, authId);
+  paymentResponse.httpCode = result.httpCode;
   paymentResponse.status = result.status;
-  paymentResponse.message = result.message;
-    t.pass();
-})
-
-test.serial('Check http code for auth reversal',async (t)=>{
-    
-    t.is(paymentResponse.httpCode, 201);
-
+  t.is(paymentResponse.httpCode, 201);
 })
 
 test.serial('Check status for auth reversal',async (t)=>{
@@ -58,24 +50,16 @@ test.serial('Check status for auth reversal',async (t)=>{
 
 })
 
-test.serial('Reversing an invalid order', async(t)=>{
+test.serial('Reversing an invalid order and check http code', async(t)=>{
   const result:any = await reverse.authReversalResponse(payment, carts, authID);
-  paymentResponse.httpCode = result.httpCode;
-  paymentResponse.transactionId = result.transactionId;
-  paymentResponse.status = result.status;
-  paymentResponse.message = result.message;
-  t.pass();
-})
-
-test.serial('Çheck http code for reversing an invalid order', async(t)=>{
-
-  t.not(paymentResponse.httpCode, 201);
-
+  paymentResponseObjects.httpCode = result.httpCode;
+  paymentResponseObjects.status = result.status;
+  t.not(paymentResponseObjects.httpCode, 201);
 })
 
 test.serial('Çheck status for reversing an invalid order', async(t)=>{
 
-t.not(paymentResponse.status, 'REVERSED');
+  t.not(paymentResponseObjects.status, 'REVERSED');
 
 })
 
