@@ -204,6 +204,11 @@ app.post('/api/extension/payment/update', async (req, res) => {
   let updateTransactions: any;
   let exceptionData: any;
   let paymentMethod = Constants.STRING_EMPTY;
+  let paymentResponse = {
+    httpCode: null,
+    status: null,
+    transactionId: null,
+  };
   try {
     if (Constants.STRING_BODY in req && Constants.STRING_RESOURCE in req.body && Constants.STRING_OBJ in req.body.resource) {
       updatePaymentObj = req.body.resource.obj;
@@ -218,8 +223,13 @@ app.post('/api/extension/payment/update', async (req, res) => {
       if (Constants.VAL_ZERO < updatePaymentObj.transactions.length) {
         updateTransactions = updatePaymentObj.transactions.pop();
         if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == updateTransactions.type) {
-          if (Constants.CT_TRANSACTION_STATE_SUCCESS == updateTransactions.state || Constants.CT_TRANSACTION_STATE_FAILURE == updateTransactions.state) {
+          if (Constants.CT_TRANSACTION_STATE_SUCCESS == updateTransactions.state || Constants.CT_TRANSACTION_STATE_FAILURE == updateTransactions.state || Constants.CT_TRANSACTION_STATE_PENDING == updateTransactions.state) {
             updateResponse = paymentService.getEmptyResponse();
+          } else if (Constants.CC_PAYER_AUTHENTICATION == paymentMethod && Constants.ISV_PAYER_AUTHENTICATION_REQUIRED in updatePaymentObj.custom.fields && !updatePaymentObj.custom.fields.isv_payerAuthenticationRequired) {
+            paymentResponse.httpCode = updatePaymentObj.custom.fields.isv_payerEnrollHttpCode;
+            paymentResponse.status = updatePaymentObj.custom.fields.isv_payerEnrollStatus;
+            paymentResponse.transactionId = updatePaymentObj.custom.fields.isv_payerEnrollTransactionId;
+            updateResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
           } else {
             updateResponse = await paymentHandler.authorizationHandler(updatePaymentObj, updateTransactions);
           }
@@ -461,5 +471,13 @@ app.get('/decisionSync', async (req, res) => {
   decisionSyncResponse = await paymentHandler.reportHandler();
   orderSuccessMessage = decisionSyncResponse.message;
   orderErrorMessage = decisionSyncResponse.error;
+  res.redirect('/orders');
+});
+
+app.get('/sync', async (req, res) => {
+  let syncResponse: any;
+  syncResponse = await paymentHandler.syncHandler();
+  orderSuccessMessage = syncResponse.message;
+  orderErrorMessage = syncResponse.error;
   res.redirect('/orders');
 });

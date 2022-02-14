@@ -99,18 +99,23 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
             paymentResponse.status = data.status;
             paymentResponse.message = data.message;
             resolve(paymentResponse);
-          } else {
-            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTH_REVERSAL_RESPONSE, Constants.LOG_INFO, errorData.message);
+          } else if (error) {
+            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTH_REVERSAL_RESPONSE, Constants.LOG_INFO, errorData);
+              paymentResponse.transactionId = errorData.id;
+              paymentResponse.status = errorData.status;
+              paymentResponse.message = errorData.message;
+            } else {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTH_REVERSAL_RESPONSE, Constants.LOG_INFO, error);
+            }
             paymentResponse.httpCode = error.status;
-            paymentResponse.transactionId = errorData.id;
-            paymentResponse.status = errorData.status;
-            paymentResponse.message = errorData.message;
+            reject(paymentResponse);
+          } else {
             reject(paymentResponse);
           }
         });
       }).catch((error) => {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTH_REVERSAL_RESPONSE, Constants.LOG_INFO, error.message);
         return paymentResponse;
       });
     } else {

@@ -236,7 +236,7 @@ div.div-font {
   float: right;
   font-size: 0.9rem;
 }
-#left {
+.leftDiv {
   width: 50%;
   float: left;
   font-size: 0.9rem;

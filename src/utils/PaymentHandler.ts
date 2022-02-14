@@ -10,11 +10,11 @@ import paymentCapture from './../service/payment/PaymentCaptureService';
 import paymentRefund from './../service/payment/PaymentRefundService';
 import paymentAuthReversal from './../service/payment/PaymentAuthorizationReversal';
 import clickToPay from '../service/payment/ClickToPayDetails';
-import payerAuthEnroll from '../service/payment/PayerAuthenticationEnrollService';
 import paymentAuthSetUp from '../service/payment/PayerAuthenticationSetupService';
 import deleteToken from '../service/payment/DeleteTokenService';
 import conversion from '../service/payment/DecisionSyncService';
 import updateToken from '../service/payment/UpdateTokenService';
+import createSearchRequest from '../service/payment/CreateTransactionSearchRequest';
 import { Constants } from '../constants';
 
 const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
@@ -84,16 +84,20 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
         }
         authResponse = await setCustomerTokenData(cardTokens, paymentResponse, authResponse, errorFlag, paymentMethod, updatePaymentObj);
         if (Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields) {
-          authResponse.actions.push({
-            action: Constants.SET_CUSTOM_FIELD,
-            name: Constants.ISV_TOKEN_VERIFICATION_CONTEXT,
-            value: null,
-          });
-          authResponse.actions.push({
-            action: Constants.SET_CUSTOM_FIELD,
-            name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
-            value: null,
-          });
+          if (Constants.ISV_TOKEN_VERIFICATION_CONTEXT in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenVerificationContext) {
+            authResponse.actions.push({
+              action: Constants.SET_CUSTOM_FIELD,
+              name: Constants.ISV_TOKEN_VERIFICATION_CONTEXT,
+              value: null,
+            });
+          }
+          if (Constants.ISV_CAPTURE_CONTEXT_SIGNATURE in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature) {
+            authResponse.actions.push({
+              action: Constants.SET_CUSTOM_FIELD,
+              name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
+              value: null,
+            });
+          }
         }
       } else {
         paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_CART);
@@ -169,6 +173,7 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
   let cartObj: any;
   let exceptionData: any;
   let cardTokens: any;
+  let enrollAuthResponse: any;
   let cardinalReferenceId = null;
   let paymentInstumentToken = null;
   let errorFlag = false;
@@ -185,9 +190,17 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
         cartObj = await commercetoolsApi.retrieveCartByAnonymousId(updatePaymentObj.anonymousId);
       }
       if (null != cartObj) {
-        enrollServiceResponse = await payerAuthEnroll.payerAuthEnrollmentCheck(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], cardinalReferenceId, cardTokens);
+        enrollServiceResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], Constants.STRING_ENROLL_CHECK, cardTokens);
         if (null != enrollServiceResponse && null != enrollServiceResponse.httpCode) {
-          enrollResponse = paymentService.getAuthResponse(enrollServiceResponse, null);
+          enrollServiceResponse.cardinalReferenceId = cardinalReferenceId;
+          enrollResponse = paymentService.payerEnrollActions(enrollServiceResponse, updatePaymentObj);
+          enrollAuthResponse = paymentService.getAuthResponse(enrollServiceResponse, null);
+          if (Constants.VAL_ZERO < enrollAuthResponse.actions.length) {
+            enrollAuthResponse.actions.forEach((i) => {
+              enrollResponse.actions.push(i);
+            });
+          }
+          enrollResponse = await setCustomerTokenData(cardTokens, enrollServiceResponse, enrollResponse, false, updatePaymentObj.paymentMethodInfo.method, updatePaymentObj);
         } else {
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
           errorFlag = true;
@@ -268,12 +281,12 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
 const getCardWith3dsResponse = async (updatePaymentObj, cartObj, updateTransactions, cardTokens) => {
   let authResponse: any;
   let paymentResponse: any;
+  let service: string;
   let returnResponse = {
     paymentResponse: null,
     authResponse: null,
     errorFlag: false,
   };
-  let service: string;
   if (updatePaymentObj.custom.fields.isv_payerAuthenticationRequired) {
     service = Constants.VALIDATION;
   } else {
@@ -367,10 +380,10 @@ const clickToPayResponse = async (updatePaymentObj, cartObj, updateTransactions,
 const googlePayRespone = async (updatePaymentObj, cartObj, updateTransactions, customerTokenId) => {
   let authResponse: any;
   let paymentResponse: any;
+  let actions: any;
   let cardDetails = {
     cardFieldGroup: null,
   };
-  let actions: any;
   let returnResponse = {
     paymentResponse: null,
     authResponse: null,
@@ -575,7 +588,7 @@ const orderManagementHandler = async (paymentId, updatePaymentObj, updateTransac
   try {
     cartObj = await commercetoolsApi.retrieveCartByPaymentId(paymentId);
     if (null != cartObj) {
-      if (Constants.CT_TRANSACTION_TYPE_CHARGE == updateTransactions.type) {
+      if (Constants.CT_TRANSACTION_TYPE_CHARGE == updateTransactions.type && Constants.CT_TRANSACTION_STATE_INITIAL == updateTransactions.state) {
         updatePaymentObj.transactions.forEach((transaction) => {
           if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == transaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == transaction.state) {
             authId = transaction.interactionId;
@@ -587,7 +600,7 @@ const orderManagementHandler = async (paymentId, updatePaymentObj, updateTransac
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_CAPTURE_FAILURE);
           errorFlag = true;
         }
-      } else if (Constants.CT_TRANSACTION_TYPE_REFUND == updateTransactions.type) {
+      } else if (Constants.CT_TRANSACTION_TYPE_REFUND == updateTransactions.type && Constants.CT_TRANSACTION_STATE_INITIAL == updateTransactions.state) {
         updatePaymentObj.transactions.forEach((transaction) => {
           if (Constants.CT_TRANSACTION_TYPE_CHARGE == transaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == transaction.state) {
             captureId = transaction.interactionId;
@@ -599,7 +612,7 @@ const orderManagementHandler = async (paymentId, updatePaymentObj, updateTransac
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_REFUND_FAILURE);
           errorFlag = true;
         }
-      } else if (Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION == updateTransactions.type) {
+      } else if (Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION == updateTransactions.type && Constants.CT_TRANSACTION_STATE_INITIAL == updateTransactions.state) {
         authReversalId = updatePaymentObj.transactions[Constants.VAL_ZERO].interactionId;
         if (null != authReversalId) {
           orderResponse = await paymentAuthReversal.authReversalResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], authReversalId);
@@ -803,6 +816,240 @@ const reportHandler = async () => {
   return decisionsyncResponse;
 };
 
+const syncHandler = async () => {
+  let createSearchResponse: any;
+  let transactionSummaries: any;
+  let exceptionData: any;
+  let paymentDetails: any;
+  let transactions: any;
+  let syncPresent = false;
+  let applicationResponse: any;
+  let rowPresent: any;
+  let applications: any;
+  let updateSyncResponse: any;
+  let syncUpdateObject = {
+    id: null,
+    transactionId: null,
+    version: null,
+    interactionId: null,
+    amountPlanned: {
+      currencyCode: null,
+      centAmount: Constants.VAL_ZERO,
+    },
+    type: Constants.STRING_EMPTY,
+    state: Constants.STRING_EMPTY,
+  };
+  let syncResponse = {
+    message: Constants.STRING_EMPTY,
+    error: Constants.STRING_EMPTY,
+  };
+  try {
+    if (Constants.STRING_TRUE == process.env.ISV_PAYMENT_RUN_SYNC) {
+      createSearchResponse = await createSearchRequest.getTransactionSearchResponse(Constants.STRING_SYNC_QUERY, Constants.STRING_SYNC_SORT);
+      if (null != createSearchResponse && Constants.HTTP_CODE_TWO_HUNDRED_ONE == createSearchResponse.httpCode) {
+        transactionSummaries = createSearchResponse.data._embedded.transactionSummaries;
+        for (let element of transactionSummaries) {
+          paymentDetails = await commercetoolsApi.retrievePayment(element.clientReferenceInformation.code);
+          if (null != paymentDetails) {
+            transactions = paymentDetails.transactions;
+            applications = element.applicationInformation.applications;
+            if (null != applications && null != transactions) {
+              applicationResponse = await getApplicationsPresent(applications);
+              if (null != applicationResponse) {
+                if (transactions.some((item) => item.interactionId == element.id)) {
+                  rowPresent = true;
+                } else if (transactions.some((item) => item.interactionId == null)) {
+                  rowPresent = false;
+                }
+                if (!rowPresent) {
+                  syncUpdateObject.id = paymentDetails.id;
+                  syncUpdateObject.version = paymentDetails.version;
+                  syncUpdateObject.interactionId = element.id;
+                  syncUpdateObject.amountPlanned.currencyCode = element.orderInformation.amountDetails.currency;
+                  syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
+                  if (applicationResponse.authPresent) {
+                    if (!applicationResponse.authReasonCodePresent) {
+                      syncUpdateObject.amountPlanned.currencyCode = paymentDetails.amountPlanned.currencyCode;
+                      syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.centAmount;
+                    }
+                    syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_AUTHORIZATION;
+                    updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
+                    if (null != updateSyncResponse && paymentDetails.paymentMethodInfo.method == Constants.VISA_CHECKOUT) {
+                      await updateVisaDetails(paymentDetails.id, updateSyncResponse.version, element.id);
+                    }
+                  } else if (applicationResponse.capturePresent) {
+                    syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_CHARGE;
+                    updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
+                  } else if (applicationResponse.authReversalPresent) {
+                    syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION;
+                    updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
+                  } else if (applicationResponse.refundPresent) {
+                    syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_REFUND;
+                    updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
+                  }
+                }
+                if (null != updateSyncResponse) {
+                  syncPresent = true;
+                }
+              }
+            }
+            if (null != applicationResponse && null == transactions) {
+              syncUpdateObject.id = paymentDetails.id;
+              syncUpdateObject.version = paymentDetails.version;
+              syncUpdateObject.interactionId = element.id;
+              syncUpdateObject.amountPlanned.currencyCode = element.orderInformation.amountDetails.currency;
+              syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
+              if (applicationResponse.authPresent) {
+                if (!applicationResponse.authReasonCodePresent) {
+                  syncUpdateObject.amountPlanned.currencyCode = paymentDetails.amountPlanned.currencyCode;
+                  syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.centAmount;
+                }
+                syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_AUTHORIZATION;
+                updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
+                if (null != updateSyncResponse && paymentDetails.paymentMethodInfo.method == Constants.VISA_CHECKOUT) {
+                  await updateVisaDetails(paymentDetails.id, updateSyncResponse.version, element.id);
+                }
+              }
+            }
+          }
+        }
+        if (syncPresent) {
+          syncResponse.message = Constants.SUCCESS_MSG_SYNC_SERVICE;
+        } else {
+          syncResponse.error = Constants.ERROR_MSG_NO_SYNC_DETAILS;
+        }
+      } else {
+        syncResponse.error = Constants.ERROR_MSG_NO_SYNC_DETAILS;
+      }
+    } else {
+      syncResponse.error = Constants.ERROR_MSG_ENABLE_SYNC;
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception;
+    }
+    syncResponse.error = Constants.ERROR_MSG_SYNC_PAYMENT_DETAILS;
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SYNC_HANDLER, Constants.LOG_ERROR, exceptionData);
+  }
+  return syncResponse;
+};
+
+const getApplicationsPresent = async (applications) => {
+  let applicationResponse = {
+    authPresent: false,
+    authReasonCodePresent: false,
+    capturePresent: false,
+    authReversalPresent: false,
+    refundPresent: false,
+  };
+  if (null != applications) {
+    if (applications.some((item) => item.name == Constants.STRING_SYNC_AUTH_NAME)) {
+      applicationResponse.authPresent = true;
+    }
+    if (applications.some((item) => item.name == Constants.STRING_SYNC_AUTH_NAME && item.reasonCode != null && Constants.VAL_HUNDRED == item.reasonCode)) {
+      applicationResponse.authReasonCodePresent = true;
+    }
+    if (applications.some((item) => item.name == Constants.STRING_SYNC_CAPTURE_NAME)) {
+      applicationResponse.capturePresent = true;
+    }
+    if (applications.some((item) => item.name == Constants.STRING_SYNC_AUTH_REVERSAL_NAME)) {
+      applicationResponse.authReversalPresent = true;
+    }
+    if (applications.some((item) => item.name == Constants.STRING_SYNC_REFUND_NAME)) {
+      applicationResponse.refundPresent = true;
+    }
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_APPLICATIONS_PRESENT, Constants.LOG_INFO, Constants.ERROR_MSG_APPLICATION_DETAILS);
+  }
+  return applicationResponse;
+};
+
+const updateVisaDetails = async (paymentId, paymentVersion, transactionId) => {
+  let actions: any;
+  let syncVisaCardDetailsResponse: any;
+  let visaObject = {
+    transactionId: null,
+  };
+  let visaCheckoutData: any;
+  let visaResponse: any;
+  let cartDetails;
+  let updateResponse = {
+    cartVersion: null,
+    paymentVersion: null,
+  };
+  let visaUpdateObject = {
+    id: null,
+    version: null,
+    actions: null,
+  };
+  if (null != paymentId && null != paymentVersion && null != transactionId) {
+    visaObject.transactionId = transactionId;
+    visaCheckoutData = await clickToPay.getVisaCheckoutData(visaObject);
+    if (null != visaCheckoutData) {
+      cartDetails = await getCartDetailsByPaymentId(paymentId);
+      if (null != cartDetails && Constants.STRING_CART_STATE == cartDetails.cartState) {
+        visaResponse = await commercetoolsApi.updateCartbyPaymentId(cartDetails.id, cartDetails.version, visaCheckoutData);
+        if (null != visaResponse) {
+          updateResponse.cartVersion = visaResponse.version;
+          actions = await paymentService.visaCardDetailsAction(visaCheckoutData);
+          if (actions != null) {
+            visaUpdateObject.actions = actions;
+            visaUpdateObject.id = paymentId;
+            visaUpdateObject.version = paymentVersion;
+            syncVisaCardDetailsResponse = await commercetoolsApi.syncVisaCardDetails(visaUpdateObject);
+            if (null != syncVisaCardDetailsResponse) {
+              updateResponse.paymentVersion = syncVisaCardDetailsResponse.version;
+            }
+          }
+        }
+      }
+    }
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_VISA_DETAILS, Constants.LOG_INFO, Constants.ERROR_MSG_PAYMENT_DETAILS);
+  }
+  return updateResponse;
+};
+
+const getCartDetailsByPaymentId = async (paymentId) => {
+  let cartResponse: any;
+  let cartDetails: any;
+  if (null != paymentId) {
+    cartResponse = await commercetoolsApi.retrieveCartByPaymentId(paymentId);
+    if (null != cartResponse) {
+      cartDetails = cartResponse.results[Constants.VAL_ZERO];
+    }
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CART_DETAILS_BY_PAYMENTID, Constants.LOG_INFO, Constants.ERROR_MSG_PAYMENT_DETAILS);
+  }
+  return cartDetails;
+};
+
+const runSyncAddTransaction = async (syncUpdateObject, reasonCode, authPresent, authReasonCodePresent) => {
+  let updateSyncResponse: any;
+  if (null != syncUpdateObject && null != reasonCode) {
+    if (Constants.VAL_HUNDRED == reasonCode) {
+      syncUpdateObject.state = Constants.CT_TRANSACTION_STATE_SUCCESS;
+      updateSyncResponse = await commercetoolsApi.syncAddTransaction(syncUpdateObject);
+    } else if ((Constants.VAL_FOUR_EIGHTY == reasonCode || Constants.VAL_FOUR_EIGHTY_ONE == reasonCode) && authPresent && authReasonCodePresent) {
+      syncUpdateObject.state = Constants.CT_TRANSACTION_STATE_PENDING;
+      updateSyncResponse = await commercetoolsApi.syncAddTransaction(syncUpdateObject);
+    } else if ((Constants.VAL_FOUR_EIGHTY == reasonCode || Constants.VAL_FOUR_EIGHTY_ONE == reasonCode) && authPresent && !authReasonCodePresent) {
+      syncUpdateObject.state = Constants.CT_TRANSACTION_STATE_FAILURE;
+      updateSyncResponse = await commercetoolsApi.syncAddTransaction(syncUpdateObject);
+    } else if (Constants.VAL_HUNDRED != reasonCode && Constants.VAL_FOUR_SEVENTY_FIVE != reasonCode) {
+      syncUpdateObject.state = Constants.CT_TRANSACTION_STATE_FAILURE;
+      updateSyncResponse = await commercetoolsApi.syncAddTransaction(syncUpdateObject);
+    }
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_RUN_SYNC_ADD_TRANSACTION, Constants.LOG_INFO, Constants.ERROR_MSG_FETCH_TRANSACTIONS);
+  }
+  return updateSyncResponse;
+};
+
 export default {
   authorizationHandler,
   getPayerAuthSetUpResponse,
@@ -812,4 +1059,5 @@ export default {
   updateCardHandler,
   deleteCardHandler,
   reportHandler,
+  syncHandler,
 };
