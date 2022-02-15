@@ -50,16 +50,21 @@ const conversionDetails = async () => {
           conversionDetailResponse.status = response[Constants.STRING_RESPONSE_STATUS];
           resolve(conversionDetailResponse);
         } else if (error) {
-          errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CONVERSION_DETAILS, Constants.LOG_INFO, errorData.message);
+          if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CONVERSION_DETAILS, Constants.LOG_INFO, errorData);
+            conversionDetailResponse.status = errorData.status;
+            conversionDetailResponse.message = errorData.message;
+          } else {
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CONVERSION_DETAILS, Constants.LOG_INFO, error);
+          }
           conversionDetailResponse.httpCode = error.status;
-          conversionDetailResponse.status = errorData.status;
-          conversionDetailResponse.message = errorData.message;
+          reject(conversionDetailResponse);
+        } else {
           reject(conversionDetailResponse);
         }
       });
     }).catch((error) => {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CONVERSION_DETAILS, Constants.LOG_INFO, error.message);
       return conversionDetailResponse;
     });
   } catch (exception) {

@@ -86,7 +86,6 @@ const captureResponse = async (payment, cart, authId) => {
         orderInformationLineItems.tax = cart.shippingInfo.taxRate.amount;
         orderInformation.lineItems[j] = orderInformationLineItems;
       }
-
       requestObj.orderInformation = orderInformation;
       const instance = new restApi.CaptureApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
@@ -97,18 +96,23 @@ const captureResponse = async (payment, cart, authId) => {
             paymentResponse.status = data.status;
             paymentResponse.message = data.message;
             resolve(paymentResponse);
-          } else {
-            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CAPTURE_RESPONSE, Constants.LOG_INFO, errorData.message);
+          } else if (error) {
+            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CAPTURE_RESPONSE, Constants.LOG_INFO, errorData);
+              paymentResponse.transactionId = errorData.id;
+              paymentResponse.status = errorData.status;
+              paymentResponse.message = errorData.message;
+            } else {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CAPTURE_RESPONSE, Constants.LOG_INFO, error);
+            }
             paymentResponse.httpCode = error.status;
-            paymentResponse.transactionId = errorData.id;
-            paymentResponse.status = errorData.status;
-            paymentResponse.message = errorData.message;
+            reject(paymentResponse);
+          } else {
             reject(paymentResponse);
           }
         });
       }).catch((error) => {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CAPTURE_RESPONSE, Constants.LOG_INFO, error.message);
         return paymentResponse;
       });
     } else {

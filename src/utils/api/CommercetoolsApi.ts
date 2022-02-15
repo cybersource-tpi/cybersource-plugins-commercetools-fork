@@ -580,6 +580,165 @@ const updateDecisionSync = async (decisionUpdateObject) => {
   }
 };
 
+const updateSync = async (syncUpdateObject) => {
+  let updateSyncResponse: any;
+  let client: any;
+  let requestBuilder: any;
+  let channelsRequest: any;
+  let exceptionData: any;
+  let uri: string;
+  try {
+    if (null != syncUpdateObject) {
+      client = getClient();
+      if (null != client) {
+        requestBuilder = createRequestBuilder({
+          projectKey: process.env.CT_PROJECT_KEY,
+        });
+        uri = requestBuilder.payments.byId(syncUpdateObject.id).build();
+        channelsRequest = {
+          uri: uri,
+          method: Constants.HTTP_METHOD_POST,
+          body: JSON.stringify({
+            version: syncUpdateObject.version,
+            actions: [
+              {
+                action: Constants.CHANGE_TRANSACTION_STATE,
+                transactionId: syncUpdateObject.transactionId,
+                state: syncUpdateObject.state,
+              },
+              {
+                action: Constants.CHANGE_TRANSACTION_INTERACTION_ID,
+                transactionId: syncUpdateObject.transactionId,
+                interactionId: syncUpdateObject.interactionId,
+              },
+            ],
+          }),
+        };
+        updateSyncResponse = await client.execute(channelsRequest);
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_SYNC, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+      }
+    } else {
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_SYNC, Constants.LOG_INFO, Constants.ERROR_MSG_RETRIEVE_PAYMENT_DETAILS);
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception;
+    }
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_SYNC, Constants.LOG_ERROR, exceptionData);
+  }
+  if (null != updateSyncResponse) {
+    updateSyncResponse = updateSyncResponse.body;
+  }
+  return updateSyncResponse;
+};
+
+const syncVisaCardDetails = async (visaUpdateObject) => {
+  let syncVisaCardDetailsResponse: any;
+  let client: any;
+  let requestBuilder: any;
+  let channelsRequest: any;
+  let exceptionData: any;
+  let uri: string;
+  try {
+    if (null != visaUpdateObject) {
+      client = getClient();
+      if (null != client) {
+        requestBuilder = createRequestBuilder({
+          projectKey: process.env.CT_PROJECT_KEY,
+        });
+        uri = requestBuilder.payments.byId(visaUpdateObject.id).build();
+        channelsRequest = {
+          uri: uri,
+          method: Constants.HTTP_METHOD_POST,
+          body: JSON.stringify({
+            version: visaUpdateObject.version,
+            actions: visaUpdateObject.actions,
+          }),
+        };
+        syncVisaCardDetailsResponse = await client.execute(channelsRequest);
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SYNC_VISA_CARD_DETAILS, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+      }
+    } else {
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SYNC_VISA_CARD_DETAILS, Constants.LOG_INFO, Constants.ERROR_MSG_RETRIEVE_PAYMENT_DETAILS);
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception;
+    }
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SYNC_VISA_CARD_DETAILS, Constants.LOG_ERROR, exceptionData);
+  }
+  if (null != syncVisaCardDetailsResponse) {
+    syncVisaCardDetailsResponse = syncVisaCardDetailsResponse.body;
+  }
+  return syncVisaCardDetailsResponse;
+};
+const syncAddTransaction = async (syncUpdateObject) => {
+  let syncAddTransactionResponse: any;
+  let client: any;
+  let requestBuilder: any;
+  let channelsRequest: any;
+  let exceptionData: any;
+  let uri: string;
+  try {
+    if (null != syncUpdateObject) {
+      client = getClient();
+      if (null != client) {
+        requestBuilder = createRequestBuilder({
+          projectKey: process.env.CT_PROJECT_KEY,
+        });
+        uri = requestBuilder.payments.byId(syncUpdateObject.id).build();
+        channelsRequest = {
+          uri: uri,
+          method: Constants.HTTP_METHOD_POST,
+          body: JSON.stringify({
+            version: syncUpdateObject.version,
+            actions: [
+              {
+                action: Constants.ADD_TRANSACTION,
+                transaction: {
+                  type: syncUpdateObject.type,
+                  timestamp: new Date(Date.now()).toISOString(),
+                  amount: syncUpdateObject.amountPlanned,
+                  state: syncUpdateObject.state,
+                  interactionId: syncUpdateObject.interactionId,
+                },
+              },
+            ],
+          }),
+        };
+        syncAddTransactionResponse = await client.execute(channelsRequest);
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SYNC_ADD_TRANSACTION, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+      }
+    } else {
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SYNC_ADD_TRANSACTION, Constants.LOG_INFO, Constants.ERROR_MSG_RETRIEVE_PAYMENT_DETAILS);
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_SYNC_DETAILS + Constants.STRING_HYPHEN + exception;
+    }
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SYNC_ADD_TRANSACTION, Constants.LOG_ERROR, exceptionData);
+  }
+  if (null != syncAddTransactionResponse) {
+    syncAddTransactionResponse = syncAddTransactionResponse.body;
+  }
+  return syncAddTransactionResponse;
+};
+
 export default {
   retrieveCartByAnonymousId,
   retrieveCartByCustomerId,
@@ -592,4 +751,7 @@ export default {
   getCustomer,
   setCustomType,
   updateDecisionSync,
+  updateSync,
+  syncVisaCardDetails,
+  syncAddTransaction,
 };

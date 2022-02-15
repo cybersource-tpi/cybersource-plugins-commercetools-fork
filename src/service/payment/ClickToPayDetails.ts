@@ -40,16 +40,21 @@ const getVisaCheckoutData = async (paymentResponse) => {
               visaCheckoutData.shipToFieldGroup = data.orderInformation.shipTo;
               visaCheckoutData.cardFieldGroup = data.paymentInformation.card;
               resolve(visaCheckoutData);
-            } else {
-              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, errorData.message);
+            } else if (error) {
+              if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+                errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+                paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, errorData);
+                visaCheckoutData.message = errorData.message;
+              } else {
+                paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, error);
+              }
               visaCheckoutData.httpCode = error.status;
-              visaCheckoutData.message = errorData.message;
+              reject(visaCheckoutData);
+            } else {
               reject(visaCheckoutData);
             }
           });
         }).catch((error) => {
-          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_VISA_CHECKOUT_DATA, Constants.LOG_INFO, error.message);
           return visaCheckoutData;
         });
       } else {

@@ -49,16 +49,21 @@ const updateTokenResponse = async (tokens) => {
             tokenResponse.default = data.default;
             tokenResponse.card = data.card;
             resolve(tokenResponse);
-          } else {
-            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, errorData.message);
+          } else if (error) {
+            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, errorData);
+              tokenResponse.message = errorData.message;
+            } else {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, error);
+            }
             tokenResponse.httpCode = error.status;
-            tokenResponse.message = errorData.message;
+            reject(tokenResponse);
+          } else {
             reject(tokenResponse);
           }
         });
       }).catch((error) => {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, error.message);
         return tokenResponse;
       });
     } else {

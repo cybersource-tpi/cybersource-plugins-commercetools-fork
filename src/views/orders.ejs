@@ -10,23 +10,23 @@
   <body>
     <h1 class="order">ISV Commercetools Plugin</h1>
     <% if(orderErrorMessage){%>
-    <div class="alert alert-error alert-dismissible">
+    <div class="alert alert-error alert-dismissible" id="orderErrorMessage">
       <em class="mark error"></em>
       <%=orderErrorMessage%>
     </div>
     <%} %> <% if(orderSuccessMessage){%>
-    <div class="alert alert-success alert-dismissible">
+    <div class="alert alert-success alert-dismissible" id="orderSuccessMessage">
       <em class="mark check"></em>
       <%=orderSuccessMessage%>
     </div>
     <% } %>
 
-    <div id="left"><h2>Orders</h2></div>
+    <div class="leftDiv"><h1>Payments</h1></div>
     <% if(total != 0) { %>
-    <div class="buttonright"><a class="button" href="/decisionsync" role="button" onclick="showDiv()">Run Decision Sync</a></div>
-    <div class="buttonright"><a class="button" href="/runsync" role="button" onclick="showDiv()">Run Sync</a></div>
+    <div class="buttonright"><a class="button" href="/decisionSync" role="button" id="decisionSync" onclick="showDiv()">Run Decision Sync</a></div>
+    <div class="buttonright"><a class="button" href="/sync" role="button" id="sync" onclick="showDiv()">Run Sync</a></div>
     <% } %>
-    <table class="order">
+    <table class="order" id="paymentDetailsTable">
       <tr>
         <th>Payment Id</th>
         <th>Order Total</th>

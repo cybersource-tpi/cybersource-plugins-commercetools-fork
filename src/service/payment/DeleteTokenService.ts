@@ -37,16 +37,21 @@ const deleteCustomerToken = async (customerTokenObj) => {
             customerTokenDeleteResponse.httpCode = response.status;
             customerTokenDeleteResponse.deletedToken = paymentInstrumentTokenId;
             resolve(customerTokenDeleteResponse);
-          } else {
-            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_INFO, errorData.message);
+          } else if (error) {
+            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_INFO, errorData);
+              customerTokenDeleteResponse.message = errorData.message;
+            } else {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_INFO, error);
+            }
             customerTokenDeleteResponse.httpCode = response.status;
-            customerTokenDeleteResponse.message = errorData.message;
+            reject(customerTokenDeleteResponse);
+          } else {
             reject(customerTokenDeleteResponse);
           }
         });
       }).catch((error) => {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_INFO, error.message);
         return customerTokenDeleteResponse;
       });
     } else {

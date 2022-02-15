@@ -263,6 +263,71 @@ const payerAuthActions = (response) => {
   return action;
 };
 
+const payerEnrollActions = (response, updatePaymentObj) => {
+  let action: any;
+  let exceptionData: any;
+  let isv_payerAuthenticationTransactionId = null;
+  let isv_payerAuthenticationRequired = false;
+  try {
+    if (null != response) {
+      action = {
+        actions: [
+          {
+            action: Constants.SET_CUSTOM_FIELD,
+            name: Constants.ISV_PAYER_AUTHETICATION_ENROLL_TRANSACTION_ID,
+            value: response.transactionId,
+          },
+          {
+            action: Constants.SET_CUSTOM_FIELD,
+            name: Constants.ISV_PAYER_AUTHETICATION_ENROLL_HTTP_CODE,
+            value: response.httpCode,
+          },
+          {
+            action: Constants.SET_CUSTOM_FIELD,
+            name: Constants.ISV_PAYER_AUTHETICATION_ENROLL_STATUS,
+            value: response.status,
+          },
+        ],
+        errors: [],
+      };
+      if (response.httpCode == Constants.HTTP_CODE_TWO_HUNDRED_ONE && response.status == Constants.API_STATUS_AUTHORIZED) {
+        isv_payerAuthenticationTransactionId = response.data.consumerAuthenticationInformation.authenticationTransactionId;
+        action.actions.push({
+          action: Constants.SET_CUSTOM_FIELD,
+          name: Constants.ISV_PAYER_AUTHETICATION_TRANSACTION_ID,
+          value: isv_payerAuthenticationTransactionId,
+        });
+        if (Constants.ISV_CAPTURE_CONTEXT_SIGNATURE in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature) {
+          action.actions.push({
+            action: Constants.SET_CUSTOM_FIELD,
+            name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
+            value: null,
+          });
+        }
+      }
+      if (Constants.API_STATUS_PENDING_AUTHENTICATION != response.status) {
+        action.actions.push({
+          action: Constants.SET_CUSTOM_FIELD,
+          name: Constants.ISV_PAYER_AUTHENTICATION_REQUIRED,
+          value: isv_payerAuthenticationRequired,
+        });
+      }
+    } else {
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_ENROLL_ACTIONS, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = exception.message;
+    } else {
+      exceptionData = exception;
+    }
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_ENROLL_ACTIONS, Constants.LOG_ERROR, exceptionData);
+  }
+  return action;
+};
+
 const getUpdateTokenActions = (actions) => {
   let returnResponse: any;
   if (null != actions) {
@@ -293,18 +358,19 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
   let paymentFailure: any;
   let payerAuthenticationData: any;
   let exceptionData: any;
-  let isv_payerAuthenticationTransactionId = Constants.STRING_EMPTY;
-  let isv_payerAuthenticationRequired = false;
   let isv_requestJwt = Constants.STRING_EMPTY;
   let isv_cardinalReferenceId = Constants.STRING_EMPTY;
   let isv_deviceDataCollectionUrl = Constants.STRING_EMPTY;
   try {
     if (null != paymentResponse) {
-      if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHORIZED == paymentResponse.status) {
+      if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHORIZED == paymentResponse.status && null != transactionDetail) {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
         setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_SUCCESS);
         response = createResponse(setTransaction, setCustomField, null);
-      } else if ((Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status) || Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status) {
+      } else if (
+        (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status && null != transactionDetail) ||
+        (Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status && null != transactionDetail)
+      ) {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
         setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_PENDING);
         response = createResponse(setTransaction, setCustomField, null);
@@ -338,16 +404,6 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
           authenticationTransactionId: paymentResponse.data.consumerAuthenticationInformation.authenticationTransactionId,
         };
         actions = payerAuthActions(payerAuthenticationData);
-        response = {
-          actions: actions,
-          errors: [],
-        };
-      } else if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHENTICATION_SUCCESSFUL == paymentResponse.status) {
-        isv_payerAuthenticationTransactionId = paymentResponse.data.consumerAuthenticationInformation.authenticationTransactionId;
-        actions = fieldMapper({
-          isv_payerAuthenticationTransactionId,
-          isv_payerAuthenticationRequired,
-        });
         response = {
           actions: actions,
           errors: [],
@@ -507,7 +563,7 @@ const deleteToken = async (tokenResponse, customerObj) => {
     }
   } else {
     isvTokensObj = customerObj.custom.fields.isv_tokens;
-    logData(path.parse(path.basename(__filename)).name, Constants.FUN_DELETE_TOKEN, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_TOKEN, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
   }
   return isvTokensObj;
 };
@@ -572,6 +628,7 @@ export default {
   failureResponse,
   visaCardDetailsAction,
   payerAuthActions,
+  payerEnrollActions,
   getUpdateTokenActions,
   getAuthResponse,
   getOMServiceResponse,

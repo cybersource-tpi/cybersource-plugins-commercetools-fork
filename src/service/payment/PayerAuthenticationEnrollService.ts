@@ -64,7 +64,7 @@ const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId, card
       orderInformationBillTo.postalCode = cart.billingAddress.postalCode;
       orderInformationBillTo.country = cart.billingAddress.country;
       orderInformationBillTo.email = cart.billingAddress.email;
-      orderInformationBillTo.phoneNumber = cart.billingAddress.phoneNumber;
+      orderInformationBillTo.phoneNumber = cart.billingAddress.phone;
       orderInformation.billTo = orderInformationBillTo;
 
       requestObj.orderInformation = orderInformation;
@@ -126,18 +126,23 @@ const payerAuthEnrollmentCheck = async (payment, cart, cardinalReferenceId, card
             enrollmentCheckResponse.data = data;
             enrollmentCheckResponse.cardinalReferenceId = cardinalReferenceId;
             resolve(enrollmentCheckResponse);
-          } else {
-            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ENROLLMENT_CHECK_RESPONSE, Constants.LOG_INFO, errorData.message);
+          } else if (error) {
+            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ENROLLMENT_CHECK_RESPONSE, Constants.LOG_INFO, errorData);
+              enrollmentCheckResponse.transactionId = errorData.id;
+              enrollmentCheckResponse.status = errorData.status;
+              enrollmentCheckResponse.message = errorData.message;
+            } else {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ENROLLMENT_CHECK_RESPONSE, Constants.LOG_INFO, error);
+            }
             enrollmentCheckResponse.httpCode = error.status;
-            enrollmentCheckResponse.transactionId = errorData.id;
-            enrollmentCheckResponse.status = errorData.status;
-            enrollmentCheckResponse.message = errorData.message;
             resolve(enrollmentCheckResponse);
+          } else {
+            reject(enrollmentCheckResponse);
           }
         });
       }).catch((error) => {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ENROLLMENT_CHECK_RESPONSE, Constants.LOG_INFO, error.message);
         return enrollmentCheckResponse;
       });
     } else {

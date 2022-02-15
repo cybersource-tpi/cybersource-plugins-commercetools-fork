@@ -50,6 +50,9 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
       } else {
         processingInformation.actionList = actionList;
       }
+      if (Constants.STRING_ENROLL_CHECK == service) {
+        actionList.push(Constants.ISV_PAYMENT_CONSUMER_AUTHENTICATION);
+      }
       if (Constants.VALIDATION == service) {
         actionList.push(Constants.ISV_PAYMENT_VALIDATE_CONSUMER_AUTHENTICATION);
       }
@@ -88,6 +91,13 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
           var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
           consumerAuthenticationInformation.authenticationTransactionId = payment.custom.fields.isv_payerAuthenticationTransactionId;
           consumerAuthenticationInformation.signedPares = payment.custom.fields.isv_payerAuthenticationPaReq;
+          requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
+        }
+        if (Constants.STRING_ENROLL_CHECK == service) {
+          var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
+          consumerAuthenticationInformation.referenceId = payment.custom.fields.isv_cardinalReferenceId;
+          consumerAuthenticationInformation.acsWindowSize = Constants.ISV_PAYMENT_ACS_WINDOW_SIZE;
+          consumerAuthenticationInformation.returnUrl = process.env.CONFIG_3DS_RETURN_URL + '/sunriseSpa';
           requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
       } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
@@ -179,18 +189,23 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
             paymentResponse.message = data.message;
             paymentResponse.data = data;
             resolve(paymentResponse);
-          } else {
-            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData.message);
+          } else if (error) {
+            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData);
+              paymentResponse.transactionId = errorData.id;
+              paymentResponse.status = errorData.status;
+              paymentResponse.message = errorData.message;
+            } else {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, error);
+            }
             paymentResponse.httpCode = error.status;
-            paymentResponse.transactionId = errorData.id;
-            paymentResponse.status = errorData.status;
-            paymentResponse.message = errorData.message;
+            reject(paymentResponse);
+          } else {
             reject(paymentResponse);
           }
         });
       }).catch((error) => {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, error.message);
         return paymentResponse;
       });
     } else {
