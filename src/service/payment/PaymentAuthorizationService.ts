@@ -56,7 +56,7 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
       if (Constants.VALIDATION == service) {
         actionList.push(Constants.ISV_PAYMENT_VALIDATE_CONSUMER_AUTHENTICATION);
       }
-      if (null == payment.custom.fields.isv_savedToken && Constants.ISV_TOKEN_ALIAS in payment.custom.fields) {
+      if ((null == payment.custom.fields.isv_savedToken || Constants.STRING_EMPTY == payment.custom.fields.isv_savedToken) && Constants.ISV_TOKEN_ALIAS in payment.custom.fields && Constants.STRING_EMPTY != payment.custom.fields.isv_tokenAlias) {
         actionList.push(Constants.ISV_PAYMENT_TOKEN_CREATE);
         if (null != cardTokens && null != cardTokens.customerTokenId) {
           processingInformation.actionTokenTypes = Constants.ISV_PAYMENT_TOKEN_ACTION_TYPES_CUSTOMER_EXISTS;
@@ -68,7 +68,7 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
       var paymentInformation = new restApi.Ptsv2paymentsPaymentInformation();
       var tokenInformation = new restApi.Ptsv2paymentsTokenInformation();
       if (Constants.CREDIT_CARD == payment.paymentMethodInfo.method || Constants.CC_PAYER_AUTHENTICATION == payment.paymentMethodInfo.method) {
-        if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
+        if (Constants.ISV_SAVED_TOKEN in payment.custom.fields && Constants.STRING_EMPTY != payment.custom.fields.isv_savedToken) {
           var paymentInformationCustomer = new restApi.Ptsv2paymentsPaymentInformationCustomer();
           paymentInformationCustomer.id = cardTokens.customerTokenId;
           paymentInformation.customer = paymentInformationCustomer;
@@ -97,7 +97,7 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
           var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
           consumerAuthenticationInformation.referenceId = payment.custom.fields.isv_cardinalReferenceId;
           consumerAuthenticationInformation.acsWindowSize = Constants.ISV_PAYMENT_ACS_WINDOW_SIZE;
-          consumerAuthenticationInformation.returnUrl = process.env.CONFIG_3DS_RETURN_URL + '/sunriseSpa';
+          consumerAuthenticationInformation.returnUrl = process.env.ISV_PAYMENT_3DS_RETURN_URL + '/sunriseSpa';
           requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
       } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {

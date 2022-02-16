@@ -31,7 +31,7 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
     if (null != updatePaymentObj && null != updateTransactions) {
       if (Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer) {
         cartObj = await commercetoolsApi.retrieveCartByCustomerId(updatePaymentObj.customer.id);
-        if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields) {
+        if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
           paymentInstumentToken = updatePaymentObj.custom.fields.isv_savedToken;
         }
         cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstumentToken);
@@ -83,15 +83,15 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
           }
         }
         authResponse = await setCustomerTokenData(cardTokens, paymentResponse, authResponse, errorFlag, paymentMethod, updatePaymentObj);
-        if (Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields) {
-          if (Constants.ISV_TOKEN_VERIFICATION_CONTEXT in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenVerificationContext) {
+        if (Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
+          if (Constants.ISV_TOKEN_VERIFICATION_CONTEXT in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenVerificationContext && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_tokenVerificationContext) {
             authResponse.actions.push({
               action: Constants.SET_CUSTOM_FIELD,
               name: Constants.ISV_TOKEN_VERIFICATION_CONTEXT,
               value: null,
             });
           }
-          if (Constants.ISV_CAPTURE_CONTEXT_SIGNATURE in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature) {
+          if (Constants.ISV_CAPTURE_CONTEXT_SIGNATURE in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature) {
             authResponse.actions.push({
               action: Constants.SET_CUSTOM_FIELD,
               name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
@@ -132,9 +132,12 @@ const getPayerAuthSetUpResponse = async (updatePaymentObj) => {
   let paymentInstumentToken = null;
   let errorFlag = false;
   try {
-    if (Constants.ISV_TOKEN in updatePaymentObj.custom.fields || Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields) {
+    if (
+      (Constants.ISV_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_token) ||
+      (Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken)
+    ) {
       if (Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer) {
-        if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields) {
+        if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
           paymentInstumentToken = updatePaymentObj.custom.fields.isv_savedToken;
         }
         cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstumentToken);
@@ -178,11 +181,15 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
   let paymentInstumentToken = null;
   let errorFlag = false;
   try {
-    if ((Constants.STRING_CUSTOM in updatePaymentObj && Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields && Constants.ISV_TOKEN in updatePaymentObj.custom.fields) || Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields) {
+    if (
+      Constants.STRING_CUSTOM in updatePaymentObj &&
+      Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields &&
+      ((Constants.ISV_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_token) || (Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken))
+    ) {
       cardinalReferenceId = updatePaymentObj.custom.fields.isv_cardinalReferenceId;
       if (Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer) {
         cartObj = await commercetoolsApi.retrieveCartByCustomerId(updatePaymentObj.customer.id);
-        if (Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields) {
+        if (Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
           paymentInstumentToken = updatePaymentObj.custom.fields.isv_savedToken;
         }
         cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstumentToken);
@@ -244,7 +251,7 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
   if (null != paymentResponse && null != paymentResponse.httpCode) {
     authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
     if (null != authResponse) {
-      if (null == updatePaymentObj.custom.fields.isv_savedToken && Constants.CREDIT_CARD == updatePaymentObj.paymentMethodInfo.method) {
+      if ((null == updatePaymentObj.custom.fields.isv_savedToken || Constants.STRING_EMPTY == updatePaymentObj.custom.fields.isv_savedToken) && Constants.CREDIT_CARD == updatePaymentObj.paymentMethodInfo.method) {
         authResponse.actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
@@ -296,7 +303,7 @@ const getCardWith3dsResponse = async (updatePaymentObj, cartObj, updateTransacti
   if (null != paymentResponse && null != paymentResponse.httpCode) {
     authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
     if (null != authResponse) {
-      if (null == updatePaymentObj.custom.fields.isv_savedToken) {
+      if (null == updatePaymentObj.custom.fields.isv_savedToken || Constants.STRING_EMPTY == updatePaymentObj.custom.fields.isv_savedToken) {
         authResponse.actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
@@ -424,14 +431,14 @@ const applePaySessionHandler = async (fields) => {
   let applePaySession: any;
   let errorFlag = false;
   try {
-    cert = process.env.CONFIG_APPLE_PAY_CERTIFICATE_PATH;
-    key = process.env.CONFIG_APPLE_PAY_KEY_PATH;
+    cert = process.env.ISV_PAYMENT_APPLE_PAY_CERTIFICATE_PATH;
+    key = process.env.ISV_PAYMENT_APPLE_PAY_KEY_PATH;
     httpsAgent = new https.Agent({
       rejectUnauthorized: false,
       cert: fs.readFileSync(cert),
       key: fs.readFileSync(key),
     });
-    domainName = process.env.CONFIG_TARGET_ORIGIN;
+    domainName = process.env.ISV_PAYMENT_TARGET_ORIGIN;
     domainName = domainName.replace(Constants.DOMAIN_REGEX, Constants.STRING_EMPTY);
     body = {
       merchantIdentifier: process.env.ISV_PAYMENT_APPLE_PAY_MERCHANT_ID,
@@ -482,7 +489,14 @@ const getCardTokens = async (customerId, isvSavedToken) => {
     paymentInstrumentId: null,
   };
   customerInfo = await commercetoolsApi.getCustomer(customerId);
-  if (null != customerInfo && Constants.STRING_CUSTOM in customerInfo && Constants.STRING_FIELDS in customerInfo.custom && Constants.ISV_TOKENS in customerInfo.custom.fields && Constants.VAL_ZERO < customerInfo.custom.fields.isv_tokens.length) {
+  if (
+    null != customerInfo &&
+    Constants.STRING_CUSTOM in customerInfo &&
+    Constants.STRING_FIELDS in customerInfo.custom &&
+    Constants.ISV_TOKENS in customerInfo.custom.fields &&
+    Constants.STRING_EMPTY != customerInfo.custom.fields.isv_tokens &&
+    Constants.VAL_ZERO < customerInfo.custom.fields.isv_tokens.length
+  ) {
     existingTokens = customerInfo.custom.fields.isv_tokens;
     existingTokensMap = existingTokens.map((item) => item);
     tokenLength = customerInfo.custom.fields.isv_tokens.length;
@@ -512,7 +526,8 @@ const setCustomerTokenData = async (cardTokens, paymentResponse, authResponse, e
     Constants.API_STATUS_AUTHORIZED == paymentResponse.status &&
     (Constants.CREDIT_CARD == paymentMethod || Constants.CC_PAYER_AUTHENTICATION == paymentMethod) &&
     null == updatePaymentObj.custom.fields.isv_savedToken &&
-    Constants.ISV_TOKEN_ALIAS in updatePaymentObj.custom.fields
+    Constants.ISV_TOKEN_ALIAS in updatePaymentObj.custom.fields &&
+    Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_tokenAlias
   ) {
     if (Constants.TOKEN_INFORMATION in paymentResponse.data && Constants.PAYMENT_INSTRUMENT in paymentResponse.data.tokenInformation) {
       authResponse.actions.push({
@@ -549,7 +564,14 @@ const processTokens = async (customerTokenId, paymentInstrumentId, instrumentIde
   let existingCardFlag = false;
   let customerId = updatePaymentObj.customer.id;
   customerInfo = await commercetoolsApi.getCustomer(customerId);
-  if (null != customerInfo && Constants.STRING_CUSTOM in customerInfo && Constants.STRING_FIELDS in customerInfo.custom && Constants.ISV_TOKENS in customerInfo.custom.fields && Constants.VAL_ZERO < customerInfo.custom.fields.isv_tokens.length) {
+  if (
+    null != customerInfo &&
+    Constants.STRING_CUSTOM in customerInfo &&
+    Constants.STRING_FIELDS in customerInfo.custom &&
+    Constants.ISV_TOKENS in customerInfo.custom.fields &&
+    Constants.STRING_EMPTY != customerInfo.custom.fields.isv_tokens &&
+    Constants.VAL_ZERO < customerInfo.custom.fields.isv_tokens.length
+  ) {
     existingTokens = customerInfo.custom.fields.isv_tokens;
     existingTokensMap = existingTokens.map((item) => item);
     existingTokensMap.forEach((token, index) => {
@@ -691,7 +713,7 @@ const updateTokenData = async (customerId, tokens, updateServiceResponse, type) 
   let updateTokenResponse: any;
   let length = Constants.VAL_NEGATIVE_ONE;
   customerInfo = await commercetoolsApi.getCustomer(customerId);
-  if (null != customerInfo && Constants.STRING_CUSTOM in customerInfo && Constants.STRING_FIELDS in customerInfo.custom && Constants.ISV_TOKENS in customerInfo.custom.fields) {
+  if (null != customerInfo && Constants.STRING_CUSTOM in customerInfo && Constants.STRING_FIELDS in customerInfo.custom && Constants.ISV_TOKENS in customerInfo.custom.fields && Constants.STRING_EMPTY != customerInfo.custom.fields.isv_tokens) {
     existingTokens = customerInfo.custom.fields.isv_tokens;
     existingTokensMap = existingTokens.map((item) => item);
     existingTokensMap.forEach((token, index) => {

@@ -209,11 +209,14 @@ const payerAuthActions = (response) => {
             authorizationAllowed: true,
             authenticationRequired: true,
             xid: response.xid,
-            authenticationTransactionId: response.isv_payerAuthenticationTransactionId,
+            paReq: response.pareq,
+            acsUrl: response.acsurl,
+            authenticationTransactionId: response.authenticationTransactionId,
             veresEnrolled: response.veresEnrolled,
             cardinalReferenceId: response.cardinalId,
             proofXml: response.proofXml,
             specificationVersion: response.specificationVersion,
+            directoryServerTransactionId: response.directoryServerTransactionId,
           },
         },
         {
@@ -223,7 +226,7 @@ const payerAuthActions = (response) => {
         },
         {
           action: Constants.SET_CUSTOM_FIELD,
-          name: Constants.ISV_PAYER_AUTHETICATION_TRANSACTION_ID,
+          name: Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID,
           value: response.isv_payerAuthenticationTransactionId,
         },
         {
@@ -274,17 +277,17 @@ const payerEnrollActions = (response, updatePaymentObj) => {
         actions: [
           {
             action: Constants.SET_CUSTOM_FIELD,
-            name: Constants.ISV_PAYER_AUTHETICATION_ENROLL_TRANSACTION_ID,
+            name: Constants.ISV_PAYER_AUTHENTICATION_ENROLL_TRANSACTION_ID,
             value: response.transactionId,
           },
           {
             action: Constants.SET_CUSTOM_FIELD,
-            name: Constants.ISV_PAYER_AUTHETICATION_ENROLL_HTTP_CODE,
+            name: Constants.ISV_PAYER_AUTHENTICATION_ENROLL_HTTP_CODE,
             value: response.httpCode,
           },
           {
             action: Constants.SET_CUSTOM_FIELD,
-            name: Constants.ISV_PAYER_AUTHETICATION_ENROLL_STATUS,
+            name: Constants.ISV_PAYER_AUTHENTICATION_ENROLL_STATUS,
             value: response.status,
           },
         ],
@@ -294,7 +297,7 @@ const payerEnrollActions = (response, updatePaymentObj) => {
         isv_payerAuthenticationTransactionId = response.data.consumerAuthenticationInformation.authenticationTransactionId;
         action.actions.push({
           action: Constants.SET_CUSTOM_FIELD,
-          name: Constants.ISV_PAYER_AUTHETICATION_TRANSACTION_ID,
+          name: Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID,
           value: isv_payerAuthenticationTransactionId,
         });
         if (Constants.ISV_CAPTURE_CONTEXT_SIGNATURE in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature) {
@@ -402,6 +405,7 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
           specificationVersion: paymentResponse.data.consumerAuthenticationInformation.specificationVersion,
           acsurl: paymentResponse.data.consumerAuthenticationInformation.acsUrl,
           authenticationTransactionId: paymentResponse.data.consumerAuthenticationInformation.authenticationTransactionId,
+          directoryServerTransactionId: paymentResponse.data.consumerAuthenticationInformation.directoryServerTransactionId,
         };
         actions = payerAuthActions(payerAuthenticationData);
         response = {

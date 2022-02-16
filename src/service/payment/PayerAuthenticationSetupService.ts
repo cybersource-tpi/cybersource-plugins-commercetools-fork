@@ -43,7 +43,7 @@ const payerAuthSetupResponse = async (payment, cardTokens) => {
       clientReferenceInformation.partner = clientReferenceInformationpartner;
       requestObj.clientReferenceInformation = clientReferenceInformation;
 
-      if (Constants.ISV_SAVED_TOKEN in payment.custom.fields) {
+      if (Constants.ISV_SAVED_TOKEN in payment.custom.fields && Constants.STRING_EMPTY != payment.custom.fields.isv_savedToken) {
         var paymentInformation = new restApi.Riskv1authenticationsetupsPaymentInformation();
         var paymentInformationCustomer = new restApi.Riskv1authenticationsetupsPaymentInformationCustomer();
         paymentInformationCustomer.id = cardTokens.customerTokenId;

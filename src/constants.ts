@@ -226,11 +226,11 @@ export abstract class Constants {
   static readonly ISV_MASKED_PAN = 'isv_maskedPan';
   static readonly ISV_PAREQ = 'isv_payerAuthenticationPaReq';
   static readonly ISV_PAYMENT_APPLE_PAY_SESSION_DATA = 'isv_applePaySessionData';
-  static readonly ISV_PAYER_AUTHETICATION_ENROLL_HTTP_CODE = 'isv_payerEnrollHttpCode';
-  static readonly ISV_PAYER_AUTHETICATION_ENROLL_TRANSACTION_ID = 'isv_payerEnrollTransactionId';
-  static readonly ISV_PAYER_AUTHETICATION_ENROLL_STATUS = 'isv_payerEnrollStatus';
+  static readonly ISV_PAYER_AUTHENTICATION_ENROLL_HTTP_CODE = 'isv_payerEnrollHttpCode';
+  static readonly ISV_PAYER_AUTHENTICATION_ENROLL_TRANSACTION_ID = 'isv_payerEnrollTransactionId';
+  static readonly ISV_PAYER_AUTHENTICATION_ENROLL_STATUS = 'isv_payerEnrollStatus';
   static readonly ISV_PAYER_AUTHENTICATION_REQUIRED = 'isv_payerAuthenticationRequired';
-  static readonly ISV_PAYER_AUTHETICATION_TRANSACTION_ID = 'isv_payerAuthenticationTransactionId';
+  static readonly ISV_PAYER_AUTHENTICATION_TRANSACTION_ID = 'isv_payerAuthenticationTransactionId';
   static readonly ISV_PAYER_AUTHENTICATION_VALIDATE_RESULT = 'isv_payments_payer_authentication_validate_result';
   static readonly ISV_PAYMENTS_CUSTOMER_TOKENS = 'isv_payments_customer_tokens';
   static readonly ISV_PAYMENT_FAILURE = 'isv_payment_failure';
