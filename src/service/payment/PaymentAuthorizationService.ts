@@ -97,7 +97,7 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
           var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
           consumerAuthenticationInformation.referenceId = payment.custom.fields.isv_cardinalReferenceId;
           consumerAuthenticationInformation.acsWindowSize = Constants.ISV_PAYMENT_ACS_WINDOW_SIZE;
-          consumerAuthenticationInformation.returnUrl = process.env.CONFIG_3DS_RETURN_URL + '/sunriseSpa';
+          consumerAuthenticationInformation.returnUrl = process.env.ISV_PAYMENT_3DS_RETURN_URL + '/sunriseSpa';
           requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
       } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {

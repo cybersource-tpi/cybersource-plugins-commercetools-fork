@@ -195,6 +195,7 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
           enrollServiceResponse.cardinalReferenceId = cardinalReferenceId;
           enrollResponse = paymentService.payerEnrollActions(enrollServiceResponse, updatePaymentObj);
           enrollAuthResponse = paymentService.getAuthResponse(enrollServiceResponse, null);
+          console.log(enrollAuthResponse);
           if (Constants.VAL_ZERO < enrollAuthResponse.actions.length) {
             enrollAuthResponse.actions.forEach((i) => {
               enrollResponse.actions.push(i);
@@ -424,14 +425,14 @@ const applePaySessionHandler = async (fields) => {
   let applePaySession: any;
   let errorFlag = false;
   try {
-    cert = process.env.CONFIG_APPLE_PAY_CERTIFICATE_PATH;
-    key = process.env.CONFIG_APPLE_PAY_KEY_PATH;
+    cert = process.env.ISV_PAYMENT_APPLE_PAY_CERTIFICATE_PATH;
+    key = process.env.ISV_PAYMENT_APPLE_PAY_KEY_PATH;
     httpsAgent = new https.Agent({
       rejectUnauthorized: false,
       cert: fs.readFileSync(cert),
       key: fs.readFileSync(key),
     });
-    domainName = process.env.CONFIG_TARGET_ORIGIN;
+    domainName = process.env.ISV_PAYMENT_TARGET_ORIGIN;
     domainName = domainName.replace(Constants.DOMAIN_REGEX, Constants.STRING_EMPTY);
     body = {
       merchantIdentifier: process.env.ISV_PAYMENT_APPLE_PAY_MERCHANT_ID,

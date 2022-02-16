@@ -31,7 +31,7 @@ const keys = async () => {
     // eslint-disable-next-line no-var
     var requestObj = new restApi.GeneratePublicKeyRequest();
     requestObj.encryptionType = Constants.ISV_PAYMENT_ENCRYPTION_TYPE;
-    requestObj.targetOrigin = process.env.CONFIG_TARGET_ORIGIN;
+    requestObj.targetOrigin = process.env.ISV_PAYMENT_TARGET_ORIGIN;
     const instance = new restApi.KeyGenerationApi(configObject, apiClient);
     return await new Promise(function (resolve, reject) {
       instance.generatePublicKey(format, requestObj, function (error, data, response) {
