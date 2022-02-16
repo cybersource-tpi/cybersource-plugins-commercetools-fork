@@ -209,11 +209,14 @@ const payerAuthActions = (response) => {
             authorizationAllowed: true,
             authenticationRequired: true,
             xid: response.xid,
-            authenticationTransactionId: response.isv_payerAuthenticationTransactionId,
+            paReq: response.pareq,
+            acsUrl: response.acsurl,
+            authenticationTransactionId: response.authenticationTransactionId,
             veresEnrolled: response.veresEnrolled,
             cardinalReferenceId: response.cardinalId,
             proofXml: response.proofXml,
             specificationVersion: response.specificationVersion,
+            directoryServerTransactionId: response.directoryServerTransactionId,
           },
         },
         {
@@ -402,6 +405,7 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
           specificationVersion: paymentResponse.data.consumerAuthenticationInformation.specificationVersion,
           acsurl: paymentResponse.data.consumerAuthenticationInformation.acsUrl,
           authenticationTransactionId: paymentResponse.data.consumerAuthenticationInformation.authenticationTransactionId,
+          directoryServerTransactionId: paymentResponse.data.consumerAuthenticationInformation.directoryServerTransactionId,
         };
         actions = payerAuthActions(payerAuthenticationData);
         response = {
