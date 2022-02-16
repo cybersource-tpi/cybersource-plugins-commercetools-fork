@@ -151,7 +151,7 @@ app.post('/api/extension/payment/create', async (req, res) => {
       paymentObj = req.body.resource.obj;
       paymentMethod = paymentObj.paymentMethodInfo.method;
       if (paymentMethod == Constants.CREDIT_CARD || paymentMethod == Constants.CC_PAYER_AUTHENTICATION) {
-        if (Constants.ISV_SAVED_TOKEN in paymentObj.custom.fields) {
+        if (Constants.ISV_SAVED_TOKEN in paymentObj.custom.fields && Constants.STRING_EMPTY != paymentObj.custom.fields.isv_savedToken) {
           actions = paymentService.fieldMapper(paymentObj.custom.fields);
           response = {
             actions: actions,
@@ -216,7 +216,7 @@ app.post('/api/extension/payment/update', async (req, res) => {
       if (Constants.CC_PAYER_AUTHENTICATION == paymentMethod && Constants.VAL_ZERO == updatePaymentObj.transactions.length) {
         if (!(Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields)) {
           updateResponse = await paymentHandler.getPayerAuthSetUpResponse(updatePaymentObj);
-        } else if (!(Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID in updatePaymentObj.custom.fields) && Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields) {
+        } else if (!(Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID in updatePaymentObj.custom.fields) && Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_cardinalReferenceId) {
           updateResponse = await paymentHandler.getPayerAuthEnrollResponse(updatePaymentObj);
         }
       }
@@ -268,7 +268,8 @@ app.post('/api/extension/customer/update', async (req, res) => {
       Constants.STRING_OBJ in req.body.resource &&
       Constants.STRING_CUSTOM in req.body.resource.obj &&
       Constants.STRING_FIELDS in req.body.resource.obj.custom &&
-      Constants.ISV_TOKENS in req.body.resource.obj.custom.fields
+      Constants.ISV_TOKENS in req.body.resource.obj.custom.fields &&
+      Constants.STRING_EMPTY != req.body.resource.obj.custom.fields.isv_tokens
     ) {
       tokensToUpdate = req.body.resource.obj.custom.fields.isv_tokens[Constants.VAL_ZERO];
       authTokens = req.body.resource.obj.custom.fields.isv_tokens;
