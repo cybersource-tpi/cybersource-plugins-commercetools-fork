@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import paymentService from '../../utils/PaymentService';
 import {fieldMapperFields, fieldMapperFieldObject,getOMServiceResponsePaymentResponse,getOMServiceResponsePaymentResponseObject,getOMServiceResponseTransactionDetail,visaCardDetailsActionVisaCheckoutData, getCapturedAmountRefundPaymentObj} from '../const/PaymentServiceConst';
-import {getAuthResponsePaymentPendingResponse,getAuthResponsePaymentCompleteResponse, getAuthResponsePaymentSuccessResponse, getAuthResponsePaymentResponse, getAuthResponsePaymentDeclinedResponse,getAuthResponsePaymentResponseObject,getAuthResponseTransactionDetail} from '../const/PaymentServiceConst';
+import {getAuthResponsePaymentPendingResponse,getAuthResponsePaymentCompleteResponse,  getAuthResponsePaymentResponse, getAuthResponsePaymentDeclinedResponse,getAuthResponsePaymentResponseObject,getAuthResponseTransactionDetail} from '../const/PaymentServiceConst';
 
 test.serial('Field mapping for flex keys', async(t)=>{
     const result = await paymentService.fieldMapper(fieldMapperFields);
@@ -71,15 +71,6 @@ test.serial('Check response of get auth response object when auth is declined', 
     t.is(result.actions[1].action, 'changeTransactionState');
     t.is(result.actions[1].state, 'Failure');
  })
-
- test.serial('Check response of get auth response object when authenthentication is successful', async(t)=>{
-    const result = await paymentService.getAuthResponse(getAuthResponsePaymentSuccessResponse, null);
-    t.is(result.actions[0].action, 'setCustomField');
-    t.is(result.actions[0].name, 'isv_payerAuthenticationTransactionId');
-    t.is(result.actions[1].action, 'setCustomField');
-    t.is(result.actions[1].name, 'isv_payerAuthenticationRequired');
-    t.is(result.actions[1].value, false);
-})
 
 test.serial('Check response of get auth response object when payer auth setup is completed', async(t)=>{
     const result = await paymentService.getAuthResponse(getAuthResponsePaymentCompleteResponse, null);

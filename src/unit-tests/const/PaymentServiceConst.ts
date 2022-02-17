@@ -70,8 +70,7 @@ export const fieldMapperFieldObject =   {
     state: 'Initial'
   }
 
-  export const getAuthResponsePaymentResponse =
-  {
+  export const getAuthResponsePaymentResponse ={
     "httpCode":201,
     "transactionId":"6424036020586494403954",
     "status":"AUTHORIZED",
@@ -154,8 +153,7 @@ export const fieldMapperFieldObject =   {
       }
     }
 
-    export const getAuthResponsePaymentResponseObject =
-  {
+  export const getAuthResponsePaymentResponseObject ={
     "httpCode":201,
     "transactionId":"6424036020586494403954",
     "status":"AUTHORIZED_PENDING_REVIEW",

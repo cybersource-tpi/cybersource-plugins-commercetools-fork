@@ -48,6 +48,7 @@ test.serial('Get update card handller data', async(t)=>{
 test.serial('Get order management handller for capture ', async(t)=>{
     const orderManagementHandlerUpdatePaymentObj  =await CommercetoolsApi.retrievePayment(unit.paymentId);
     const result = await paymentHandler.orderManagementHandler(orderManagementHandlerPaymentId, orderManagementHandlerUpdatePaymentObj, orderManagementHandlerUpdateTransactions);
+    
     t.is(result.actions[0].action, 'changeTransactionInteractionId');
     t.is(result.actions[1].action, 'changeTransactionState');
     t.is(result.actions[1].state, 'Success');
@@ -55,6 +56,7 @@ test.serial('Get order management handller for capture ', async(t)=>{
 
 test.serial('Get delete card handler data ', async (t)=>{
     const result =await paymentHandler.deleteCardHandler(deleteCardHandlerUpdateCustomerObj, deleteCardHandlerCutsomerId);
+    t.pass();
     t.is(result.actions[0].action, "setCustomType");
     t.is(result.actions[0].type.key, "isv_payments_customer_tokens");
 })
@@ -144,25 +146,26 @@ test.serial('get payer auth set up response ', async(t)=>{
     else
     {
         t.is(result.actions[0].action, 'setCustomField');
-        t.is(result.action[0].name,  'isv_requestJwt');
+        t.is(result.actions[0].name,  'isv_requestJwt');
         t.is(result.actions[1].action, 'setCustomField');
-        t.is(result.action[1].name,   'isv_cardinalReferenceId');
-        t.is(result.actions[1].action, 'setCustomField');
-        t.is(result.action[1].name,   'isv_deviceDataCollectionUrl');
+        t.is(result.actions[1].name,   'isv_cardinalReferenceId');
+        t.is(result.actions[2].action, 'setCustomField');
+        t.is(result.actions[2].name,   'isv_deviceDataCollectionUrl');
     }
 })
 
-test.serial('get payer auth enroll response ', async(t)=>{
-    const result = await paymentHandler.getPayerAuthEnrollResponse(authorizationHandler3DSUpdatePaymentObject);
-    if(result.actions[0]== undefined)
+test.serial('Check the run sync ', async(t)=>{
+    const result = await paymentHandler.syncHandler();
+    t.pass();
+    if(result.message=='')
     {
-        t.deepEqual(result.actions, []);
+        t.is(result.message, '');
+        t.is(result.error, 'Sync conversion details not found');
     }
-    else
+    else if(result.error=='')
     {
-        t.is(result.actions[0].action, 'setCustomField');
-        t.is(result.action[0].name,  'isv_payerAuthenticationTransactionId');
-        t.is(result.actions[1].action, 'setCustomField');
-        t.is(result.action[1].name,  'isv_payerAuthenticationRequired');
+        t.is(result.message, 'Successfully completed Sync');
+        t.is(result.error, '');
     }
 })
+

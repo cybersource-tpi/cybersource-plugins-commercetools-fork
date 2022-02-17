@@ -1,5 +1,4 @@
 /* eslint-disable import/order */
-//import {payment} from '../const/PaymentAuthorizationServiceConst'
 import googlePay from '../JSON/googlePay.json';
 import applePay from '../JSON/applePay.json';
 import creditCard from '../JSON/creditCard.json';
@@ -1581,3 +1580,5 @@ export const deleteCardHandlerUpdateCustomerObj = {
         interfaceInteractions: [],
         anonymousId: '033cd1c3-801d-4d2b-9729-fef0064dd3be'
       }
+
+   
