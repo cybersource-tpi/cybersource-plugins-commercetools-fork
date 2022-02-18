@@ -70,8 +70,7 @@ export const fieldMapperFieldObject =   {
     state: 'Initial'
   }
 
-  export const getAuthResponsePaymentResponse =
-  {
+  export const getAuthResponsePaymentResponse ={
     "httpCode":201,
     "transactionId":"6424036020586494403954",
     "status":"AUTHORIZED",
@@ -154,8 +153,7 @@ export const fieldMapperFieldObject =   {
       }
     }
 
-    export const getAuthResponsePaymentResponseObject =
-  {
+  export const getAuthResponsePaymentResponseObject ={
     "httpCode":201,
     "transactionId":"6424036020586494403954",
     "status":"AUTHORIZED_PENDING_REVIEW",
@@ -328,7 +326,7 @@ export const fieldMapperFieldObject =   {
           "code":"a9cf118c-8a3f-4225-8190-6d155d357b22",
           "partner":
           {
-            "solutionId":"0RX6X1BO"
+            "solutionId":"YBBY8SIG"
           }
         },
         "consumerAuthenticationInformation":
@@ -370,7 +368,7 @@ export const fieldMapperFieldObject =   {
           "code":"5bfd0e66-7243-4359-9891-7fce264aaa30",
           "partner":
           {
-            "solutionId":"0RX6X1BO"
+            "solutionId":"YBBY8SIG"
           }
         },
         "consumerAuthenticationInformation":
