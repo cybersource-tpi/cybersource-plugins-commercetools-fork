@@ -4,6 +4,7 @@ import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
 const refundResponse = async (payment, captureId, updateTransactions) => {
+  let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
   let paymentResponse = {
@@ -12,15 +13,14 @@ const refundResponse = async (payment, captureId, updateTransactions) => {
     status: null,
     message: null,
   };
-  let runEnvironment: any;
   try {
     if (null != captureId && null != payment && null != updateTransactions) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.RefundPaymentRequest();
       if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
       } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,

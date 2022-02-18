@@ -4,6 +4,7 @@ import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
 const updateTokenResponse = async (tokens) => {
+  let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
   let customerTokenId: null;
@@ -14,7 +15,6 @@ const updateTokenResponse = async (tokens) => {
     card: null,
     message: null,
   };
-  let runEnvironment: any;
   try {
     if (null != tokens && Constants.STRING_VALUE in tokens && Constants.STRING_PAYMENT_TOKEN in tokens && Constants.STRING_CARD_EXPIRY_MONTH in tokens && Constants.STRING_CARD_EXPIRY_YEAR in tokens) {
       customerTokenId = tokens.value;
@@ -22,9 +22,9 @@ const updateTokenResponse = async (tokens) => {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.PatchCustomerPaymentInstrumentRequest();
       if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
       } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,

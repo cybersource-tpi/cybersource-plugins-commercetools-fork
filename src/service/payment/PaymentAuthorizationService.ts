@@ -4,14 +4,14 @@ import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
 const authorizationResponse = async (payment, cart, service, cardTokens) => {
+  let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
+  let actionList = new Array();
   let j = Constants.VAL_ZERO;
   let totalAmount = Constants.VAL_FLOAT_ZERO;
   let unitPrice = Constants.VAL_FLOAT_ZERO;
   let shippingCost = Constants.VAL_FLOAT_ZERO;
-  let actionList = new Array();
-  let runEnvironment: any;
   let paymentResponse = {
     httpCode: null,
     transactionId: null,
@@ -24,9 +24,9 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CreatePaymentRequest();
       if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
       } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,

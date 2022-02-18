@@ -4,23 +4,23 @@ import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
 const deleteCustomerToken = async (customerTokenObj) => {
+  let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
+  let opts = new Array();
   let customerTokenDeleteResponse = {
     httpCode: null,
     message: Constants.STRING_EMPTY,
     deletedToken: Constants.STRING_EMPTY,
   };
-  let opts = new Array();
-  let runEnvironment: any;
   try {
     if (null != customerTokenObj) {
       var customerTokenId = customerTokenObj.value;
       var paymentInstrumentTokenId = customerTokenObj.paymentToken;
       if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
       } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
