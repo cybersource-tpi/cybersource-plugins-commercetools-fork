@@ -4,6 +4,7 @@ import { Constants } from '../../constants';
 import paymentService from '../../utils/PaymentService';
 
 const getVisaCheckoutData = async (paymentResponse) => {
+  let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
   let visaCheckoutData = {
@@ -13,15 +14,14 @@ const getVisaCheckoutData = async (paymentResponse) => {
     cardFieldGroup: null,
     message: null,
   };
-  let runEnvironment: any;
   try {
     if (null != paymentResponse) {
       const id = paymentResponse.transactionId;
       if (null != id) {
         if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-          runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+          runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
         } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-          runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+          runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
         }
         const configObject = {
           authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,

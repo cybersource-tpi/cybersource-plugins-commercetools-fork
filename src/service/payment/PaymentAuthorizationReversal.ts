@@ -4,6 +4,8 @@ import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
 const authReversalResponse = async (payment, cart, authReversalId) => {
+  let runEnvironment: any;
+  let cartData: any;
   let errorData: any;
   let exceptionData: any;
   let j = Constants.VAL_ZERO;
@@ -15,15 +17,14 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
     status: null,
     message: null,
   };
-  let runEnvironment: any;
   try {
-    if (null != authReversalId && null != payment && null != cart) {
+    if (null != authReversalId && null != payment) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.AuthReversalRequest();
       if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
       } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
         authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
@@ -58,28 +59,31 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
 
       var orderInformation = new restApi.Ptsv2paymentsidreversalsOrderInformation();
 
-      orderInformation.lineItems = [];
-      cart.lineItems.forEach((lineItem) => {
-        var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
-        const unitPrice = paymentService.convertCentToAmount(lineItem.price.value.centAmount);
-        orderInformationLineItems.productName = lineItem.name.en;
-        orderInformationLineItems.quantity = lineItem.quantity;
-        orderInformationLineItems.productSku = lineItem.variant.sku;
-        orderInformationLineItems.productCode = lineItem.productId;
-        orderInformationLineItems.unitPrice = unitPrice;
-        orderInformation.lineItems[j] = orderInformationLineItems;
-        j++;
-      });
-      if (Constants.SHIPPING_INFO in cart) {
-        var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
-        shippingCost = paymentService.convertCentToAmount(cart.shippingInfo.price.centAmount);
-        orderInformationLineItems.productName = cart.shippingInfo.shippingMethodName;
-        orderInformationLineItems.quantity = Constants.VAL_ONE;
-        orderInformationLineItems.productSku = Constants.SHIPPING_AND_HANDLING;
-        orderInformationLineItems.productCode = Constants.SHIPPING_AND_HANDLING;
-        orderInformationLineItems.unitPrice = shippingCost;
-        orderInformationLineItems.tax = cart.shippingInfo.taxRate.amount;
-        orderInformation.lineItems[j] = orderInformationLineItems;
+      if (null != cart && Constants.STRING_RESULTS in cart && Constants.VAL_ZERO < cart.results.length) {
+        cartData = cart.results[Constants.VAL_ZERO];
+        orderInformation.lineItems = [];
+        cartData.lineItems.forEach((lineItem) => {
+          var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
+          const unitPrice = paymentService.convertCentToAmount(lineItem.price.value.centAmount);
+          orderInformationLineItems.productName = lineItem.name.en;
+          orderInformationLineItems.quantity = lineItem.quantity;
+          orderInformationLineItems.productSku = lineItem.variant.sku;
+          orderInformationLineItems.productCode = lineItem.productId;
+          orderInformationLineItems.unitPrice = unitPrice;
+          orderInformation.lineItems[j] = orderInformationLineItems;
+          j++;
+        });
+        if (Constants.SHIPPING_INFO in cartData) {
+          var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
+          shippingCost = paymentService.convertCentToAmount(cartData.shippingInfo.price.centAmount);
+          orderInformationLineItems.productName = cartData.shippingInfo.shippingMethodName;
+          orderInformationLineItems.quantity = Constants.VAL_ONE;
+          orderInformationLineItems.productSku = Constants.SHIPPING_AND_HANDLING;
+          orderInformationLineItems.productCode = Constants.SHIPPING_AND_HANDLING;
+          orderInformationLineItems.unitPrice = shippingCost;
+          orderInformationLineItems.tax = cartData.shippingInfo.taxRate.amount;
+          orderInformation.lineItems[j] = orderInformationLineItems;
+        }
       }
       requestObj.orderInformation = orderInformation;
 

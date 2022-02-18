@@ -5,6 +5,7 @@ import { Constants } from '../../constants';
 import paymentService from '../../utils/PaymentService';
 
 const conversionDetails = async () => {
+  let runEnvironment: any;
   let startTime: any;
   let endTime: any;
   let organizationId: any;
@@ -17,13 +18,12 @@ const conversionDetails = async () => {
     message: null,
     data: null,
   };
-  let runEnvironment: any;
   try {
     const apiClient = new restApi.ApiClient();
     if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-      runEnvironment = Constants.CONFIG_TEST_ENVIRONMENT;
+      runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
     } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-      runEnvironment = Constants.CONFIG_PRODUCTION_ENVIRONMENT;
+      runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
     }
     const configObject = {
       authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,

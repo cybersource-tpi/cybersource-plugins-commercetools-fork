@@ -49,9 +49,9 @@ const retrieveCartByAnonymousId = async (anonymousId) => {
   let anonymousIdResponse: any;
   let client: any;
   let requestBuilder: any;
-  let uri: string;
   let channelsRequest: any;
   let exceptionData: any;
+  let uri: string;
   try {
     if (null != anonymousId) {
       client = getClient();
@@ -95,9 +95,9 @@ const retrieveCartByCustomerId = async (customerId) => {
   let customerIdResponse: any;
   let client: any;
   let requestBuilder: any;
-  let uri: string;
   let channelsRequest: any;
   let exceptionData: any;
+  let uri: string;
   try {
     if (null != customerId) {
       client = getClient();
@@ -141,9 +141,9 @@ const retrieveCartByPaymentId = async (paymentId) => {
   let paymentIdResponse: any;
   let client: any;
   let requestBuilder: any;
-  let uri: string;
   let channelsRequest: any;
   let exceptionData: any;
+  let uri: string;
   try {
     if (null != paymentId) {
       client = getClient();
@@ -183,9 +183,9 @@ const retrievePayment = async (paymentId) => {
   let paymentResponse: any;
   let client: any;
   let requestBuilder: any;
-  let uri: string;
   let channelsRequest: any;
   let exceptionData: any;
+  let uri: string;
   try {
     client = getClient();
     if (null != client) {
@@ -221,9 +221,9 @@ const addTransaction = async (transactionObject) => {
   let transactionResonse: any;
   let client: any;
   let requestBuilder: any;
-  let uri: string;
   let channelsRequest: any;
   let exceptionData: any;
+  let uri: string;
   try {
     if (null != transactionObject) {
       client = getClient();
@@ -277,9 +277,9 @@ const getOrders = async () => {
   let orderResponse: any;
   let client: any;
   let requestBuilder: any;
-  let uri: string;
   let channelsRequest: any;
   let exceptionData: any;
+  let uri: string;
   try {
     client = getClient();
     if (null != client) {
@@ -315,13 +315,13 @@ const getOrders = async () => {
   return orderResponse;
 };
 
-const updateCartbyPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
+const updateCartByPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
   let orderResponse: any;
   let client: any;
   let requestBuilder: any;
-  let uri: string;
   let channelsRequest: any;
   let exceptionData: any;
+  let uri: string;
   try {
     if (null != cartId && null != cartVersion && null != visaCheckoutData) {
       client = getClient();
@@ -382,10 +382,10 @@ const setCustomerTokens = async (tokenCustomerId, paymentInstrumentId, instrumen
   let customerInfo: any;
   let client: any;
   let tokenData: any;
-  let stringTokenData: string;
   let isvTokens: any;
   let mappedTokens: any;
   let exceptionData: any;
+  let stringTokenData: string;
   let length: number;
   let tokenArray: Array<string>;
   let customerId = null;
@@ -682,6 +682,7 @@ const syncVisaCardDetails = async (visaUpdateObject) => {
   }
   return syncVisaCardDetailsResponse;
 };
+
 const syncAddTransaction = async (syncUpdateObject) => {
   let syncAddTransactionResponse: any;
   let client: any;
@@ -746,7 +747,7 @@ export default {
   retrievePayment,
   addTransaction,
   getOrders,
-  updateCartbyPaymentId,
+  updateCartByPaymentId,
   setCustomerTokens,
   getCustomer,
   setCustomType,

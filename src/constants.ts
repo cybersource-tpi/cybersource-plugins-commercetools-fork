@@ -32,7 +32,7 @@ export abstract class Constants {
   static readonly FUNC_GET_CAPTURED_AMOUNT = 'FuncGetCapturedAmount';
   static readonly FUNC_GET_CARD_WITH_3DS_RESPONSE = 'FuncgetCardWith3dsResponse';
   static readonly FUNC_GET_CARD_WITHOUT_3DS_RESPONSE = 'FuncgetCardWithout3dsResponse';
-  static readonly FUNC_GET_CART_DETAILS_BY_PAYMENTID = 'FuncGetCartDetailsByPaymentId';
+  static readonly FUNC_GET_CART_DETAILS_BY_PAYMENT_ID = 'FuncGetCartDetailsByPaymentId';
   static readonly FUNC_GET_CLIENT = 'FuncGetClient';
   static readonly FUNC_GET_CUSTOMER = 'FuncGetCustomer';
   static readonly FUNC_GET_ORDERS = 'FuncGetOrders';
@@ -40,7 +40,7 @@ export abstract class Constants {
   static readonly FUNC_GET_PAYER_AUTH_SETUP_RESPONSE = 'FuncGetPayerAuthSetUpResponse';
   static readonly FUNC_GET_SERVICE_RESPONSE = 'FuncGetOMServiceResponse';
   static readonly FUNC_GET_VISA_CHECKOUT_DATA = 'FuncGetVisaCheckoutData';
-  static readonly FUNC_GOOGLE_PAY_RESPONSE = 'FuncGooglePayRespone';
+  static readonly FUNC_GOOGLE_PAY_RESPONSE = 'FuncGooglePayResponse';
   static readonly FUNC_KEYS = 'FuncKeys';
   static readonly FUNC_PAYER_AUTH_ACTIONS = 'FuncPayerAuthActions';
   static readonly FUNC_PAYER_ENROLL_ACTIONS = 'FuncPayerEnrollActions';
@@ -58,7 +58,7 @@ export abstract class Constants {
   static readonly FUNC_SET_CUTSOM_TYPE = 'FuncSetCustomType';
   static readonly FUNC_SET_TRANSACTION_ID = 'FuncSetTransactionId';
   static readonly FUNC_SYNC_HANDLER = 'FuncSyncHandler';
-  static readonly FUNC_UPDATE_CART_BY_PAYMENT_ID = 'FuncUpdateCartbyPaymentId';
+  static readonly FUNC_UPDATE_CART_BY_PAYMENT_ID = 'FuncUpdateCartByPaymentId';
   static readonly FUNC_UPDATE_CARD_HANDLER = 'FuncUpdateCardHandler';
   static readonly FUNC_UPDATE_DECISION_SYNC = 'FuncUpdateDecisionSync';
   static readonly FUNC_UPDATE_TOKEN_RESPONSE = 'FuncUpdateTokenResponse';
@@ -84,8 +84,8 @@ export abstract class Constants {
   static readonly VAL_TWO_THOUSAND = 2000;
 
   //Payments data
-  static readonly CONFIG_TEST_ENVIRONMENT = 'apitest.cybersource.com';
-  static readonly CONFIG_PRODUCTION_ENVIRONMENT = 'api.cybersource.com';
+  static readonly ISV_PAYMENT_TEST_ENVIRONMENT = 'apitest.cybersource.com';
+  static readonly ISV_PAYMENT_PRODUCTION_ENVIRONMENT = 'api.cybersource.com';
   static readonly TEST_ENVIRONMENT = 'TEST';
   static readonly LIVE_ENVIRONMENT = 'PRODUCTION';
   static readonly ISV_PAYMENT_APPLE_PAY_INITIATIVE = 'web';
@@ -96,11 +96,10 @@ export abstract class Constants {
   static readonly ISV_PAYMENT_ENCRYPTION_TYPE = 'RsaOaep';
   static readonly ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION = '012';
   static readonly ISV_PAYMENT_JWT_FORMAT = 'JWT';
-  static readonly ISV_PAYMENT_PARTNER_SOLUTION_ID = '0RX6X1BO';
+  static readonly ISV_PAYMENT_PARTNER_SOLUTION_ID = 'YBBY8SIG';
   static readonly ISV_PAYMENT_TOKEN_ACTION_TYPES = 'customer,paymentInstrument,instrumentIdentifier';
   static readonly ISV_PAYMENT_TOKEN_ACTION_TYPES_CUSTOMER_EXISTS = 'paymentInstrument,instrumentIdentifier';
   static readonly ISV_PAYMENT_TOKEN_CREATE = 'TOKEN_CREATE';
-  static readonly ISV_PAYMENT_TRANSACTION_MODE = 'S';
   static readonly ISV_PAYMENT_ACS_WINDOW_SIZE = '01';
   static readonly ISV_PAYMENT_VALIDATE_CONSUMER_AUTHENTICATION = 'VALIDATE_CONSUMER_AUTHENTICATION';
 
@@ -113,7 +112,6 @@ export abstract class Constants {
   static readonly HTTP_CODE_TWO_HUNDRED_FOUR = 204;
 
   //Payment response
-  static readonly API_STATUS_AUTHENTICATION_SUCCESSFUL = 'AUTHENTICATION_SUCCESSFUL';
   static readonly API_STATUS_AUTHORIZED = 'AUTHORIZED';
   static readonly API_STATUS_AUTHORIZED_RISK_DECLINED = 'AUTHORIZED_RISK_DECLINED';
   static readonly API_STATUS_COMPLETED = 'COMPLETED';
@@ -150,8 +148,8 @@ export abstract class Constants {
   static readonly REFUND_ID = 'refundId';
   static readonly REFUND_AMOUNT = 'refundAmount';
   static readonly SHIPPING_AND_HANDLING = 'shipping_and_handling';
+  static readonly SHIPPING_INFO = 'shippingInfo';
   static readonly STRING_BODY = 'body';
-  static readonly STRING_SYNC_CAPTURE_NAME = 'ics_bill';
   static readonly STRING_CARD = 'card';
   static readonly STRING_CARD_EXPIRY_MONTH = 'cardExpiryMonth';
   static readonly STRING_CARD_EXPIRY_YEAR = 'cardExpiryYear';
@@ -170,16 +168,17 @@ export abstract class Constants {
   static readonly STRING_GOOGLE = 'google';
   static readonly STRING_HOURS = 'hours';
   static readonly STRING_ID = 'id';
-  static readonly SHIPPING_INFO = 'shippingInfo';
   static readonly STRING_OBJ = 'obj';
   static readonly STRING_PAYMENT_TOKEN = 'paymentToken';
   static readonly STRING_QUERY = 'query';
   static readonly STRING_RESOURCE = 'resource';
   static readonly STRING_RESPONSE = 'response';
   static readonly STRING_RESPONSE_STATUS = 'status';
+  static readonly STRING_RESULTS = 'results';
   static readonly STRING_SUCCESS = 'success';
   static readonly STRING_SYNC_AUTH_NAME = 'ics_auth';
   static readonly STRING_SYNC_AUTH_REVERSAL_NAME = 'ics_auth_reversal';
+  static readonly STRING_SYNC_CAPTURE_NAME = 'ics_bill';
   static readonly STRING_SYNC_QUERY = 'submitTimeUtc:[NOW/DAY-1DAY TO NOW/HOUR+1HOUR}';
   static readonly STRING_SYNC_REFUND_NAME = 'ics_credit';
   static readonly STRING_SYNC_SORT = 'submitTimeUtc:desc';
@@ -190,12 +189,12 @@ export abstract class Constants {
   static readonly STRING_VALUE = 'value';
   static readonly STRING_VISA = 'visa';
 
-  static readonly TOKEN_INFORMATION = 'tokenInformation';
-  static readonly VALIDATION = 'validation';
-  static readonly VALIDATION_CALLBACK = 'validationCallback';
   static readonly LOG_ERROR = 'error';
   static readonly LOG_INFO = 'info';
   static readonly LOG_WARN = 'warn';
+  static readonly TOKEN_INFORMATION = 'tokenInformation';
+  static readonly VALIDATION = 'validation';
+  static readonly VALIDATION_CALLBACK = 'validationCallback';
 
   //CT transaction type
   static readonly CT_TRANSACTION_TYPE_AUTHORIZATION = 'Authorization';

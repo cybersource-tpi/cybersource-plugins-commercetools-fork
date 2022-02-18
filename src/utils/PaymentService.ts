@@ -468,11 +468,11 @@ function createResponse(setTransaction, setCustomField, paymentFailure) {
 }
 
 const getOMServiceResponse = (paymentResponse, transactionDetail) => {
-  let response = {};
   let setTransaction: any;
   let setCustomField: any;
   let paymentFailure: any;
   let exceptionData: any;
+  let response = {};
   try {
     if (null != paymentResponse && null != transactionDetail) {
       if (Constants.API_STATUS_PENDING == paymentResponse.status || Constants.API_STATUS_REVERSED == paymentResponse.status) {
@@ -589,9 +589,9 @@ const convertAmountToCent = (amount) => {
 };
 
 const getSubstring = (firstIndex, lastIndex, input) => {
-  let subsString = Constants.STRING_EMPTY;
-  subsString = input.substring(firstIndex, lastIndex);
-  return subsString;
+  let subString = Constants.STRING_EMPTY;
+  subString = input.substring(firstIndex, lastIndex);
+  return subString;
 };
 
 const getEmptyResponse = () => {

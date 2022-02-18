@@ -68,7 +68,7 @@ app.get('/orders', async (req, res) => {
   }
   res.render('orders', {
     count: orderCount,
-    orderlist: orderResult,
+    orderList: orderResult,
     total: total,
     moment: moment,
     amountConversion: paymentService.convertCentToAmount,
@@ -84,12 +84,12 @@ app.get('/paymentDetails', async (req, res) => {
   let cartData: any;
   let exceptionData: any;
   let refundTransaction: any;
+  let authReversalFlag = false;
   let convertedPaymentId = Constants.STRING_EMPTY;
   let pendingCaptureAmount = Constants.VAL_FLOAT_ZERO;
-  let authReversalFlag = false;
+  let refundErrorMessage = Constants.ERROR_MSG_REFUND_AMOUNT;
   orderErrorMessage = Constants.STRING_EMPTY;
   orderSuccessMessage = Constants.STRING_EMPTY;
-  let refundErrorMessage = Constants.ERROR_MSG_REFUND_AMOUNT;
   try {
     if (Constants.STRING_ID in req.query) {
       paymentId = req.query.id;
