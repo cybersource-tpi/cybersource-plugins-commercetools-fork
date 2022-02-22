@@ -213,15 +213,19 @@ export abstract class Constants {
   static readonly ADD_TRANSACTION = 'addTransaction';
   static readonly CHANGE_TRANSACTION_INTERACTION_ID = 'changeTransactionInteractionId';
   static readonly CHANGE_TRANSACTION_STATE = 'changeTransactionState';
-  static readonly ISV_DDC_URL = 'isv_deviceDataCollectionUrl';
   static readonly INVALID_OPERATION = 'InvalidOperation';
   static readonly INVALID_INPUT = 'InvalidInput';
+  static readonly ISV_ACCEPT_HEADER = 'isv_acceptHeader';
   static readonly ISV_ACS_URL = 'isv_payerAuthenticationAcsUrl';
+  static readonly ISV_CARDINAL_REFERENCE_ID = 'isv_cardinalReferenceId';
+  static readonly ISV_DDC_URL = 'isv_deviceDataCollectionUrl';
+  static readonly ISV_DEVICE_FINGERPRINT_ID = 'isv_deviceFingerprintId';
   static readonly ISV_CAPTURE_CONTEXT_SIGNATURE = 'isv_tokenCaptureContextSignature';
   static readonly ISV_CARD_EXPIRY_MONTH = 'isv_cardExpiryMonth';
   static readonly ISV_CARD_EXPIRY_YEAR = 'isv_cardExpiryYear';
   static readonly ISV_CARD_TYPE = 'isv_cardType';
   static readonly ISV_ENROLLMENT_CHECK = 'isv_payments_payer_authentication_enrolment_check';
+  static readonly ISV_IP_ADDRESS = 'isv_customerIpAddress';
   static readonly ISV_MASKED_PAN = 'isv_maskedPan';
   static readonly ISV_PAREQ = 'isv_payerAuthenticationPaReq';
   static readonly ISV_PAYMENT_APPLE_PAY_SESSION_DATA = 'isv_applePaySessionData';
@@ -233,7 +237,6 @@ export abstract class Constants {
   static readonly ISV_PAYER_AUTHENTICATION_VALIDATE_RESULT = 'isv_payments_payer_authentication_validate_result';
   static readonly ISV_PAYMENTS_CUSTOMER_TOKENS = 'isv_payments_customer_tokens';
   static readonly ISV_PAYMENT_FAILURE = 'isv_payment_failure';
-  static readonly ISV_CARDINAL_REFERENCE_ID = 'isv_cardinalReferenceId';
   static readonly ISV_RESPONSE_JWT = 'isv_responseJwt';
   static readonly ISV_SAVED_TOKEN = 'isv_savedToken';
   static readonly ISV_STEPUP_URL = 'isv_stepUpUrl';
@@ -241,6 +244,7 @@ export abstract class Constants {
   static readonly ISV_TOKEN_ALIAS = 'isv_tokenAlias';
   static readonly ISV_TOKEN_VERIFICATION_CONTEXT = 'isv_tokenVerificationContext';
   static readonly ISV_TOKENS = 'isv_tokens';
+  static readonly ISV_USER_AGENT_HEADER = 'isv_userAgentHeader';
   static readonly SET_BILLING_ADDRESS = 'setBillingAddress';
   static readonly SET_CUSTOM_FIELD = 'setCustomField';
   static readonly SET_CUSTOM_TYPE = 'setCustomType';

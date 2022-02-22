@@ -177,7 +177,18 @@ const authorizationResponse = async (payment, cart, service, cardTokens) => {
       requestObj.orderInformation = orderInformation;
 
       var deviceInformation = new restApi.Ptsv2paymentsDeviceInformation();
-      deviceInformation.fingerprintSessionId = payment.custom.fields.isv_deviceFingerprintId;
+      if (Constants.ISV_DEVICE_FINGERPRINT_ID in payment.custom.fields && Constants.STRING_EMPTY != payment.custom.fields.isv_deviceFingerprintId) {
+        deviceInformation.fingerprintSessionId = payment.custom.fields.isv_deviceFingerprintId;
+      }
+      if (Constants.ISV_IP_ADDRESS in payment.custom.fields && Constants.STRING_EMPTY != payment.custom.fields.isv_customerIpAddress) {
+        deviceInformation.ipAddress = payment.custom.fields.isv_customerIpAddress;
+      }
+      if (Constants.ISV_ACCEPT_HEADER in payment.custom.fields && Constants.STRING_EMPTY != payment.custom.fields.isv_acceptHeader) {
+        deviceInformation.httpAcceptBrowserValue = payment.custom.fields.isv_acceptHeader;
+      }
+      if (Constants.ISV_USER_AGENT_HEADER in payment.custom.fields && Constants.STRING_EMPTY != payment.custom.fields.isv_userAgentHeader) {
+        deviceInformation.userAgentBrowserValue = payment.custom.fields.isv_userAgentHeader;
+      }
       requestObj.deviceInformation = deviceInformation;
       const instance = new restApi.PaymentsApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
