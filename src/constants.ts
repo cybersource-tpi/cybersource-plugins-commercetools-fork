@@ -20,9 +20,9 @@ export abstract class Constants {
   static readonly FUNC_CLICK_TO_PAY = 'FuncClickToPayResponse';
   static readonly FUNC_CONVERSION_DETAILS = 'FuncConversionDetails';
   static readonly FUNC_CREATE_RESPONSE = 'FuncCreateResponse';
-  static readonly FUNC_DELETE_CARD_HANDLER = 'FuncDeleteCardHandler';
-  static readonly FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE = 'FuncDeleteCustomerTokenResponse';
   static readonly FUNC_CREATE_ORDER_FROM_CART = 'FuncCreateOrderFromCart';
+  static readonly FUNC_DELETE_CARD_HANDLER = 'FuncDeleteCardHandler';
+  static readonly FUNC_DELETE_CUSTOMER_TOKEN = 'FuncDeleteCustomerToken';
   static readonly FUNC_DELETE_TOKEN = 'FunDeleteToken';
   static readonly FUNC_FAILURE_RESPONSE = 'FuncFailureResponse';
   static readonly FUNC_FIELD_MAPPER = 'FuncFieldMapper';
