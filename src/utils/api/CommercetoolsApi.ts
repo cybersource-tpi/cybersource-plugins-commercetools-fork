@@ -478,12 +478,12 @@ const getCustomer = async (customerId) => {
   return customerResponse;
 };
 
-const setCustomType = async (customerId, fieldsdata) => {
+const setCustomType = async (customerId, fieldsData) => {
   let customResponse: any;
   let customerInfo: any;
   let exceptionData: any;
   try {
-    if (null != customerId && null != fieldsdata) {
+    if (null != customerId && null != fieldsData) {
       const client = getClient();
       if (null != client) {
         const requestBuilder = createRequestBuilder({
@@ -504,7 +504,7 @@ const setCustomType = async (customerId, fieldsdata) => {
                   typeId: Constants.TYPE_ID_TYPE,
                 },
                 fields: {
-                  isv_tokens: fieldsdata,
+                  isv_tokens: fieldsData,
                 },
               },
             ],
