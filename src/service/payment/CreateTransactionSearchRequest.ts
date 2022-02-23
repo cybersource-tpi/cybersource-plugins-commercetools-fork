@@ -31,6 +31,7 @@ const getTransactionSearchResponse = async (query, sort) => {
       requestObj.save = false;
       requestObj.query = query;
       requestObj.limit = Constants.VAL_FIFTY;
+      requestObj.offset = Constants.VAL_FIFTY;
       requestObj.sort = sort;
       const instance = new restApi.SearchTransactionsApi(configObject, apiClient);
       return await new Promise((resolve, reject) => {
