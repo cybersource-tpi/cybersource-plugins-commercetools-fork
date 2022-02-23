@@ -204,7 +204,7 @@ const payerAuthActions = (response) => {
       action = [
         {
           action: Constants.ADD_INTERFACE_INTERACTION,
-          type: { key: Constants.ISV_ENROLLMENT_CHECK },
+          type: { key: Constants.ISV_ENROLMENT_CHECK },
           fields: {
             authorizationAllowed: true,
             authenticationRequired: true,

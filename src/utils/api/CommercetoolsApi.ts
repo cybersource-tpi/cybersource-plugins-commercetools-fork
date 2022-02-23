@@ -512,10 +512,10 @@ const setCustomType = async (customerId, fieldsdata) => {
         };
         customResponse = await client.execute(channelsRequest);
       } else {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUTSOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUSTOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
       }
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUTSOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_CUSTOMER_DETAILS);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUSTOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_CUSTOMER_DETAILS);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -525,7 +525,7 @@ const setCustomType = async (customerId, fieldsdata) => {
     } else {
       exceptionData = Constants.EXCEPTION_MSG_FETCH_ORDER_DETAILS + Constants.STRING_HYPHEN + exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUTSOM_TYPE, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUSTOM_TYPE, Constants.LOG_ERROR, exceptionData);
   }
   if (null != customResponse) {
     customResponse = customResponse.body;
@@ -570,11 +570,11 @@ const updateDecisionSync = async (decisionUpdateObject) => {
     }
   } catch (exception) {
     if (typeof exception === 'string') {
-      exceptionData = Constants.EXCEPTION_MSG_DECISON_SYNC + Constants.STRING_HYPHEN + exception.toUpperCase();
+      exceptionData = Constants.EXCEPTION_MSG_DECISION_SYNC + Constants.STRING_HYPHEN + exception.toUpperCase();
     } else if (exception instanceof Error) {
-      exceptionData = Constants.EXCEPTION_MSG_DECISON_SYNC + Constants.STRING_HYPHEN + exception.message;
+      exceptionData = Constants.EXCEPTION_MSG_DECISION_SYNC + Constants.STRING_HYPHEN + exception.message;
     } else {
-      exceptionData = Constants.EXCEPTION_MSG_DECISON_SYNC + Constants.STRING_HYPHEN + exception;
+      exceptionData = Constants.EXCEPTION_MSG_DECISION_SYNC + Constants.STRING_HYPHEN + exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_DECISION_SYNC, Constants.LOG_ERROR, exceptionData);
   }

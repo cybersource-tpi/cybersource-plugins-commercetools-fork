@@ -811,10 +811,10 @@ const reportHandler = async () => {
         if (conversionPresent) {
           decisionSyncResponse.message = Constants.SUCCESS_MSG_DECISION_SYNC_SERVICE;
         } else {
-          decisionSyncResponse.error = Constants.ERROR_MSG_NO_CONVERSION_DETAILS;
+          decisionSyncResponse.error = Constants.ERROR_MSG_NO_SYNC_DETAILS;
         }
       } else {
-        decisionSyncResponse.error = Constants.ERROR_MSG_NO_CONVERSION_DETAILS;
+        decisionSyncResponse.error = Constants.ERROR_MSG_NO_SYNC_DETAILS;
       }
     } else {
       decisionSyncResponse.error = Constants.ERROR_MSG_ENABLE_DECISION_SYNC;

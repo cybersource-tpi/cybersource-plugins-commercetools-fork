@@ -32,7 +32,7 @@ const conversionDetails = async () => {
       merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
       merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
     };
-    startTime = moment(Date.now()).subtract(Constants.VAL_TWENTYTHREE, Constants.STRING_HOURS).subtract(Constants.VAL_FIFTYNINE).format(Constants.DATE_FORMAT);
+    startTime = moment(Date.now()).subtract(Constants.VAL_TWENTY_THREE, Constants.STRING_HOURS).subtract(Constants.VAL_FIFTY_NINE).format(Constants.DATE_FORMAT);
     endTime = moment(Date.now()).format(Constants.DATE_FORMAT);
 
     organizationId = process.env.ISV_PAYMENT_MERCHANT_ID;
