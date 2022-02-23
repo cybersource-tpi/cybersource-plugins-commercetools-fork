@@ -218,7 +218,7 @@ const retrievePayment = async (paymentId) => {
 };
 
 const addTransaction = async (transactionObject) => {
-  let transactionResonse: any;
+  let transactionResponse: any;
   let client: any;
   let requestBuilder: any;
   let channelsRequest: any;
@@ -250,7 +250,7 @@ const addTransaction = async (transactionObject) => {
             ],
           }),
         };
-        transactionResonse = await client.execute(channelsRequest);
+        transactionResponse = await client.execute(channelsRequest);
       } else {
         paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TRANSACTION, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
       }
@@ -267,10 +267,10 @@ const addTransaction = async (transactionObject) => {
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TRANSACTION, Constants.LOG_ERROR, exceptionData);
   }
-  if (null != transactionResonse) {
-    transactionResonse = transactionResonse.body;
+  if (null != transactionResponse) {
+    transactionResponse = transactionResponse.body;
   }
-  return transactionResonse;
+  return transactionResponse;
 };
 
 const getOrders = async () => {
@@ -478,12 +478,12 @@ const getCustomer = async (customerId) => {
   return customerResponse;
 };
 
-const setCustomType = async (customerId, fieldsdata) => {
+const setCustomType = async (customerId, fieldsData) => {
   let customResponse: any;
   let customerInfo: any;
   let exceptionData: any;
   try {
-    if (null != customerId && null != fieldsdata) {
+    if (null != customerId && null != fieldsData) {
       const client = getClient();
       if (null != client) {
         const requestBuilder = createRequestBuilder({
@@ -504,7 +504,7 @@ const setCustomType = async (customerId, fieldsdata) => {
                   typeId: Constants.TYPE_ID_TYPE,
                 },
                 fields: {
-                  isv_tokens: fieldsdata,
+                  isv_tokens: fieldsData,
                 },
               },
             ],
@@ -512,10 +512,10 @@ const setCustomType = async (customerId, fieldsdata) => {
         };
         customResponse = await client.execute(channelsRequest);
       } else {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUTSOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUSTOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
       }
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUTSOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_CUSTOMER_DETAILS);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUSTOM_TYPE, Constants.LOG_INFO, Constants.ERROR_MSG_CUSTOMER_DETAILS);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -525,7 +525,7 @@ const setCustomType = async (customerId, fieldsdata) => {
     } else {
       exceptionData = Constants.EXCEPTION_MSG_FETCH_ORDER_DETAILS + Constants.STRING_HYPHEN + exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUTSOM_TYPE, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_CUSTOM_TYPE, Constants.LOG_ERROR, exceptionData);
   }
   if (null != customResponse) {
     customResponse = customResponse.body;
@@ -570,11 +570,11 @@ const updateDecisionSync = async (decisionUpdateObject) => {
     }
   } catch (exception) {
     if (typeof exception === 'string') {
-      exceptionData = Constants.EXCEPTION_MSG_DECISON_SYNC + Constants.STRING_HYPHEN + exception.toUpperCase();
+      exceptionData = Constants.EXCEPTION_MSG_DECISION_SYNC + Constants.STRING_HYPHEN + exception.toUpperCase();
     } else if (exception instanceof Error) {
-      exceptionData = Constants.EXCEPTION_MSG_DECISON_SYNC + Constants.STRING_HYPHEN + exception.message;
+      exceptionData = Constants.EXCEPTION_MSG_DECISION_SYNC + Constants.STRING_HYPHEN + exception.message;
     } else {
-      exceptionData = Constants.EXCEPTION_MSG_DECISON_SYNC + Constants.STRING_HYPHEN + exception;
+      exceptionData = Constants.EXCEPTION_MSG_DECISION_SYNC + Constants.STRING_HYPHEN + exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_DECISION_SYNC, Constants.LOG_ERROR, exceptionData);
   }

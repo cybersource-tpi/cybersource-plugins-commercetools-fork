@@ -40,10 +40,10 @@ const deleteCustomerToken = async (customerTokenObj) => {
           } else if (error) {
             if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_INFO, errorData);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_INFO, errorData);
               customerTokenDeleteResponse.message = errorData.message;
             } else {
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_INFO, error);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_INFO, error);
             }
             customerTokenDeleteResponse.httpCode = response.status;
             reject(customerTokenDeleteResponse);
@@ -55,7 +55,7 @@ const deleteCustomerToken = async (customerTokenObj) => {
         return customerTokenDeleteResponse;
       });
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
       return customerTokenDeleteResponse;
     }
   } catch (exception) {
@@ -66,7 +66,7 @@ const deleteCustomerToken = async (customerTokenObj) => {
     } else {
       exceptionData = exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CUSTOMER_TOKEN_DELETE_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_ERROR, exceptionData);
     return customerTokenDeleteResponse;
   }
 };

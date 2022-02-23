@@ -70,12 +70,12 @@ const payerAuthSetupResponse = async (payment, cardTokens) => {
           } else if (error) {
             if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYMENT_RESPONSE, Constants.LOG_INFO, errorData);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_SETUP_RESPONSE, Constants.LOG_INFO, errorData);
               paymentResponse.transactionId = errorData.id;
               paymentResponse.status = errorData.status;
               paymentResponse.message = errorData.message;
             } else {
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYMENT_RESPONSE, Constants.LOG_INFO, error);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_SETUP_RESPONSE, Constants.LOG_INFO, error);
             }
             paymentResponse.httpCode = error.status;
             reject(paymentResponse);
@@ -87,7 +87,7 @@ const payerAuthSetupResponse = async (payment, cardTokens) => {
         return paymentResponse;
       });
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYMENT_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_SETUP_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
       return paymentResponse;
     }
   } catch (exception) {
@@ -98,7 +98,7 @@ const payerAuthSetupResponse = async (payment, cardTokens) => {
     } else {
       exceptionData = exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYMENT_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_SETUP_RESPONSE, Constants.LOG_ERROR, exceptionData);
     return paymentResponse;
   }
 };
