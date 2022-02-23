@@ -218,7 +218,7 @@ const retrievePayment = async (paymentId) => {
 };
 
 const addTransaction = async (transactionObject) => {
-  let transactionResonse: any;
+  let transactionResponse: any;
   let client: any;
   let requestBuilder: any;
   let channelsRequest: any;
@@ -250,7 +250,7 @@ const addTransaction = async (transactionObject) => {
             ],
           }),
         };
-        transactionResonse = await client.execute(channelsRequest);
+        transactionResponse = await client.execute(channelsRequest);
       } else {
         paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TRANSACTION, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
       }
@@ -267,10 +267,10 @@ const addTransaction = async (transactionObject) => {
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TRANSACTION, Constants.LOG_ERROR, exceptionData);
   }
-  if (null != transactionResonse) {
-    transactionResonse = transactionResonse.body;
+  if (null != transactionResponse) {
+    transactionResponse = transactionResponse.body;
   }
-  return transactionResonse;
+  return transactionResponse;
 };
 
 const getOrders = async () => {
