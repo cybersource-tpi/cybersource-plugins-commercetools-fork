@@ -43,6 +43,7 @@ export abstract class Constants {
   static readonly FUNC_GOOGLE_PAY_RESPONSE = 'FuncGooglePayResponse';
   static readonly FUNC_KEYS = 'FuncKeys';
   static readonly FUNC_PAYER_AUTH_ACTIONS = 'FuncPayerAuthActions';
+  static readonly FUNC_PAYER_AUTH_SETUP_RESPONSE = "FuncPayerAuthSetupResponse";
   static readonly FUNC_PAYER_ENROLL_ACTIONS = 'FuncPayerEnrollActions';
   static readonly FUNC_PAYMENT_RESPONSE = 'FuncPaymentResponse';
   static readonly FUNC_ORDER_MANAGEMENT_HANDLER = 'FuncOrderManagementHandler';
@@ -184,6 +185,7 @@ export abstract class Constants {
   static readonly STRING_SYNC_SORT = 'submitTimeUtc:desc';
   static readonly STRING_TRUE = 'true';
   static readonly STRING_TEXT = 'text';
+  static readonly STRING_PAYER_AUTH_RETURN_URL = '/payerAuthReturnUrl';
   static readonly STRING_UPDATE = 'update';
   static readonly STRING_UPDATED = 'updated';
   static readonly STRING_VALUE = 'value';

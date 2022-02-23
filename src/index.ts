@@ -31,7 +31,7 @@ app.listen(port, () => {
 app.set('views', path.join(__dirname, 'views/'));
 app.set('view engine', 'ejs');
 
-app.post('/sunriseSpa', (req, res) => {
+app.post('/payerAuthReturnUrl', (req, res) => {
   res.send(`<script>window.parent.postMessage({
     'messageType': 'validationCallback',
     'message': '${req.body.TransactionId}'
