@@ -63,7 +63,7 @@ const captureResponse = async (payment, cart, authId) => {
       orderInformationAmountDetails.currency = payment.amountPlanned.currencyCode;
       orderInformation.amountDetails = orderInformationAmountDetails;
 
-      if (null != cart && Constants.STRING_RESULTS in cart && Constants.VAL_ZERO < cart.results.length) {
+      if (null != cart && Constants.VAL_ZERO < cart.count && Constants.STRING_RESULTS in cart) {
         cartData = cart.results[Constants.VAL_ZERO];
         orderInformation.lineItems = [];
         cartData.lineItems.forEach((lineItem) => {
