@@ -62,6 +62,7 @@ const retrieveCartByAnonymousId = async (anonymousId) => {
         uri = requestBuilder.carts
           .parse({
             where: [`${Constants.ANONYMOUS_ID} = "${anonymousId}"`, `${Constants.ACTIVE_CART_STATE}`],
+            sort: [{ by: Constants.LAST_MODIFIED_AT, direction: Constants.DESC_ORDER }]
           })
           .build();
         channelsRequest = {
@@ -108,6 +109,7 @@ const retrieveCartByCustomerId = async (customerId) => {
         uri = requestBuilder.carts
           .parse({
             where: [`${Constants.CUSTOMER_ID} = "${customerId}"`, `${Constants.ACTIVE_CART_STATE}`],
+            sort: [{ by: Constants.LAST_MODIFIED_AT, direction: Constants.DESC_ORDER }]
           })
           .build();
         channelsRequest = {

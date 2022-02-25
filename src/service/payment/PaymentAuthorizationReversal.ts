@@ -59,7 +59,7 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
 
       var orderInformation = new restApi.Ptsv2paymentsidreversalsOrderInformation();
 
-      if (null != cart && Constants.STRING_RESULTS in cart && Constants.VAL_ZERO < cart.results.length) {
+      if (null != cart && Constants.VAL_ZERO < cart.count && Constants.STRING_RESULTS in cart) {
         cartData = cart.results[Constants.VAL_ZERO];
         orderInformation.lineItems = [];
         cartData.lineItems.forEach((lineItem) => {
