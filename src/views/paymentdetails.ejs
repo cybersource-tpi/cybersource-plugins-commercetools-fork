@@ -231,15 +231,23 @@
       <table class="paymenttable1" id="paymentCardDetailsTable">
         <tr>
           <th>Masked Card Number</th>
+          <% if(null != payments.custom.fields.isv_cardType){ %>
           <th>Card Type</th>
+          <% } %> <% if(null != payments.custom.fields.isv_cardExpiryMonth){ %>
           <th>Card Expiry Month</th>
+          <% } %> <% if(null != payments.custom.fields.isv_cardExpiryYear){ %>
           <th>Card Expiry Year</th>
+          <% } %>
         </tr>
         <tr>
           <td><%= payments.custom.fields.isv_maskedPan%></td>
+          <% if(null != payments.custom.fields.isv_cardType){ %>
           <td><%= payments.custom.fields.isv_cardType%></td>
+          <% } %> <% if(null != payments.custom.fields.isv_cardExpiryMonth){ %>
           <td><%= payments.custom.fields.isv_cardExpiryMonth%></td>
+          <% } %> <% if(null != payments.custom.fields.isv_cardExpiryYear){ %>
           <td><%= payments.custom.fields.isv_cardExpiryYear%></td>
+          <% } %>
         </tr>
       </table>
     </div>

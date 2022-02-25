@@ -148,38 +148,44 @@ const failureResponse = (paymentResponse, transactionDetail) => {
 };
 
 const visaCardDetailsAction = (visaCheckoutData) => {
-  let actions: any;
+  let actions = [] as any;
   let cardPrefix: any;
   let cardSuffix: any;
   let maskedPan: any;
   let exceptionData: any;
   try {
     if (null != visaCheckoutData) {
-      cardPrefix = visaCheckoutData.cardFieldGroup.prefix;
-      cardSuffix = visaCheckoutData.cardFieldGroup.suffix;
-      maskedPan = cardPrefix.concat(Constants.CLICK_TO_PAY_CARD_MASK, cardSuffix);
-      actions = [
-        {
+      if (null != visaCheckoutData.cardFieldGroup.prefix && null != visaCheckoutData.cardFieldGroup.suffix) {
+        cardPrefix = visaCheckoutData.cardFieldGroup.prefix;
+        cardSuffix = visaCheckoutData.cardFieldGroup.suffix;
+        maskedPan = cardPrefix.concat(Constants.CLICK_TO_PAY_CARD_MASK, cardSuffix);
+        actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_MASKED_PAN,
           value: maskedPan,
-        },
-        {
+        });
+      }
+      if (null != visaCheckoutData.cardFieldGroup.expirationMonth) {
+        actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CARD_EXPIRY_MONTH,
           value: visaCheckoutData.cardFieldGroup.expirationMonth,
-        },
-        {
+        });
+      }
+      if (null != visaCheckoutData.cardFieldGroup.expirationYear) {
+        actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CARD_EXPIRY_YEAR,
           value: visaCheckoutData.cardFieldGroup.expirationYear,
-        },
-        {
+        });
+      }
+      if (null != visaCheckoutData.cardFieldGroup.type) {
+        actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CARD_TYPE,
           value: visaCheckoutData.cardFieldGroup.type,
-        },
-      ];
+        });
+      }
     } else {
       logData(path.parse(path.basename(__filename)).name, Constants.FUNC_VISA_CARD_DETAILS_ACTION, Constants.LOG_INFO, Constants.ERROR_MSG_CLICK_TO_PAY_DATA);
     }

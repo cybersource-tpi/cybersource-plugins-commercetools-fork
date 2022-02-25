@@ -212,7 +212,7 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
           enrollServiceResponse.cardinalReferenceId = cardinalReferenceId;
           enrollResponse = paymentService.payerEnrollActions(enrollServiceResponse, updatePaymentObj);
           enrollAuthResponse = paymentService.getAuthResponse(enrollServiceResponse, null);
-          if (Constants.VAL_ZERO < enrollAuthResponse.actions.length) {
+          if (null != enrollAuthResponse && Constants.VAL_ZERO < enrollAuthResponse.actions.length) {
             enrollAuthResponse.actions.forEach((i) => {
               enrollResponse.actions.push(i);
             });
@@ -272,9 +272,11 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
         cardDetails = await clickToPay.getVisaCheckoutData(paymentResponse);
         if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.HTTP_CODE_TWO_HUNDRED == cardDetails.httpCode && null != cardDetails.cardFieldGroup) {
           actions = paymentService.visaCardDetailsAction(cardDetails);
-          actions.forEach((i) => {
-            authResponse.actions.push(i);
-          });
+          if (null != actions && Constants.VAL_ZERO < actions.length) {
+            actions.forEach((i) => {
+              authResponse.actions.push(i);
+            });
+          }
         }
         authResponse.actions.push({
           action: Constants.SET_CUSTOM_FIELD,
@@ -371,9 +373,11 @@ const clickToPayResponse = async (updatePaymentObj, cartObj, updateTransactions,
       visaCheckoutData = await clickToPay.getVisaCheckoutData(paymentResponse);
       if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.HTTP_CODE_TWO_HUNDRED == visaCheckoutData.httpCode && null != visaCheckoutData.cardFieldGroup) {
         actions = paymentService.visaCardDetailsAction(visaCheckoutData);
-        actions.forEach((i) => {
-          authResponse.actions.push(i);
-        });
+        if (null != actions && Constants.VAL_ZERO < actions.length) {
+          actions.forEach((i) => {
+            authResponse.actions.push(i);
+          });
+        }
         cartUpdate = await commercetoolsApi.updateCartByPaymentId(cartObj.id, cartObj.version, visaCheckoutData);
         if (null != cartUpdate) {
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CLICK_TO_PAY, Constants.LOG_INFO, Constants.SUCCESS_MSG_UPDATE_CLICK_TO_PAY_CARD_DETAILS);
@@ -416,10 +420,11 @@ const googlePayResponse = async (updatePaymentObj, cartObj, updateTransactions, 
     }
     if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && null != cardDetails.cardFieldGroup) {
       actions = paymentService.visaCardDetailsAction(cardDetails);
-
-      actions.forEach((i) => {
-        authResponse.actions.push(i);
-      });
+      if (null != actions && Constants.VAL_ZERO < actions.length) {
+        actions.forEach((i) => {
+          authResponse.actions.push(i);
+        });
+      }
     }
   } else {
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GOOGLE_PAY_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
@@ -1023,7 +1028,7 @@ const updateVisaDetails = async (paymentId, paymentVersion, transactionId) => {
         if (null != visaResponse) {
           updateResponse.cartVersion = visaResponse.version;
           actions = await paymentService.visaCardDetailsAction(visaCheckoutData);
-          if (actions != null) {
+          if (actions != null && Constants.VAL_ZERO < actions.length) {
             visaUpdateObject.actions = actions;
             visaUpdateObject.id = paymentId;
             visaUpdateObject.version = paymentVersion;
