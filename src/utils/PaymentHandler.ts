@@ -413,17 +413,19 @@ const googlePayResponse = async (updatePaymentObj, cartObj, updateTransactions, 
   paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_GOOGLE, customerTokenId);
   if (null != paymentResponse && null != paymentResponse.httpCode) {
     authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
-    if (null != paymentResponse.data.paymentInformation.tokenizedCard.expirationMonth) {
-      cardDetails.cardFieldGroup = paymentResponse.data.paymentInformation.tokenizedCard;
-    } else {
-      cardDetails.cardFieldGroup = paymentResponse.data.paymentInformation.card;
-    }
-    if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && null != cardDetails.cardFieldGroup) {
-      actions = paymentService.visaCardDetailsAction(cardDetails);
-      if (null != actions && Constants.VAL_ZERO < actions.length) {
-        actions.forEach((i) => {
-          authResponse.actions.push(i);
-        });
+    if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode) {
+      if (null != paymentResponse.data.paymentInformation.tokenizedCard && null != paymentResponse.data.paymentInformation.tokenizedCard.expirationMonth) {
+        cardDetails.cardFieldGroup = paymentResponse.data.paymentInformation.tokenizedCard;
+      } else {
+        cardDetails.cardFieldGroup = paymentResponse.data.paymentInformation.card;
+      }
+      if (null != cardDetails.cardFieldGroup) {
+        actions = paymentService.visaCardDetailsAction(cardDetails);
+        if (null != actions && Constants.VAL_ZERO < actions.length) {
+          actions.forEach((i) => {
+            authResponse.actions.push(i);
+          });
+        }
       }
     }
   } else {
@@ -649,7 +651,11 @@ const orderManagementHandler = async (paymentId, updatePaymentObj, updateTransac
         errorFlag = true;
       }
     } else if (Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION == updateTransactions.type && Constants.CT_TRANSACTION_STATE_INITIAL == updateTransactions.state) {
-      authReversalId = updatePaymentObj.transactions[Constants.VAL_ZERO].interactionId;
+      updatePaymentObj.transactions.forEach((transaction) => {
+        if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == transaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == transaction.state) {
+          authReversalId = transaction.interactionId;
+        }
+      });
       if (null != authReversalId) {
         orderResponse = await paymentAuthReversal.authReversalResponse(updatePaymentObj, cartObj, authReversalId);
       } else {
@@ -897,13 +903,28 @@ const syncHandler = async () => {
                   syncUpdateObject.id = paymentDetails.id;
                   syncUpdateObject.version = paymentDetails.version;
                   syncUpdateObject.interactionId = element.id;
-                  syncUpdateObject.amountPlanned.currencyCode = element.orderInformation.amountDetails.currency;
-                  syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
-                  if (applicationResponse.authPresent) {
+                  if (applicationResponse.authPresent || applicationResponse.capturePresent || applicationResponse.authReversalPresent) {
+                    if (null != element.orderInformation && null != element.orderInformation.amountDetails) {
+                      if (null != element.orderInformation.amountDetails.currency) {
+                        syncUpdateObject.amountPlanned.currencyCode = element.orderInformation.amountDetails.currency;
+                      } else {
+                        syncUpdateObject.amountPlanned.currencyCode = paymentDetails.amountPlanned.currencyCode;
+                      }
+                      if (null != element.orderInformation.amountDetails.centAmount) {
+                        syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
+                      } else {
+                        syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.currencyCode;
+                      }
+                    }
                     if (!applicationResponse.authReasonCodePresent) {
                       syncUpdateObject.amountPlanned.currencyCode = paymentDetails.amountPlanned.currencyCode;
                       syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.centAmount;
                     }
+                  } else {
+                    syncUpdateObject.amountPlanned.currencyCode = element.orderInformation.amountDetails.currency;
+                    syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
+                  }
+                  if (applicationResponse.authPresent) {
                     syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_AUTHORIZATION;
                     updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
                     if (null != updateSyncResponse && paymentDetails.paymentMethodInfo.method == Constants.VISA_CHECKOUT) {
