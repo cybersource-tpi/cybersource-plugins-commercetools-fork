@@ -904,17 +904,15 @@ const syncHandler = async () => {
                   syncUpdateObject.version = paymentDetails.version;
                   syncUpdateObject.interactionId = element.id;
                   if (applicationResponse.authPresent || applicationResponse.capturePresent || applicationResponse.authReversalPresent) {
-                    if (null != element.orderInformation && null != element.orderInformation.amountDetails) {
-                      if (null != element.orderInformation.amountDetails.currency) {
-                        syncUpdateObject.amountPlanned.currencyCode = element.orderInformation.amountDetails.currency;
-                      } else {
-                        syncUpdateObject.amountPlanned.currencyCode = paymentDetails.amountPlanned.currencyCode;
-                      }
-                      if (null != element.orderInformation.amountDetails.centAmount) {
-                        syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
-                      } else {
-                        syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.centAmount;
-                      }
+                    if (null != element.orderInformation && null != element.orderInformation.amountDetails && null != element.orderInformation.amountDetails.currency) {
+                      syncUpdateObject.amountPlanned.currencyCode = element.orderInformation.amountDetails.currency;
+                    } else {
+                      syncUpdateObject.amountPlanned.currencyCode = paymentDetails.amountPlanned.currencyCode;
+                    }
+                    if (null != element.orderInformation && null != element.orderInformation.amountDetails && null != element.orderInformation.amountDetails.centAmount) {
+                      syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
+                    } else {
+                      syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.centAmount;
                     }
                     if (!applicationResponse.authReasonCodePresent) {
                       syncUpdateObject.amountPlanned.currencyCode = paymentDetails.amountPlanned.currencyCode;
