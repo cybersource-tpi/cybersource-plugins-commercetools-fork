@@ -913,7 +913,7 @@ const syncHandler = async () => {
                       if (null != element.orderInformation.amountDetails.centAmount) {
                         syncUpdateObject.amountPlanned.centAmount = paymentService.convertAmountToCent(Number(element.orderInformation.amountDetails.totalAmount));
                       } else {
-                        syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.currencyCode;
+                        syncUpdateObject.amountPlanned.centAmount = paymentDetails.amountPlanned.centAmount;
                       }
                     }
                     if (!applicationResponse.authReasonCodePresent) {
