@@ -27,12 +27,18 @@ export const payment = {
    },
     custom: {
       type: { typeId: 'type', id: '28701886-4e26-4cab-924e-9b0da3829f88' },
-      fields: { isv_token: clickToPay.isv_token }
+      fields: 
+      { 
+          isv_deviceFingerprintId:"1ccd2043-4c08-4419-a629-bc32dc5f91eb",
+          isv_token: clickToPay.isv_token,
+          isv_acceptHeader:"*/*",
+          isv_customerIpAddress:"171.76.13.221",
+          isv_userAgentHeader:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+      }
     },
     paymentStatus: {},
     transactions: [],
-    interfaceInteractions: [],
-    anonymousId: '9f9da50d-abc8-416b-a31d-ea319abf31fc'
+    interfaceInteractions: []
   }
 
   export const payments = {
@@ -62,12 +68,18 @@ export const payment = {
    },
     custom: {
       type: { typeId: 'type', id: '28701886-4e26-4cab-924e-9b0da3829f88' },
-      fields: { isv_token: '195403577059284' }
+      fields: 
+      { 
+          isv_deviceFingerprintId:"ac692e81-8ed7-4f85-b4c2-931057fb9b24",
+          isv_token: '195403577059284',
+          isv_acceptHeader:"*/*",
+          isv_customerIpAddress:"171.76.13.221",
+          isv_userAgentHeader:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+      }  
     },
     paymentStatus: {},
     transactions: [],
     interfaceInteractions: [],
-    anonymousId: '9f9da50d-abc8-416b-a31d-ea319abf31fc'
   }
 
   export const cart = {

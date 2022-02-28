@@ -23,9 +23,9 @@ import CommercetoolsApi from '../../utils/api/CommercetoolsApi';
 
 test.serial('Check for report handller ', async (t)=>{
     const result =await paymentHandler.reportHandler();
-    if(result.error=='Conversion details not found')
+    if(result.error=='There were no payment details found to update')
     {
-        t.is(result.error, 'Conversion details not found');
+        t.is(result.error, 'There were no payment details found to update');
         t.is(result.message, '');
     }
     else if(result.message=='Successfully completed DecisionSync')
@@ -35,7 +35,7 @@ test.serial('Check for report handller ', async (t)=>{
     }
     else
     {
-        t.is(result.error, 'Please enable DecisionSync');
+        t.is(result.error, 'Please enable Decision sync');
         t.is(result.message, '');
     }
 })
@@ -56,7 +56,6 @@ test.serial('Get order management handller for capture ', async(t)=>{
 
 test.serial('Get delete card handler data ', async (t)=>{
     const result =await paymentHandler.deleteCardHandler(deleteCardHandlerUpdateCustomerObj, deleteCardHandlerCutsomerId);
-    t.pass();
     t.is(result.actions[0].action, "setCustomType");
     t.is(result.actions[0].type.key, "isv_payments_customer_tokens");
 })
@@ -156,16 +155,20 @@ test.serial('get payer auth set up response ', async(t)=>{
 
 test.serial('Check the run sync ', async(t)=>{
     const result = await paymentHandler.syncHandler();
-    t.pass();
-    if(result.message=='')
+    if(result.error=='Please enable Run sync')
     {
         t.is(result.message, '');
-        t.is(result.error, 'Sync conversion details not found');
+        t.is(result.error, 'Please enable Run sync');
     }
     else if(result.error=='')
     {
-        t.is(result.message, 'Successfully completed Sync');
+        t.is(result.message, 'Successfully updated payment details');
         t.is(result.error, '');
+    }
+    else if(result.error=='There were no payment details found to update')
+    {
+        t.is(result.message, '');
+        t.is(result.error, 'There were no payment details found to update');
     }
 })
 
