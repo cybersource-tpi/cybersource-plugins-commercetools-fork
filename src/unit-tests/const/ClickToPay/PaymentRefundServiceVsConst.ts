@@ -21,12 +21,16 @@ export const payment = {
     custom: {
       type: { typeId: 'type', id: '28701886-4e26-4cab-924e-9b0da3829f88' },
       fields: {
+        isv_deviceFingerprintId:"8a22fb00-dc63-496b-b0de-9f1d1fd36a50",
         isv_cardExpiryYear: '25  ',
         isv_token: '4304492039459355101',
+        isv_customerIpAddress:"106.202.150.94",
+        isv_maskedPan: '411111XXXXXX1111',
+        isv_cardExpiryMonth: '05',
+        isv_userAgentHeader:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
+        isv_acceptHeader:"*/*",
         isv_cardType: '001',
-        isv_maskedPan: '411111...1111',
-        isv_cardExpiryMonth: '05'
-      }
+       }
     },
     paymentStatus: {},
     transactions: [
@@ -46,7 +50,6 @@ export const payment = {
       }
     ],
     interfaceInteractions: [],
-    anonymousId: '9f9da50d-abc8-416b-a31d-ea319abf31fc'
   }
 
   export const captureId = clickToPay.captureId;
