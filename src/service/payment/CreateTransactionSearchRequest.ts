@@ -41,7 +41,7 @@ const getTransactionSearchResponse = async (query, sort) => {
             searchResponse.data = data;
             resolve(searchResponse);
           } else if (error) {
-            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+            if (Constants.STRING_RESPONSE in error && null != error.response && Constants.STRING_TEXT in error.response) {
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_TRANSACTION_SEARCH_RESPONSE, Constants.LOG_INFO, errorData);
               searchResponse.message = errorData.message;

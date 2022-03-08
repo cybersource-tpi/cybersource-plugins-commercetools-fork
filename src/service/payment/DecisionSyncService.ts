@@ -50,7 +50,7 @@ const conversionDetails = async () => {
           conversionDetailResponse.status = response[Constants.STRING_RESPONSE_STATUS];
           resolve(conversionDetailResponse);
         } else if (error) {
-          if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+          if (Constants.STRING_RESPONSE in error && null != error.response && Constants.STRING_TEXT in error.response) {
             errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CONVERSION_DETAILS, Constants.LOG_INFO, errorData);
             conversionDetailResponse.status = errorData.status;

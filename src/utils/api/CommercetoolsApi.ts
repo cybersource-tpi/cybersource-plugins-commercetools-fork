@@ -325,7 +325,7 @@ const updateCartByPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
   let exceptionData: any;
   let uri: string;
   try {
-    if (null != cartId && null != cartVersion && null != visaCheckoutData) {
+    if (null != cartId && null != cartVersion && null != visaCheckoutData &&  null!= visaCheckoutData.billToFieldGroup && Constants.STRING_TRUE == visaCheckoutData.hasOwnProperty(Constants.STRING_BILL_TO_FIELD_GROUP)) {
       client = getClient();
       if (null != client) {
         requestBuilder = createRequestBuilder({

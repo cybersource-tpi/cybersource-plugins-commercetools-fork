@@ -190,6 +190,8 @@ export abstract class Constants {
   static readonly STRING_UPDATED = 'updated';
   static readonly STRING_VALUE = 'value';
   static readonly STRING_VISA = 'visa';
+  static readonly STRING_BILL_TO_FIELD_GROUP = 'billToFieldGroup';
+
 
   static readonly LOG_ERROR = 'error';
   static readonly LOG_INFO = 'info';

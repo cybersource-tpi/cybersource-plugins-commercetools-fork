@@ -38,7 +38,7 @@ const deleteCustomerToken = async (customerTokenObj) => {
             customerTokenDeleteResponse.deletedToken = paymentInstrumentTokenId;
             resolve(customerTokenDeleteResponse);
           } else if (error) {
-            if (Constants.STRING_RESPONSE in error && Constants.STRING_TEXT in error.response) {
+            if (Constants.STRING_RESPONSE in error && null != error.response && Constants.STRING_TEXT in error.response) {
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_INFO, errorData);
               customerTokenDeleteResponse.message = errorData.message;
