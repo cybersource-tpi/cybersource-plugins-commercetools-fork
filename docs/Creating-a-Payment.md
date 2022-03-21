@@ -20,7 +20,7 @@ When creating a payment, the following fields are validated
 | payment.transactions                       | Must be empty                               | Always |
 | payment.amountPlanned                      | Must not be a negative value                | Always |
 | payment.custom.isv_token                   | Must exist                                  | Always |
-| payment.custom.isv_acceptHeader            | Must exist                                  | Always |
-| payment.custom.isv_userAgentHeader         | Must exist                                  | Always |
+| payment.custom.isv_acceptHeader            | Must exist                                  | payment.paymentMethodInfo.method == creditCardWithPayerAuthentication |
+| payment.custom.isv_userAgentHeader         | Must exist                                  | payment.paymentMethodInfo.method == creditCardWithPayerAuthentication |
 
 Once a payment has been created, you can continue on to the Authorization steps.

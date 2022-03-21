@@ -25,4 +25,4 @@ If you would like to implement Apple Pay, you will need to first create a mercha
 
 See the [Apple Pay JS API](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api) document from the Apple Pay developer center to setup Apple Pay on your browser.
 
-Once the JS API is setup and you are recieving an Apple Pay Payment Token, you can continue to the [Authorize a Payment (Apple Pay)](Authorize-a-Payment-ApplePay.md) process.
+Once the JS API is setup and you are receiving an Apple Pay Payment Token, you can continue to the [Authorize a Payment (Apple Pay)](Authorize-a-Payment-ApplePay.md) process.

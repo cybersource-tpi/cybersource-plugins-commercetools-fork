@@ -4,7 +4,7 @@
 
 If you would like to support Visa Click to Pay, you will need to create a
 Visa Click to Pay API Key and use the Visa Click to Pay Javascript SDK to
-generate a Visa Click to Pay Order Id to provide to Cybersource on a payment
+generate a "Visa Click to Pay Order Id" to provide it to Cybersource on a payment
 request.
 
 ### Visa Click to Pay API Key
