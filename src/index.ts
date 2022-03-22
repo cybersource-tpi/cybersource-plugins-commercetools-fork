@@ -171,11 +171,8 @@ app.post('/api/extension/payment/create', async (req, res) => {
           }
         }
       } else if (paymentMethod == Constants.APPLE_PAY) {
-        if (Constants.STRING_FIELDS in paymentObj.custom) {
+        if (Constants.STRING_CUSTOM in paymentObj && Constants.STRING_FIELDS in paymentObj.custom) {
           response = await paymentHandler.applePaySessionHandler(paymentObj.custom.fields);
-        } else {
-          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS);
-          response = paymentService.invalidOperationResponse();
         }
       } else {
         response = paymentService.getEmptyResponse();
