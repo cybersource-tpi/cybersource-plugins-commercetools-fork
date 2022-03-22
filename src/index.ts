@@ -77,7 +77,7 @@ app.get('/orders', async (req, res) => {
   });
 });
 
-app.get('/paymentDetails', async (req, res) => {
+app.get('/paymentdetails', async (req, res) => {
   let paymentId: any;
   let paymentDetails: any;
   let cartDetails: any;
@@ -127,7 +127,7 @@ app.get('/paymentDetails', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.render('paymentDetails', {
+  res.render('paymentdetails', {
     id: convertedPaymentId,
     payments: paymentDetails,
     cart: cartData,
@@ -343,7 +343,7 @@ app.get('/capture', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.redirect(`/paymentDetails?id=${paymentId}`);
+  res.redirect(`/paymentdetails?id=${paymentId}`);
 });
 
 app.get('/refund', async (req, res) => {
@@ -410,7 +410,7 @@ app.get('/refund', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.redirect(`/paymentDetails?id=${paymentId}`);
+  res.redirect(`/paymentdetails?id=${paymentId}`);
 });
 
 app.get('/authReversal', async (req, res) => {
@@ -464,7 +464,7 @@ app.get('/authReversal', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.redirect(`/paymentDetails?id=${req.query.id}`);
+  res.redirect(`/paymentdetails?id=${req.query.id}`);
 });
 
 app.get('/decisionSync', async (req, res) => {
