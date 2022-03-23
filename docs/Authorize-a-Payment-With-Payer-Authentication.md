@@ -34,7 +34,7 @@ After authentication is complete, authorization of the payment can then be tri
 
 2.  Tokenise credit card details using Cybersource Flex
 
-    a. Retrieve the Flex capture context: Create a Commercetools payment (<https://docs.commercetools.com/http-api-projects-payments>) and populate the following
+    a. Retrieve the Flex capture context: Create a Commercetools payment (https://docs.commercetools.com/http-api-projects-payments) and populate the following
 
 | Property                           | Value                               | Required  | Notes                                                                                                                                                                                                                                        |
 | ---------------------------------- | ----------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

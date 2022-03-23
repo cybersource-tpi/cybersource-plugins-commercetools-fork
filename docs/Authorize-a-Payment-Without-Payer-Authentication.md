@@ -27,7 +27,7 @@ Authorization of a payment is triggered by adding an initial transaction to a Co
 
 2.  Tokenize credit card details using Cybersource Flex
 
-    a. Retrieve the Flex capture context: Create a Commercetools payment (<https://docs.commercetools.com/http-api-projects-payments>) and populate the following
+    a. Retrieve the Flex capture context: Create a Commercetools payment (https://docs.commercetools.com/http-api-projects-payments) and populate the following
 
 | Property                           | Value                               | Required  | Notes                                                                                                                                                                                                                                        |
 | ---------------------------------- | ----------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -11,7 +11,7 @@
     a. Ensure your cart locale is set
 
 2.  Create a Commercetools payment
-    (<https://docs.commercetools.com/http-api-projects-payments>) and
+    (https://docs.commercetools.com/http-api-projects-payments) and
     populate the following
 
     | Property                              | Value                               | Required  | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |

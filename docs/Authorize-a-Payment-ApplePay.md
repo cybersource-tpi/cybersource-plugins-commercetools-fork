@@ -26,7 +26,7 @@
 3.  You can obtain the session data for <b>Web integration</b> to pass the merchant session object to your Apple Pay session’s completeMerchantValidation method by creating a payment with the following
         
         a. Create a Commercetools payment
-        (<https://docs.commercetools.com/http-api-projects-payments>) and
+        (https://docs.commercetools.com/http-api-projects-payments) and
         populate the following
 
     | Property                                | Value                                           | Required  | Notes                                                                                                                                                                                                                                                                          |
