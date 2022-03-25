@@ -6,7 +6,7 @@ import path from 'path';
 
 import flexKeys from './service/payment/FlexKeys';
 import commercetoolsApi from './utils/api/CommercetoolsApi';
-import paymentHandler from './utils//PaymentHandler';
+import paymentHandler from './utils/PaymentHandler';
 import paymentService from './utils/PaymentService';
 import { Constants } from './constants';
 
