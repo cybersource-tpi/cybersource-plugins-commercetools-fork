@@ -278,11 +278,13 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
             });
           }
         }
-        authResponse.actions.push({
-          action: Constants.SET_CUSTOM_FIELD,
-          name: Constants.ISV_PAYMENT_APPLE_PAY_SESSION_DATA,
-          value: null,
-        });
+        if (Constants.ISV_PAYMENT_APPLE_PAY_SESSION_DATA in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_applePaySessionData) {
+          authResponse.actions.push({
+            action: Constants.SET_CUSTOM_FIELD,
+            name: Constants.ISV_PAYMENT_APPLE_PAY_SESSION_DATA,
+            value: null,
+          });
+        }
       }
     } else {
       paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CARD_WITHOUT_3DS_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
@@ -448,35 +450,42 @@ const applePaySessionHandler = async (fields) => {
   let applePaySession: any;
   let errorFlag = false;
   try {
-    cert = process.env.ISV_PAYMENT_APPLE_PAY_CERTIFICATE_PATH;
-    key = process.env.ISV_PAYMENT_APPLE_PAY_KEY_PATH;
-    httpsAgent = new https.Agent({
-      rejectUnauthorized: false,
-      cert: fs.readFileSync(cert),
-      key: fs.readFileSync(key),
-    });
-    domainName = process.env.ISV_PAYMENT_TARGET_ORIGIN;
-    domainName = domainName.replace(Constants.DOMAIN_REGEX, Constants.STRING_EMPTY);
-    body = {
-      merchantIdentifier: process.env.ISV_PAYMENT_APPLE_PAY_MERCHANT_ID,
-      domainName: domainName,
-      displayName: fields.isv_applePayDisplayName,
-      initiative: Constants.ISV_PAYMENT_APPLE_PAY_INITIATIVE,
-      initiativeContext: domainName,
-    };
-    applePaySession = await axios.post(fields.isv_applePayValidationUrl, body, {
-      httpsAgent,
-    });
-    serviceResponse = {
-      actions: [
-        {
-          action: Constants.SET_CUSTOM_FIELD,
-          name: Constants.ISV_PAYMENT_APPLE_PAY_SESSION_DATA,
-          value: JSON.stringify(applePaySession.data),
-        },
-      ],
-      errors: [],
-    };
+    if (null != fields && Constants.ISV_APPLE_PAY_VALIDATION_URL in fields && Constants.STRING_EMPTY != fields.isv_applePayValidationUrl && Constants.ISV_APPLE_PAY_DISPLAY_NAME in fields && Constants.STRING_EMPTY != fields.isv_applePayDisplayName) {
+      if (Constants.STRING_EMPTY != process.env.ISV_PAYMENT_APPLE_PAY_CERTIFICATE_PATH && Constants.STRING_EMPTY != process.env.ISV_PAYMENT_APPLE_PAY_KEY_PATH) {
+        cert = process.env.ISV_PAYMENT_APPLE_PAY_CERTIFICATE_PATH;
+        key = process.env.ISV_PAYMENT_APPLE_PAY_KEY_PATH;
+        httpsAgent = new https.Agent({
+          rejectUnauthorized: false,
+          cert: fs.readFileSync(cert),
+          key: fs.readFileSync(key),
+        });
+        domainName = process.env.ISV_PAYMENT_TARGET_ORIGIN;
+        domainName = domainName.replace(Constants.DOMAIN_REGEX, Constants.STRING_EMPTY);
+        body = {
+          merchantIdentifier: process.env.ISV_PAYMENT_APPLE_PAY_MERCHANT_ID,
+          domainName: domainName,
+          displayName: fields.isv_applePayDisplayName,
+          initiative: Constants.ISV_PAYMENT_APPLE_PAY_INITIATIVE,
+          initiativeContext: domainName,
+        };
+        applePaySession = await axios.post(fields.isv_applePayValidationUrl, body, {
+          httpsAgent,
+        });
+        serviceResponse = {
+          actions: [
+            {
+              action: Constants.SET_CUSTOM_FIELD,
+              name: Constants.ISV_PAYMENT_APPLE_PAY_SESSION_DATA,
+              value: JSON.stringify(applePaySession.data),
+            },
+          ],
+          errors: [],
+        };
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_APPLE_PAY_SESSION_HANDLER, Constants.LOG_ERROR, Constants.ERROR_MSG_APPLE_PAY_CERTIFICATES);
+        errorFlag = true;
+      }
+    }
   } catch (exception) {
     if (typeof exception === 'string') {
       exceptionData = Constants.EXCEPTION_MSG_SERVICE_PROCESS + Constants.STRING_HYPHEN + exception.toUpperCase();

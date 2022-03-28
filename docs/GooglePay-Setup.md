@@ -2,7 +2,7 @@
 
 ## Google Pay
 
-If you would like to support Google Pay, you will need have a Google Pay merchant id and use the Google Pay Javascript to generate a Google Pay Payment Token to provide to Cybersource on a payment request.
+If you would like to support Google Pay, you will need to have a Google Pay merchant id and use the Google Pay Javascript to generate a Google Pay Payment Token to provide to Cybersource on a payment request.
 
 ### Google Pay Merchant Id
 

@@ -219,6 +219,8 @@ export abstract class Constants {
   static readonly INVALID_INPUT = 'InvalidInput';
   static readonly ISV_ACCEPT_HEADER = 'isv_acceptHeader';
   static readonly ISV_ACS_URL = 'isv_payerAuthenticationAcsUrl';
+  static readonly ISV_APPLE_PAY_DISPLAY_NAME = 'isv_applePayDisplayName';
+  static readonly ISV_APPLE_PAY_VALIDATION_URL = 'isv_applePayValidationUrl';
   static readonly ISV_CARDINAL_REFERENCE_ID = 'isv_cardinalReferenceId';
   static readonly ISV_DDC_URL = 'isv_deviceDataCollectionUrl';
   static readonly ISV_DEVICE_FINGERPRINT_ID = 'isv_deviceFingerprintId';
