@@ -282,6 +282,7 @@ export abstract class Constants {
   //Error messges
   static readonly ERROR_MSG_ADD_TRANSACTION_DETAILS = 'There was an error while adding transaction details, please try again';
   static readonly ERROR_MSG_APPLICATION_DETAILS = 'Unable to fetch transaction application details';
+  static readonly ERROR_MSG_APPLE_PAY_CERTIFICATES = 'Please provide certificates paths for Apple Pay in configuration file';
   static readonly ERROR_MSG_EMPTY_PAYMENT_DATA = 'There was an error while fetching payment details';
   static readonly ERROR_MSG_EMPTY_TRANSACTION_DETAILS = 'There was an error while fetching transaction details, please try again';
   static readonly ERROR_MSG_ENABLE_SYNC = 'Please enable Run sync';
