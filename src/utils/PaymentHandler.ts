@@ -259,9 +259,9 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
           cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstrumentToken);
         }
         if (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_ENABLE_RATE_LIMITER && Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer && null != updatePaymentObj.customer.id) {
-          if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS) {
-            cardRate = process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS;
-            cardRateCount = process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER;
+          if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME) {
+            cardRate = process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME;
+            cardRateCount = process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE;
             startTime = new Date();
             startTime.setHours(startTime.getHours() - cardRate);
             limiterResponse = await commercetoolsApi.retrievePaymentByCustomerId(updatePaymentObj.customer.id, new Date(startTime).toISOString(), new Date(Date.now()).toISOString());
@@ -328,9 +328,9 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
     errorFlag: false,
   };
   if (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_ENABLE_RATE_LIMITER && null != updatePaymentObj && Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer && null != updatePaymentObj.customer.id) {
-    if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS) {
-      cardRate = process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS;
-      cardRateCount = process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER;
+    if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME) {
+      cardRate = process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME;
+      cardRateCount = process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE;
       startTime = new Date();
       startTime.setHours(startTime.getHours() - cardRate);
       limiterResponse = await commercetoolsApi.retrievePaymentByCustomerId(updatePaymentObj.customer.id, new Date(startTime).toISOString(), new Date(Date.now()).toISOString());
@@ -396,9 +396,9 @@ const getCardWith3dsResponse = async (updatePaymentObj, cartObj, updateTransacti
     service = Constants.STRING_CARD;
   }
   if (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_ENABLE_RATE_LIMITER && null != updatePaymentObj && Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer && null != updatePaymentObj.customer.id) {
-    if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS) {
-      cardRate = process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER_HOURS;
-      cardRateCount = process.env.PAYMENT_GATEWAY_SET_RATE_LIMITER;
+    if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME) {
+      cardRate = process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME;
+      cardRateCount = process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE;
       startTime = new Date();
       startTime.setHours(startTime.getHours() - cardRate);
       limiterResponse = await commercetoolsApi.retrievePaymentByCustomerId(updatePaymentObj.customer.id, new Date(startTime).toISOString(), new Date(Date.now()).toISOString());

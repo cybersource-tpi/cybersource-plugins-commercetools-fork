@@ -103,7 +103,7 @@ Follow the appropriate Cybersource guide for device fingerprinting and add the s
 
 ### Enabling/disabling decision manager for specific payments
 
-The Cybersource Plugin has environment variable for decision manager as ISV_PAYMENT_DECISION_MANAGER, you can set the values to true or false to enable or disable decision manager
+The Cybersource Plugin has environment variable for decision manager as PAYMENT_GATEWAY_DECISION_MANAGER, you can set the values to true or false to enable or disable decision manager
 
 > **_NOTE:_** This field is case sensitive
 
