@@ -107,7 +107,7 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
           var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
           consumerAuthenticationInformation.referenceId = payment.custom.fields.isv_cardinalReferenceId;
           consumerAuthenticationInformation.acsWindowSize = Constants.PAYMENT_GATEWAY_ACS_WINDOW_SIZE;
-          consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL + Constants.STRING_PAYER_AUTH_RETURN_URL;
+          consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL;
           requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
       } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
