@@ -34,79 +34,95 @@ After authentication is complete, authorization of the payment can then be tri
 
 2.  Tokenise credit card details using Cybersource Flex
 
-    a. Retrieve the Flex capture context: Create a Commercetools payment (<https://docs.commercetools.com/http-api-projects-payments>) and populate the following
+    a. Create a Commercetools payment (https://docs.commercetools.com/http-api-projects-payments) and populate the following
 
-| Property                           | Value                               | Required  | Notes                                                                                                                                                                                                                                        |
-| ---------------------------------- | ----------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| customer                           | Reference to Commercetools customer | See notes | Required for non-guest checkout. If using MyPayments API this will automatically be set to the logged in customer. One of customer or anonymousId must be populated                                                                          |
-| anonymousId                        | Id for tracking guest checkout      | See notes | Required for guest checkout. If using MyPayments API this will automatically be set. One of customer or anonymousId must be populated                                                                                                        |
-| paymentMethodInfo.paymentInterface | cybersource                         | Yes       | Required for guest checkout. If using MyPayments API this will automatically be set to the session id of the anonymous oauth token. One of customer or anonymousId must be populated                                                         |
-| paymentMethodInfo.method           | creditCardWithPayerAuthentication   | Yes       | The plugin is set up to support payments with and without payer authentication and the method is used to determine which is being use Typically an implementation would choose one or the other and the method name may be different to this |
+    | Property                           | Value                               | Required  | Notes                                                                                                                                                               |
+    | ---------------------------------- | ----------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | customer                           | Reference to Commercetools customer | See notes | Required for non-guest checkout. If using MyPayments API this will automatically be set to the logged in customer. One of customer or anonymousId must be populated |
+    | anonymousId                        | Id for tracking guest checkout      | See notes | Required for guest checkout. If using MyPayments API this will automatically be set. One of customer or anonymousId must be populated                               |
+    | paymentMethodInfo.paymentInterface | cybersource                         | Yes       |                                                                                                                                                                     |
+    | paymentMethodInfo.method           | creditCardWithPayerAuthentication   | Yes       |                                                                                                                                                                     |
 
-The response should have the `isv_tokenCaptureContextSignature` and `isv_tokenVerificationContext` custom fields which will load Cybersource Flex Microform.
+    b. The response should have the `isv_tokenCaptureContextSignature` and `isv_tokenVerificationContext` custom fields, set the `isv_tokenCaptureContextSignature` custom field value to the captureContext of flex object which will load Cybersource Flex Microform
 
-3.  Use the Flex Microform 0.11 to tokenize card details. See <https://github.com/CyberSource/cybersource-flex-samples-node> for an example of how to use the captureContext obtained above and the Flex Microform JS to tokenize a credit card.
+        flexInstance = new Flex(captureContext);
 
     This step can be skipped when using a saved token
 
-4.  Add the payment to the cart
+3.  Add the payment to the cart
 
-5.  Update a Commercetools payment (<https://docs.commercetools.com/http-api-projects-payments>) and populate the following
+4.  Use the Flex Microform 0.11 to tokenize card details. See <https://github.com/CyberSource/cybersource-flex-samples-node> for an example of how to use the captureContext obtained above and the Flex Microform JS to tokenize a credit card
+
+    This step can be skipped when using a saved token
+
+5.  Update the Commercetools payment (<https://docs.commercetools.com/http-api-projects-payments>) and populate the following
+
+    Skip this step for saved token
 
     a. Also see [Decision Manager](Decision-Manager.md) for additional fields to populate if you are using Decision Manager
 
-    b. When processing the payment creation the extension will do an Payer Setup call to get reference_id for Digital Wallets to use in place of BIN number in Cardinal
+    b. When updating the payment, the extension will do a Payer Setup call to get reference_id for Digital Wallets to use in place of BIN number in Cardinal
 
-| Property                          | Value                                   | Required  | Notes                                                                                                                                                                                                                                                                 |
-| --------------------------------- | --------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| custom.fields.isv_token           | Cybersource flex token                  | See notes | This is the token parameter passed into the callback for the microform.createToken call <br><br> Required when not using a saved token                                                                                                                                |
-| custom.fields.isv_tokenAlias      | Alias for saved token                   | No        | When this is specified the token will be saved as a subscription for later use                                                                                                                                                                                        |
-| custom.fields.isv_savedToken      | Saved token value                       | No        | Required when paying with a saved token                                                                                                                                                                                                                               |
-| custom.fields.isv_maskedPan       | Masked credit card number               | No        | Can be obtained from the token parameter passed into the callback for the microform.createToken call. The token is a JWT which when decoded has a data.number field containing the masked card number. <br><br> Not required by extension but can be used for display |
-| custom.fields.isv_cardType        | Credit card type                        | No        | For display only                                                                                                                                                                                                                                                      |
-| custom.fields.isv_cardExpiryMonth | Card expiry month                       | No        | For display only                                                                                                                                                                                                                                                      |
-| custom.fields.isv_cardExpiryYear  | Card expiry year                        | No        | For display only                                                                                                                                                                                                                                                      |
-| custom.fields.isv_acceptHeader    | Accept header from Customer browser     | Yes       | Used by 3DS process, populated from client-side libraries                                                                                                                                                                                                             |
-| custom.fields.isv_userAgentHeader | User agent header from Customer browser | Yes       | Used by 3DS process, populated from client-side libraries                                                                                                                                                                                                             |
+    | Property                              | Value                          | Required  | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+    | ------------------------------------- | ------------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | custom.fields.isv_token               | Cybersource flex token         | See notes | This is the token parameter passed into the callback for the microform.createToken call <br><br> Required when not using a saved token                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+    | custom.fields.isv_tokenAlias          | Alias for saved token          | No        | When this is specified the token will be saved as a subscription for later use. Merchant can either provide a input text field asking for the customer to provide value for this field or a checkbox to select if the token needs be saved as a subscription for later use. In the latter case, Merchant should provide a unique value upon selecting the checkbox                                                                                                                                                                                                                                                                                                                                            |
+    | custom.fields.isv_maskedPan           | Masked credit card number      | No        | Can be obtained from the token parameter passed into the callback for the microform.createToken call. The token is a JWT which when decoded has a data.number field containing the masked card number <br><br> Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+    | custom.fields.isv_cardType            | Credit card type               | No        | Can be obtained from the token parameter passed into the callback for the microform.createToken call. The token is a JWT which when decoded has a data.type field containing the card type <br><br> Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+    | custom.fields.isv_cardExpiryMonth     | Card expiry month              | No        | Can be obtained from the token parameter passed into the callback for the microform.createToken call. The token is a JWT which when decoded has a data.expirationMonth field containing the card type <br><br> Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+    | custom.fields.isv_cardExpiryYear      | Card expiry year               | No        | Can be obtained from the token parameter passed into the callback for the microform.createToken call. The token is a JWT which when decoded has a data.expirationYear field containing the card type <br><br> Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+    | custom.fields.isv_deviceFingerprintId | Customer device fingerprint id | Yes       | It must be unique for each merchant Id. You can use any string that you are already generating, such as an order number or web session Id. However, do not use the same uppercase and lowercase letters to indicate different session Ids. Replace sessionId with the unique Id generated in the URL given. Include the script "https://h.online-metrix.net/fp/tags.js?org_id={{org Id}}&session_id={{merchant Id}}{{session Id}}". Replace the below data {{org Id}} - To obtain this value, contact your CyberSource representative and specify to them whether it is for testing or production. {{merchant Id}} - Your unique CyberSource merchant Id. {{session Id}} - Value of unique Id generated above |
 
-6.  Initialise Payer Authentication Setup with the request JWT by using the field `isv_token` or `isv_saved_token`(if exists)
+6.  For saved token, update the Commercetools payment (<https://docs.commercetools.com/http-api-projects-payments>) and populate the following
 
-        jtiToken = jwtDecode(payment.custom.fields.isv_token);
-        var tokenInformation = new restApi.Riskv1authenticationsetupsTokenInformation();
-        tokenInformation.transientToken = jtiToken.jti;
-        requestObj.tokenInformation = tokenInformation;
+    a. Also see [Decision Manager](Decision-Manager.md) for additional fields to populate if you are using Decision Manager
 
-7.  Wait for event to return back the following fields. See [3DSecure Setup](3D-Secure-Setup.md) for details of the
-    one-time setup for this
+    b. When updating the payment, the extension will do a Payer Setup call to get reference_id for Digital Wallets to use in place of BIN number in Cardinal
+
+    | Property                              | Value                          | Required | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+    | ------------------------------------- | ------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | custom.fields.isv_savedToken          | Saved token value              | Yes      | custom.fields.isv_tokens's "paymentToken" value from Customer object                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+    | custom.fields.isv_tokenAlias          | Alias for saved token          | No       | custom.fields.isv_tokens's "alias" value from Customer object                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+    | custom.fields.isv_maskedPan           | Masked credit card number      | No       | custom.fields.isv_tokens's "cardNumber" value from Customer object <br>Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+    | custom.fields.isv_cardType            | Credit card type               | No       | custom.fields.isv_tokens's "cardType" value from Customer object <br>Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+    | custom.fields.isv_cardExpiryMonth     | Card expiry month              | No       | custom.fields.isv_tokens's "cardExpiryMonth" value from Customer object <br>Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+    | custom.fields.isv_cardExpiryYear      | Card expiry year               | No       | custom.fields.isv_tokens's "cardExpiryYear" value from Customer object <br>Not required by extension but can be used for display                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+    | custom.fields.isv_deviceFingerprintId | Customer device fingerprint id | Yes      | It must be unique for each merchant Id. You can use any string that you are already generating, such as an order number or web session Id. However, do not use the same uppercase and lowercase letters to indicate different session Ids. Replace sessionId with the unique Id generated in the URL given. Include the script "https://h.online-metrix.net/fp/tags.js?org_id={{org Id}}&session_id={{merchant Id}}{{session Id}}". Replace the below data {{org Id}} - To obtain this value, contact your CyberSource representative and specify to them whether it is for testing or production. {{merchant Id}} - Your unique CyberSource merchant Id. {{session Id}} - Value of unique Id generated above |
+
+7.  Wait for the event to return back the following fields, verify the following fields from update response. If the data exists for below fields, submit the device data collection form using below data, else throw error to the user. See [Device Data Collection Iframe](https://docs.cybersource.com/content/dam/new-documentation/documentation/en/fraud-management/payer-auth/rest/payer-auth-rest.pdf) to get more details about device data collection Iframe
 
         accessToken
         referenceId
         deviceDataCollectionURL
 
-8.  After completing the Setup event, initialize the Enrolment Check by populating the following fields to the payment
+8.  After completing the Setup event, initialize the Enrolment Check by updating the payment with the following
 
-| Property                                  | Value                                      | Required  | Notes                                                                                                                                                    |
-| ----------------------------------------- | ------------------------------------------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| custom.fields.isv_deviceDataCollectionUrl | Device Data Collection URL for 3DS         | See notes | This is the `deviceDataCollectionURL` parameter obtained from the Payer Authentication SetUp call and passed into the request object for Enrolment Check |
-| custom.fields.isv_cardinalReferenceId     | Cardinal Reference Id for 3DS              | See notes | This is the `referenceId` parameter obtained from the Payer Authentication SetUp call and passed into the request object for Enrolment Check             |
-| custom.fields.isv_requestJwt              | Request JWT for payer auth enrolment check | See notes | This is the `accessToken` parameter obtained from the Payer Authentication SetUp call and passed into the request object for Enrolment Check             |
+    | Property                            | Value                                   | Required | Notes                                                     |
+    | ----------------------------------- | --------------------------------------- | -------- | --------------------------------------------------------- |
+    | custom.fields.isv_acceptHeader      | Accept header from Customer browser     | Yes      | Used by 3DS process, populated from client-side libraries |
+    | custom.fields.isv_userAgentHeader   | User agent header from Customer browser | Yes      | Used by 3DS process, populated from client-side libraries |
+    | custom.fields.isv_customerIpAddress | Customer IP address                     | Yes      | Populated from client-side libraries                      |
 
-9. Wait for the event to return back the following fields
+9.  Wait for the event to return back the following fields, verify the following fields from update response
 
-   authenticationTransactionId
-
-   stepUpURL
-
-   accessToken
+        authenticationTransactionId
+        stepUpURL
+        accessToken
 
 10. Check the value of the isv_payerAuthenticationRequired field on the
-    created payment. If the value is true, perform the following steps
+    updated payment. If the value is true, perform the following steps
 
-    submit the stepup form buy using the `stepUpURL` & `accessToken`
+    submit the stepup form by using the `stepUpURL` & `accessToken`. See [Step-Up IFrame](https://docs.cybersource.com/content/dam/new-documentation/documentation/en/fraud-management/payer-auth/rest/payer-auth-rest.pdf) to get more details about step up Iframe
 
-    a. The payer authentication window will be displayed and when the user completes the process, the user is redirected back to the consumerAuthenticationInformation.returnUrl within the iframe.
+    a. The payer authentication window will be displayed and when the user completes the process, the user is redirected back to the consumerAuthenticationInformation.returnUrl within the iframe
 
-    b. Update the commerce tools payment to set the value of custom.fields.isv_responseJwt to the value extracted from the Cardinal response
+    b. The response sent back to the return URL contains the following
+
+         - Transaction ID: (consumerAuthenticationInformation.authenticationTransactionId response field)
+
+        - MD: merchant data returned if present in the POST to step-up URL; otherwise, null
+
+    c. Update the commerce tools payment to set the value of custom.fields.isv_payerAuthenticationTransactionId to the value extracted from the return URL's Transaction ID
 
 11. Add a transaction to the payment with the following values populated
 
@@ -114,30 +130,31 @@ The response should have the `isv_tokenCaptureContextSignature` and `isv_tokenVe
     | -------- | ------------------- | ------------------------------------- |
     | type     | Authorization       |                                       |
     | state    | Initial             |                                       |
-    | amount   | Amount to authorise | Should match amountPlanned on payment |
+    | amount   | Amount to authorize | Should match amountPlanned on payment |
 
-12. Verify the payment state
+12. Verify the payment state and convey the payment result to the customer
 
-    a. If the authorisation was successful the transaction state will have been updated to **Success**
 
-    b. See [Overview\#Errorhandling](Overview.md#Errorhandling) for handling errors or failures
+    a. If the authorization was successful the transaction state is updated to **Success**, display the order confirmation page
 
-13. Convey the payment result to the customer. If this is the only/final payment for this order you can transition your Commercetools cart to an order at this point
+    b. If the state of the authorization transaction is updated to **Pending** which is due Fraud Check, display the order confirmation page
+
+    C. If the state of the authorization transaction is updated to **Failure**, display the error page and See [Overview\#Errorhandling](Overview.md#Errorhandling) for handling errors or failures
 
 ## Stored values
 
-The following values are stored within commerce tools to allow later
+The following values are stored within Commercetools to allow later
 verification that the payer was authenticated correctly
 
 - Responses to the enrolment check are stored on a payment interface interaction with a type key of `isv_payments_payer_authentication_enrolment_check`
 
 - Responses to the authentication validation are stored on a payment interface interaction with a type key of `isv_payments_payer_authentication_validate_result`
 
-- The request and response Cardinal JWTs are stored a custom properties on the payment
+- The request and response Cardinal JWTs are stored as custom properties on the payment
 
-- The paReq and acsUrl values are stored a custom properties on the payment
+- The paReq and acsUrl values are stored as custom properties on the payment
 
-When a token is saved as a subscription the saved token value will be returned as a custom property on the payment called isv_savedToken
+When a token is saved as a subscription the saved token value will be returned as a custom property on the payment called isv_savedToken.
 
 See [Commercetools Setup](Commercetools-Setup.md) for more details on the individual fields.
 

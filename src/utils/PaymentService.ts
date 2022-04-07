@@ -154,8 +154,8 @@ const visaCardDetailsAction = (visaCheckoutData) => {
   let maskedPan: any;
   let exceptionData: any;
   try {
-    if (null != visaCheckoutData) {
-      if (null != visaCheckoutData.cardFieldGroup.prefix && null != visaCheckoutData.cardFieldGroup.suffix) {
+    if (null != visaCheckoutData && visaCheckoutData.hasOwnProperty(Constants.CARD_FIELD_GROUP) && Constants.VAL_ZERO < Object.keys(visaCheckoutData.cardFieldGroup).length) {
+      if (visaCheckoutData.cardFieldGroup.hasOwnProperty(Constants.STRING_PREFIX) && null != visaCheckoutData.cardFieldGroup.prefix && visaCheckoutData.cardFieldGroup.hasOwnProperty(Constants.STRING_SUFFIX) && null != visaCheckoutData.cardFieldGroup.suffix) {
         cardPrefix = visaCheckoutData.cardFieldGroup.prefix;
         cardSuffix = visaCheckoutData.cardFieldGroup.suffix;
         maskedPan = cardPrefix.concat(Constants.CLICK_TO_PAY_CARD_MASK, cardSuffix);
@@ -165,21 +165,21 @@ const visaCardDetailsAction = (visaCheckoutData) => {
           value: maskedPan,
         });
       }
-      if (null != visaCheckoutData.cardFieldGroup.expirationMonth) {
+      if (visaCheckoutData.cardFieldGroup.hasOwnProperty(Constants.STRING_EXPIRATION_MONTH) && null != visaCheckoutData.cardFieldGroup.expirationMonth) {
         actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CARD_EXPIRY_MONTH,
           value: visaCheckoutData.cardFieldGroup.expirationMonth,
         });
       }
-      if (null != visaCheckoutData.cardFieldGroup.expirationYear) {
+      if (visaCheckoutData.cardFieldGroup.hasOwnProperty(Constants.STRING_EXPIRATION_YEAR) && null != visaCheckoutData.cardFieldGroup.expirationYear) {
         actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CARD_EXPIRY_YEAR,
           value: visaCheckoutData.cardFieldGroup.expirationYear,
         });
       }
-      if (null != visaCheckoutData.cardFieldGroup.type) {
+      if (visaCheckoutData.cardFieldGroup.hasOwnProperty(Constants.TYPE_ID_TYPE) && null != visaCheckoutData.cardFieldGroup.type) {
         actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_CARD_TYPE,
@@ -306,13 +306,26 @@ const payerEnrollActions = (response, updatePaymentObj) => {
           name: Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID,
           value: isv_payerAuthenticationTransactionId,
         });
-        if (Constants.ISV_CAPTURE_CONTEXT_SIGNATURE in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature) {
-          action.actions.push({
-            action: Constants.SET_CUSTOM_FIELD,
-            name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
-            value: null,
-          });
-        }
+      }
+      if (Constants.ISV_CAPTURE_CONTEXT_SIGNATURE in updatePaymentObj.custom.fields && null != updatePaymentObj.custom.fields.isv_tokenCaptureContextSignature) {
+        action.actions.push({
+          action: Constants.SET_CUSTOM_FIELD,
+          name: Constants.ISV_CAPTURE_CONTEXT_SIGNATURE,
+          value: null,
+        });
+      }
+      if (
+        Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields &&
+        Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken &&
+        Constants.ISV_TOKEN_VERIFICATION_CONTEXT in updatePaymentObj.custom.fields &&
+        null != updatePaymentObj.custom.fields.isv_tokenVerificationContext &&
+        Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_tokenVerificationContext
+      ) {
+        action.actions.push({
+          action: Constants.SET_CUSTOM_FIELD,
+          name: Constants.ISV_TOKEN_VERIFICATION_CONTEXT,
+          value: null,
+        });
       }
       if (Constants.API_STATUS_PENDING_AUTHENTICATION != response.status) {
         action.actions.push({
@@ -372,14 +385,11 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
   let isv_deviceDataCollectionUrl = Constants.STRING_EMPTY;
   try {
     if (null != paymentResponse) {
-      if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHORIZED == paymentResponse.status && null != transactionDetail) {
+      if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && null != transactionDetail && (Constants.API_STATUS_AUTHORIZED == paymentResponse.status || Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status)) {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
         setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_SUCCESS);
         response = createResponse(setTransaction, setCustomField, null);
-      } else if (
-        (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status && null != transactionDetail) ||
-        (Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status && null != transactionDetail)
-      ) {
+      } else if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status && null != transactionDetail) {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
         setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_PENDING);
         response = createResponse(setTransaction, setCustomField, null);
@@ -594,6 +604,12 @@ const convertAmountToCent = (amount) => {
   return cent;
 };
 
+const roundOff = (amount) => {
+  let value = Constants.VAL_FLOAT_ZERO;
+  value = Math.round(amount * Constants.VAL_HUNDRED) / Constants.VAL_HUNDRED;
+  return value;
+};
+
 const getSubstring = (firstIndex, lastIndex, input) => {
   let subString = Constants.STRING_EMPTY;
   subString = input.substring(firstIndex, lastIndex);
@@ -650,4 +666,5 @@ export default {
   getEmptyResponse,
   invalidOperationResponse,
   invalidInputResponse,
+  roundOff,
 };

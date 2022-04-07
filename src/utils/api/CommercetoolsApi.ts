@@ -62,12 +62,12 @@ const retrieveCartByAnonymousId = async (anonymousId) => {
         uri = requestBuilder.carts
           .parse({
             where: [`${Constants.ANONYMOUS_ID} = "${anonymousId}"`, `${Constants.ACTIVE_CART_STATE}`],
-            sort: [{ by: Constants.LAST_MODIFIED_AT, direction: Constants.DESC_ORDER }]
+            sort: [{ by: Constants.LAST_MODIFIED_AT, direction: Constants.DESC_ORDER }],
           })
           .build();
         channelsRequest = {
           uri: uri,
-          method: 'GET',
+          method: Constants.HTTP_METHOD_GET,
         };
         anonymousIdResponse = await client.execute(channelsRequest);
       } else {
@@ -109,7 +109,7 @@ const retrieveCartByCustomerId = async (customerId) => {
         uri = requestBuilder.carts
           .parse({
             where: [`${Constants.CUSTOMER_ID} = "${customerId}"`, `${Constants.ACTIVE_CART_STATE}`],
-            sort: [{ by: Constants.LAST_MODIFIED_AT, direction: Constants.DESC_ORDER }]
+            sort: [{ by: Constants.LAST_MODIFIED_AT, direction: Constants.DESC_ORDER }],
           })
           .build();
         channelsRequest = {
@@ -154,6 +154,53 @@ const retrieveCartByPaymentId = async (paymentId) => {
           projectKey: process.env.CT_PROJECT_KEY,
         });
         uri = requestBuilder.carts.parse({ where: [`paymentInfo(payments(id="${paymentId}"))`] }).build();
+        channelsRequest = {
+          uri: uri,
+          method: Constants.HTTP_METHOD_GET,
+        };
+        paymentIdResponse = await client.execute(channelsRequest);
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_RETRIEVE_CART_BY_PAYMENT_ID, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+      }
+    } else {
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_RETRIEVE_CART_BY_PAYMENT_ID, Constants.LOG_INFO, Constants.ERROR_MSG_RETRIEVE_PAYMENT_DETAILS);
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS + Constants.STRING_HYPHEN + exception;
+    }
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_RETRIEVE_CART_BY_PAYMENT_ID, Constants.LOG_ERROR, exceptionData);
+  }
+  if (null != paymentIdResponse) {
+    paymentIdResponse = paymentIdResponse.body;
+  }
+  return paymentIdResponse;
+};
+
+const retrievePaymentByCustomerId = async (paymentId, startTime, endTime) => {
+  let paymentIdResponse: any;
+  let client: any;
+  let requestBuilder: any;
+  let channelsRequest: any;
+  let exceptionData: any;
+  let uri: string;
+  try {
+    if (null != paymentId) {
+      client = getClient();
+      if (null != client) {
+        requestBuilder = createRequestBuilder({
+          projectKey: process.env.CT_PROJECT_KEY,
+        });
+        uri = requestBuilder.payments
+          .byCustomerId(paymentId)
+          .parse({
+            where: [`createdAt > "${startTime}" and createdAt < "${endTime}" and custom(fields(isv_tokenAlias is defined)) and custom(fields(isv_token is defined))`],
+          })
+          .build();
         channelsRequest = {
           uri: uri,
           method: Constants.HTTP_METHOD_GET,
@@ -324,41 +371,64 @@ const updateCartByPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
   let channelsRequest: any;
   let exceptionData: any;
   let uri: string;
+  let actions = [] as any;
   try {
-    if (null != cartId && null != cartVersion && null != visaCheckoutData &&  null!= visaCheckoutData.billToFieldGroup && Constants.STRING_TRUE == visaCheckoutData.hasOwnProperty(Constants.STRING_BILL_TO_FIELD_GROUP)) {
-      client = getClient();
-      if (null != client) {
-        requestBuilder = createRequestBuilder({
-          projectKey: process.env.CT_PROJECT_KEY,
+    if (null != cartId && null != cartVersion && null != visaCheckoutData && Constants.VAL_ZERO != Object.keys(visaCheckoutData).length) {
+      if (null != visaCheckoutData.billToFieldGroup && Constants.VAL_ZERO != Object.keys(visaCheckoutData.billToFieldGroup).length) {
+        actions.push({
+          action: Constants.SET_BILLING_ADDRESS,
+          address: {
+            firstName: visaCheckoutData.billToFieldGroup.firstName,
+            lastName: visaCheckoutData.billToFieldGroup.lastName,
+            streetName: visaCheckoutData.billToFieldGroup.address1,
+            streetNumber: visaCheckoutData.billToFieldGroup.address2,
+            postalCode: visaCheckoutData.billToFieldGroup.postalCode,
+            city: visaCheckoutData.billToFieldGroup.locality,
+            region: visaCheckoutData.billToFieldGroup.administrativeArea,
+            country: visaCheckoutData.billToFieldGroup.country,
+            phone: visaCheckoutData.billToFieldGroup.phoneNumber,
+            email: visaCheckoutData.billToFieldGroup.email,
+          },
         });
-        uri = requestBuilder.carts.byId(cartId).build();
-        channelsRequest = {
-          uri: uri,
-          method: Constants.HTTP_METHOD_POST,
-          body: JSON.stringify({
-            version: cartVersion,
-            actions: [
-              {
-                action: Constants.SET_BILLING_ADDRESS,
-                address: {
-                  firstName: visaCheckoutData.billToFieldGroup.firstName,
-                  lastName: visaCheckoutData.billToFieldGroup.lastName,
-                  streetName: visaCheckoutData.billToFieldGroup.address1,
-                  streetNumber: visaCheckoutData.billToFieldGroup.address2,
-                  postalCode: visaCheckoutData.billToFieldGroup.postalCode,
-                  city: visaCheckoutData.billToFieldGroup.locality,
-                  region: visaCheckoutData.billToFieldGroup.administrativeArea,
-                  country: visaCheckoutData.billToFieldGroup.country,
-                  phone: visaCheckoutData.billToFieldGroup.phoneNumber,
-                  email: visaCheckoutData.billToFieldGroup.email,
-                },
-              },
-            ],
-          }),
-        };
-        orderResponse = await client.execute(channelsRequest);
+      }
+      if (null != visaCheckoutData.shipToFieldGroup && Constants.VAL_ZERO != Object.keys(visaCheckoutData.shipToFieldGroup).length) {
+        actions.push({
+          action: Constants.SET_SHIPPING_ADDRESS,
+          address: {
+            firstName: visaCheckoutData.shipToFieldGroup.firstName,
+            lastName: visaCheckoutData.shipToFieldGroup.lastName,
+            streetName: visaCheckoutData.shipToFieldGroup.address1,
+            streetNumber: visaCheckoutData.shipToFieldGroup.address2,
+            postalCode: visaCheckoutData.shipToFieldGroup.postalCode,
+            city: visaCheckoutData.shipToFieldGroup.locality,
+            region: visaCheckoutData.shipToFieldGroup.administrativeArea,
+            country: visaCheckoutData.shipToFieldGroup.country,
+            phone: visaCheckoutData.shipToFieldGroup.phoneNumber,
+            email: visaCheckoutData.shipToFieldGroup.email,
+          },
+        });
+      }
+      if (null != actions && Constants.VAL_ZERO != actions.length) {
+        client = getClient();
+        if (null != client) {
+          requestBuilder = createRequestBuilder({
+            projectKey: process.env.CT_PROJECT_KEY,
+          });
+          uri = requestBuilder.carts.byId(cartId).build();
+          channelsRequest = {
+            uri: uri,
+            method: Constants.HTTP_METHOD_POST,
+            body: JSON.stringify({
+              version: cartVersion,
+              actions: actions,
+            }),
+          };
+          orderResponse = await client.execute(channelsRequest);
+        } else {
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CART_BY_PAYMENT_ID, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+        }
       } else {
-        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CART_BY_PAYMENT_ID, Constants.LOG_INFO, Constants.ERROR_MSG_COMMERCETOOLS_CONNECT);
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CART_BY_PAYMENT_ID, Constants.LOG_INFO, Constants.ERROR_MSG_UPDATE_CART);
       }
     } else {
       paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CART_BY_PAYMENT_ID, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_CART);
@@ -757,4 +827,5 @@ export default {
   updateSync,
   syncVisaCardDetails,
   syncAddTransaction,
+  retrievePaymentByCustomerId,
 };

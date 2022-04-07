@@ -5,7 +5,7 @@
 import test from 'ava';
 import dotenv from 'dotenv';
 dotenv.config();
-import { cart, cardTokens,payment, payments, service } from '../../const/GooglePay/PaymentAuthorizationServiceConstGP';
+import { cart, cardTokens, payment, payments, service, dontSaveTokenFlag } from '../../const/GooglePay/PaymentAuthorizationServiceConstGP';
 import authorizationResponse from '../../../service/payment/PaymentAuthorizationService';
 
 let paymentResponse = {
@@ -17,7 +17,7 @@ let paymentResponse = {
 };
 
 test.serial('Authorizing a payment and check http code', async (t) => {
-  const result: any = await authorizationResponse.authorizationResponse(payment, cart, service, cardTokens);
+  const result: any = await authorizationResponse.authorizationResponse(payment, cart, service, cardTokens, dontSaveTokenFlag);
   paymentResponse.httpCode = result.httpCode;
   paymentResponse.transactionId = result.transactionId;
   paymentResponse.status = result.status;
@@ -27,22 +27,17 @@ test.serial('Authorizing a payment and check http code', async (t) => {
 });
 
 test.serial('Check status of payment authorization', async (t) => {
-  if(paymentResponse.status=='AUTHORIZED')
-  {
+  if (paymentResponse.status == 'AUTHORIZED') {
     t.is(paymentResponse.status, 'AUTHORIZED');
-  }
-  else if(paymentResponse.status=='AUTHORIZED_PENDING_REVIEW')
-  {
+  } else if (paymentResponse.status == 'AUTHORIZED_PENDING_REVIEW') {
     t.is(paymentResponse.status, 'AUTHORIZED_PENDING_REVIEW');
-  }
-  else if(paymentResponse.status=='DECLINED')
-  {
-    t.is(paymentResponse.status, 'DECLINED')
+  } else if (paymentResponse.status == 'DECLINED') {
+    t.is(paymentResponse.status, 'DECLINED');
   }
 });
 
 test.serial('Authorizing a payment using invalid token and check http code', async (t) => {
-  const result: any = await authorizationResponse.authorizationResponse(payments, cart, service, cardTokens);
+  const result: any = await authorizationResponse.authorizationResponse(payments, cart, service, cardTokens, dontSaveTokenFlag);
   paymentResponse.httpCode = result.httpCode;
   paymentResponse.transactionId = result.transactionId;
   paymentResponse.status = result.status;
@@ -52,10 +47,9 @@ test.serial('Authorizing a payment using invalid token and check http code', asy
 });
 
 test.serial('Check status of payment authorization using invalid token', async (t) => {
-  var i=0;
-  if(paymentResponse.status=='AUTHORIZED' || paymentResponse.status=='DECLINED' || paymentResponse.status=='AUTHORIZED_PENDING_REVIEW')
-  {
+  var i = 0;
+  if (paymentResponse.status == 'AUTHORIZED' || paymentResponse.status == 'DECLINED' || paymentResponse.status == 'AUTHORIZED_PENDING_REVIEW') {
     i++;
   }
-    t.is(i, 0);
+  t.is(i, 0);
 });

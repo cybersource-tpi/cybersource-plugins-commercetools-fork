@@ -1,5 +1,9 @@
 # Refund a Payment
 
+## Refund Service Sequence Diagram
+
+![Refund service flow](images/Refund-Flow.svg)
+
 ## Process
 
 To refund a payment, a Capture must have been completed. When the Payment Update API Extension receives a payment that contains an INITIAL REFUND transaction, it will attempt to refund the requested amount on the transaction using the `interactionId` of the existing SUCCESS CHARGE transaction on the payment. You can perform multiple refunds but the total of all previous successful refunds and the current refund must be no more than the amount captured.

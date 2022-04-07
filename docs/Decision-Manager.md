@@ -127,19 +127,6 @@ To pass additional data to Decision Manager it is possible to customize your Com
 <td>billTo_ipAddress</td>
 <td><br />
 </td>
-</tr>
-<tr class="odd">
-<td>line-item</td>
-<td>isv_productCode</td>
-<td>item_#_productCode</td>
-<td><p>Needs to be populated on the cart line items as the extension has no access to the product</p></td>
-</tr>
-<tr class="even">
-<td>line-item</td>
-<td>isv_productRisk</td>
-<td>item_#_productRisk</td>
-<td><p>Needs to be populated on the cart line items as the extension has no access to the product</p></td>
-</tr>
 </tbody>
 </table>
 
@@ -160,16 +147,6 @@ The following is an example of field definitions for the customer IP address and
             "en": "Customer IP address"
           },
           "required": false
-        },
-        {
-          "type": {
-            "name": "String"
-          },
-          "name": "isv_merchantDefinedData_mddField_1",
-          "label": {
-            "en": "isv_merchantDefinedData_mddField_1"
-          },
-          "required": false
         }
       ],
       "key": "isv_payment_data",
@@ -178,87 +155,6 @@ The following is an example of field definitions for the customer IP address and
       },
       "resourceTypeIds": [
         "payment"
-      ]
-    }
-
-#### Line Item
-
-The following fields are defined as enums with all the values supported by Cybersource for the product code and risk. However you could use plain String fields instead. If you have already customized the line-item resource you should add the fields to that definition
-
-    {
-      "fieldDefinitions": [
-        {
-          "type" : {
-            "name" : "Enum",
-            "values" : [ {
-              "key" : "adult_content",
-              "label" : "Adult content."
-            }, {
-              "key" : "coupon",
-              "label" : "Coupon applied to the entire order."
-            }, {
-              "key" : "default",
-              "label" : "Default value for the product code."
-            }, {
-              "key" : "electronic_good",
-              "label" : "Electronic product other than software."
-            }, {
-              "key" : "electronic_software",
-              "label" : "Software distributed electronically rather than on disks or other media."
-            }, {
-              "key" : "gift_certificate",
-              "label" : "Gift certificate."
-            }, {
-              "key" : "handling_only",
-              "label" : "Fee that you charge your customer to cover your administrative selling costs."
-            }, {
-              "key" : "service",
-              "label" : "Service that you perform for your customer."
-            }, {
-              "key" : "shipping_and_handling",
-              "label" : "The shipping portion is the charge for shipping the product to your customer."
-            }, {
-              "key" : "shipping_only",
-              "label" : "Charge for transporting tangible personal property from your location to your customer."
-            }, {
-              "key" : "subscription",
-              "label" : "Subscription to a web site or other content."
-            } ]
-          },
-          "name" : "isv_productCode",
-          "label" : {
-            "en" : "Payment service product code"
-          },
-          "required" : false
-        },
-        {
-          "type" : {
-            "name" : "Enum",
-            "values" : [ {
-              "key" : "low",
-              "label" : "The product is associated with few chargebacks."
-            }, {
-              "key" : "normal",
-              "label" : "The product is associated with a normal number of chargebacks."
-            }, {
-              "key" : "high",
-              "label" : "The product is associated with many chargebacks."
-            } ]
-          },
-          "name" : "isv_productRisk",
-          "label" : {
-            "en" : "Payment service product risk"
-          },
-          "required" : false
-        }
-
-      ],
-      "key": "isv_payments_line_item_data",
-      "name": {
-        "en": "Payment service custom line item fields"
-      },
-      "resourceTypeIds": [
-        "line-item"
       ]
     }
 

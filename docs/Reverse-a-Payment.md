@@ -1,5 +1,9 @@
 # Reverse a Payment
 
+## Authorization Reversal Service Sequence Diagram
+
+![Authorization Reversal service flow](images/Authorization-Reversal-Flow.svg)
+
 ## Process
 
 To reverse a payment, an Authorization must have been completed. When the Payment Update API Extension receives a payment that contains an INITIAL CANCEL_AUTHORIZATION transaction, it will attempt to reverse the requested amount on the transaction using the `interactionId` of the existing SUCCESS AUTHORIZATION transaction on the payment. The requested amount must be equal to the amount original authorized.

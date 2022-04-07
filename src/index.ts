@@ -6,7 +6,7 @@ import path from 'path';
 
 import flexKeys from './service/payment/FlexKeys';
 import commercetoolsApi from './utils/api/CommercetoolsApi';
-import paymentHandler from './utils//PaymentHandler';
+import paymentHandler from './utils/PaymentHandler';
 import paymentService from './utils/PaymentService';
 import { Constants } from './constants';
 
@@ -77,13 +77,15 @@ app.get('/orders', async (req, res) => {
   });
 });
 
-app.get('/paymentDetails', async (req, res) => {
+app.get('/paymentdetails', async (req, res) => {
   let paymentId: any;
   let paymentDetails: any;
   let cartDetails: any;
   let cartData: any;
   let exceptionData: any;
   let refundTransaction: any;
+  let selectedLocale: any;
+  let locale: any;
   let authReversalFlag = false;
   let convertedPaymentId = Constants.STRING_EMPTY;
   let pendingCaptureAmount = Constants.VAL_FLOAT_ZERO;
@@ -96,6 +98,10 @@ app.get('/paymentDetails', async (req, res) => {
       convertedPaymentId = paymentId.replace(/\s+/g, Constants.STRING_EMPTY);
       cartDetails = await commercetoolsApi.retrieveCartByPaymentId(convertedPaymentId);
       cartData = cartDetails.results[Constants.VAL_ZERO];
+      if (Constants.STRING_LOCALE in cartData && null != cartData.locale) {
+        selectedLocale = cartData.locale.split(Constants.REGEX_HYPHEN);
+        locale = selectedLocale[Constants.VAL_ZERO];
+      }
       paymentDetails = await commercetoolsApi.retrievePayment(convertedPaymentId);
       if (null != paymentDetails) {
         refundTransaction = paymentDetails.transactions;
@@ -127,12 +133,14 @@ app.get('/paymentDetails', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.render('paymentDetails', {
+  res.render('paymentdetails', {
     id: convertedPaymentId,
     payments: paymentDetails,
     cart: cartData,
     captureAmount: pendingCaptureAmount,
     amountConversion: paymentService.convertCentToAmount,
+    roundOff: paymentService.roundOff,
+    locale: locale,
     errorMessage: errorMessage,
     successMessage: successMessage,
     refundErrorMessage: refundErrorMessage,
@@ -151,7 +159,7 @@ app.post('/api/extension/payment/create', async (req, res) => {
       paymentObj = req.body.resource.obj;
       paymentMethod = paymentObj.paymentMethodInfo.method;
       if (paymentMethod == Constants.CREDIT_CARD || paymentMethod == Constants.CC_PAYER_AUTHENTICATION) {
-        if (Constants.ISV_SAVED_TOKEN in paymentObj.custom.fields && Constants.STRING_EMPTY != paymentObj.custom.fields.isv_savedToken) {
+        if (null != paymentObj && Constants.STRING_CUSTOM in paymentObj && Constants.STRING_FIELDS in paymentObj.custom && Constants.ISV_SAVED_TOKEN in paymentObj.custom.fields && Constants.STRING_EMPTY != paymentObj.custom.fields.isv_savedToken) {
           actions = paymentService.fieldMapper(paymentObj.custom.fields);
           response = {
             actions: actions,
@@ -171,11 +179,8 @@ app.post('/api/extension/payment/create', async (req, res) => {
           }
         }
       } else if (paymentMethod == Constants.APPLE_PAY) {
-        if (Constants.STRING_FIELDS in paymentObj.custom) {
+        if (Constants.STRING_CUSTOM in paymentObj && Constants.STRING_FIELDS in paymentObj.custom) {
           response = await paymentHandler.applePaySessionHandler(paymentObj.custom.fields);
-        } else {
-          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_PAYMENT_CREATE, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS);
-          response = paymentService.invalidOperationResponse();
         }
       } else {
         response = paymentService.getEmptyResponse();
@@ -214,18 +219,30 @@ app.post('/api/extension/payment/update', async (req, res) => {
       updatePaymentObj = req.body.resource.obj;
       paymentMethod = updatePaymentObj.paymentMethodInfo.method;
       if (Constants.CC_PAYER_AUTHENTICATION == paymentMethod && Constants.VAL_ZERO == updatePaymentObj.transactions.length) {
-        if (!(Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields)) {
+        if (null != updatePaymentObj && Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && !(Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields)) {
           updateResponse = await paymentHandler.getPayerAuthSetUpResponse(updatePaymentObj);
-        } else if (!(Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID in updatePaymentObj.custom.fields) && Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_cardinalReferenceId) {
+        } else if (
+          Constants.STRING_CUSTOM in updatePaymentObj &&
+          Constants.STRING_FIELDS in updatePaymentObj.custom &&
+          !(Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID in updatePaymentObj.custom.fields) &&
+          Constants.ISV_CARDINAL_REFERENCE_ID in updatePaymentObj.custom.fields &&
+          Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_cardinalReferenceId
+        ) {
           updateResponse = await paymentHandler.getPayerAuthEnrollResponse(updatePaymentObj);
         }
       }
       if (Constants.VAL_ZERO < updatePaymentObj.transactions.length) {
         updateTransactions = updatePaymentObj.transactions.pop();
-        if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == updateTransactions.type) {
+        if (null != updateTransactions && Constants.TYPE_ID_TYPE in updateTransactions && Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == updateTransactions.type) {
           if (Constants.CT_TRANSACTION_STATE_SUCCESS == updateTransactions.state || Constants.CT_TRANSACTION_STATE_FAILURE == updateTransactions.state || Constants.CT_TRANSACTION_STATE_PENDING == updateTransactions.state) {
             updateResponse = paymentService.getEmptyResponse();
-          } else if (Constants.CC_PAYER_AUTHENTICATION == paymentMethod && Constants.ISV_PAYER_AUTHENTICATION_REQUIRED in updatePaymentObj.custom.fields && !updatePaymentObj.custom.fields.isv_payerAuthenticationRequired) {
+          } else if (
+            Constants.CC_PAYER_AUTHENTICATION == paymentMethod &&
+            Constants.STRING_CUSTOM in updatePaymentObj &&
+            Constants.STRING_FIELDS in updatePaymentObj.custom &&
+            Constants.ISV_PAYER_AUTHENTICATION_REQUIRED in updatePaymentObj.custom.fields &&
+            !updatePaymentObj.custom.fields.isv_payerAuthenticationRequired
+          ) {
             paymentResponse.httpCode = updatePaymentObj.custom.fields.isv_payerEnrollHttpCode;
             paymentResponse.status = updatePaymentObj.custom.fields.isv_payerEnrollStatus;
             paymentResponse.transactionId = updatePaymentObj.custom.fields.isv_payerEnrollTransactionId;
@@ -309,23 +326,27 @@ app.get('/capture', async (req, res) => {
     if (Constants.STRING_QUERY in req && Constants.STRING_ID in req.query && null != req.query.id) {
       paymentId = req.query.id;
       capturePaymentObj = await commercetoolsApi.retrievePayment(paymentId);
-      transactionObject = {
-        paymentId: paymentId,
-        version: capturePaymentObj.version,
-        amount: capturePaymentObj.amountPlanned,
-        type: Constants.CT_TRANSACTION_TYPE_CHARGE,
-        state: Constants.CT_TRANSACTION_STATE_INITIAL,
-      };
-      transactionResponse = await commercetoolsApi.addTransaction(transactionObject);
-      if (null != transactionResponse) {
-        latestTransaction = transactionResponse.transactions.pop();
-        if (Constants.CT_TRANSACTION_TYPE_CHARGE == latestTransaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == latestTransaction.state) {
-          successMessage = Constants.SUCCESS_MSG_CAPTURE_SERVICE;
+      if (null != capturePaymentObj) {
+        transactionObject = {
+          paymentId: paymentId,
+          version: capturePaymentObj.version,
+          amount: capturePaymentObj.amountPlanned,
+          type: Constants.CT_TRANSACTION_TYPE_CHARGE,
+          state: Constants.CT_TRANSACTION_STATE_INITIAL,
+        };
+        transactionResponse = await commercetoolsApi.addTransaction(transactionObject);
+        if (null != transactionResponse && Constants.STRING_TRANSACTIONS in transactionResponse) {
+          latestTransaction = transactionResponse.transactions.pop();
+          if (null != latestTransaction && Constants.CT_TRANSACTION_TYPE_CHARGE == latestTransaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == latestTransaction.state) {
+            successMessage = Constants.SUCCESS_MSG_CAPTURE_SERVICE;
+          } else {
+            errorMessage = Constants.ERROR_MSG_CAPTURE_SERVICE;
+          }
         } else {
-          errorMessage = Constants.ERROR_MSG_CAPTURE_SERVICE;
+          errorMessage = Constants.ERROR_MSG_ADD_TRANSACTION_DETAILS;
         }
       } else {
-        errorMessage = Constants.ERROR_MSG_ADD_TRANSACTION_DETAILS;
+        errorMessage = Constants.ERROR_MSG_RETRIEVE_PAYMENT_DETAILS;
       }
     } else {
       orderErrorMessage = Constants.ERROR_MSG_CANNOT_PROCESS;
@@ -343,7 +364,7 @@ app.get('/capture', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.redirect(`/paymentDetails?id=${paymentId}`);
+  res.redirect(`/paymentdetails?id=${paymentId}`);
 });
 
 app.get('/refund', async (req, res) => {
@@ -380,9 +401,9 @@ app.get('/refund', async (req, res) => {
             state: Constants.CT_TRANSACTION_STATE_INITIAL,
           };
           addTransaction = await commercetoolsApi.addTransaction(transactionObject);
-          if (null != addTransaction) {
+          if (null != addTransaction && Constants.STRING_TRANSACTIONS in addTransaction) {
             latestTransaction = addTransaction.transactions.pop();
-            if (Constants.CT_TRANSACTION_TYPE_REFUND == latestTransaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == latestTransaction.state) {
+            if (null != latestTransaction && Constants.CT_TRANSACTION_TYPE_REFUND == latestTransaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == latestTransaction.state) {
               successMessage = Constants.SUCCESS_MSG_REFUND_SERVICE;
             } else {
               errorMessage = Constants.ERROR_MSG_REFUND_SERVICE;
@@ -410,7 +431,7 @@ app.get('/refund', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.redirect(`/paymentDetails?id=${paymentId}`);
+  res.redirect(`/paymentdetails?id=${paymentId}`);
 });
 
 app.get('/authReversal', async (req, res) => {
@@ -435,9 +456,9 @@ app.get('/authReversal', async (req, res) => {
           state: Constants.CT_TRANSACTION_STATE_INITIAL,
         };
         addTransaction = await commercetoolsApi.addTransaction(transactionObject);
-        if (null != addTransaction) {
+        if (null != addTransaction && Constants.STRING_TRANSACTIONS in addTransaction) {
           latestTransaction = addTransaction.transactions.pop();
-          if (Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION == latestTransaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == latestTransaction.state) {
+          if (null != latestTransaction && Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION == latestTransaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == latestTransaction.state) {
             successMessage = Constants.SUCCESS_MSG_REVERSAL_SERVICE;
           } else {
             errorMessage = Constants.ERROR_MSG_REVERSAL_SERVICE;
@@ -464,7 +485,7 @@ app.get('/authReversal', async (req, res) => {
     orderErrorMessage = Constants.EXCEPTION_MSG_FETCH_PAYMENT_DETAILS;
     res.redirect('/orders');
   }
-  res.redirect(`/paymentDetails?id=${req.query.id}`);
+  res.redirect(`/paymentdetails?id=${req.query.id}`);
 });
 
 app.get('/decisionSync', async (req, res) => {

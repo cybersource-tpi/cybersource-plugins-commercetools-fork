@@ -20,15 +20,15 @@ Variables that begin with 'CT' prefix are Commercetools project specific propert
 | ISV_PAYMENT_MERCHANT_KEY_ID            | Id of a Cybersource shared secret key to be used for HTTP Signature authentication    | Created in <a href="Key-Creation.md">Key Creation</a>                              |
 | ISV_PAYMENT_MERCHANT_SECRET_KEY        | Value of a Cybersource shared secret key to be used for HTTP Signature authentication | Created in <a href="Key-Creation.md">Key Creation</a>                              |
 | ISV_PAYMENT_RUN_ENVIRONMENT            | TEST or PRODUCTION                                                                    | Property for running the project in TEST or PRODUCTION environment                 |
-| ISV_PAYMENT_VERIFICATION_KEY           | Used to check Flex tokens for tampering                                               |
-| ISV_PAYMENT_DECISION_MANAGER           | Flag for enabling and disabling Decision Manager for Authorization                    | Boolean value                                                                      |
+| ISV_PAYMENT_VERIFICATION_KEY           | Used to check Flex tokens for tampering                                               | Use <b>Openssl -rand64 32</b> to generate verification key |
+| ISV_PAYMENT_DECISION_MANAGER           | Boolean value - true or false                    | Flag for enabling and disabling Decision Manager for Authorization. Case sensitive.                                                                      |
 | ISV_PAYMENT_TARGET_ORIGIN              | Base URL where your frontend will be accessible                                       |                                                                                    |
 | ISV_PAYMENT_3DS_RETURN_URL             | URL that the issuing bank will redirect to the customer for payer Authentication      | Used only if payment.paymentMethodInfo.method == creditCardWithPayerAuthentication |
-| ISV_PAYMENT_APPLE_PAY_MERCHANT_ID      | Your Apple Pay merchant id                                                            | Provided by Cybersource                                                            |
+| ISV_PAYMENT_APPLE_PAY_MERCHANT_ID      | Your Apple Pay merchant id                                                            | Provided by Apple                                                            |
 | ISV_PAYMENT_APPLE_PAY_CERTIFICATE_PATH | Path where the Apple Pay certificate is stored                                        | Used only if payment.paymentMethodInfo.method == applePay                          |
 | ISV_PAYMENT_APPLE_PAY_KEY_PATH         | Path where the Apple Pay key is stored                                                | Used only if payment.paymentMethodInfo.method == applePay                          |
-| ISV_PAYMENT_DECISION_SYNC              | Flag for enabling and disabling Decision sync                                         | Boolean value                                                                      |
-| ISV_PAYMENT_RUN_SYNC                   | Flag for enabling and disabling Run sync                                              | Boolean value                                                                      |
+| ISV_PAYMENT_DECISION_SYNC              | Boolean value - true or false                                         | Flag for enabling and disabling Decision sync. Case sensitive.                                                                      |
+| ISV_PAYMENT_RUN_SYNC                   | Boolean value - true or false                                              | Flag for enabling and disabling Run sync. Case sensitive.                                                                      |
 | CT_PROJECT_KEY                         | Project key for your Commercetools project                                            | Created in <a href="Key-Creation.md">Key Creation</a>                              |
 | CT_CLIENT_ID                           | Client id of your Commercetools Payment API key                                       | Created in <a href="Key-Creation.md">Key Creation</a>                              |
 | CT_CLIENT_SECRET                       | Client secret of your Commercetools Payment API key                                   | Created in <a href="Key-Creation.md">Key Creation</a>                              |
@@ -38,7 +38,7 @@ Variables that begin with 'CT' prefix are Commercetools project specific propert
 
 # <a name="Deployment"></a>Deployment
 
-The Commercetools-Cybersource plugin is a typescript project which is built using cybersource-rest-client npm package and other several node packages.
+The Commercetools - Cybersource plugin is a typescript project which is built using cybersource-rest-client npm package and other several node packages.
 
 ## Example deployment steps
 
