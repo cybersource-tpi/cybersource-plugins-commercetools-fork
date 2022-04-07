@@ -13,25 +13,25 @@ const keys = async () => {
   let parsedContext: string;
   let isv_tokenCaptureContextSignature = Constants.STRING_EMPTY;
   let isv_tokenVerificationContext = Constants.STRING_EMPTY;
-  const format = Constants.ISV_PAYMENT_JWT_FORMAT;
+  const format = Constants.PAYMENT_GATEWAY_JWT_FORMAT;
   try {
     const apiClient = new restApi.ApiClient();
-    if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-      runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
-    } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-      runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
+    if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
+      runEnvironment = Constants.PAYMENT_GATEWAY_TEST_ENVIRONMENT;
+    } else if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
+      runEnvironment = Constants.PAYMENT_GATEWAY_PRODUCTION_ENVIRONMENT;
     }
     const configObject = {
-      authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
+      authenticationType: Constants.PAYMENT_GATEWAY_AUTHENTICATION_TYPE,
       runEnvironment: runEnvironment,
-      merchantID: process.env.ISV_PAYMENT_MERCHANT_ID,
-      merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
-      merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
+      merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
+      merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
+      merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
     };
     // eslint-disable-next-line no-var
     var requestObj = new restApi.GeneratePublicKeyRequest();
-    requestObj.encryptionType = Constants.ISV_PAYMENT_ENCRYPTION_TYPE;
-    requestObj.targetOrigin = process.env.ISV_PAYMENT_TARGET_ORIGIN;
+    requestObj.encryptionType = Constants.PAYMENT_GATEWAY_ENCRYPTION_TYPE;
+    requestObj.targetOrigin = process.env.PAYMENT_GATEWAY_TARGET_ORIGIN;
     const instance = new restApi.KeyGenerationApi(configObject, apiClient);
     return await new Promise(function (resolve, reject) {
       instance.generatePublicKey(format, requestObj, function (error, data, response) {
@@ -39,7 +39,7 @@ const keys = async () => {
           isv_tokenCaptureContextSignature = data.keyId;
           contextWithoutSignature = isv_tokenCaptureContextSignature.substring(Constants.VAL_ZERO, isv_tokenCaptureContextSignature.lastIndexOf(Constants.REGEX_DOT) + Constants.VAL_ONE);
           parsedContext = jwt_decode(contextWithoutSignature);
-          isv_tokenVerificationContext = jwt.sign(parsedContext, process.env.ISV_PAYMENT_VERIFICATION_KEY);
+          isv_tokenVerificationContext = jwt.sign(parsedContext, process.env.PAYMENT_GATEWAY_VERIFICATION_KEY);
           resolve({
             isv_tokenCaptureContextSignature,
             isv_tokenVerificationContext,

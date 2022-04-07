@@ -15,9 +15,14 @@ For using Synchronizing services , they might be enabled from the configuration 
 
 > **_NOTE:_** These fields are case sensitive
 
-The `run sync` button will synchronize every payment found for the current day, 50 payments at a time. Where as the `decision sync` also works in the similar way such that, it will update the state of payment that is in 'Pending' to either 'Success' or 'Failure' based on the Decision taken by the merchant.
+The `run sync` button in plugin UI (<https://{domain_where_plugin_is_hosted}/orders>) will synchronize every payment found for the current day, 50 payments at a time. Where as the `decision sync` also works in the similar way such that, it will update the state of payment that is in 'Pending' to either 'Success' or 'Failure' based on the Decision taken by the merchant.
 
-TODO
+Alternatively, Cron job can be used to run the sync periodically. Below are the endpoints for synchronization:
+
+| Sync service                   | Endpoint                                  | Note                                                                                                  |
+| -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Decision sync                        | {baseUrl}/decisionSync          | The baseUrl will be defined by where you deploy the plugin. HTTPS should be used for production                                                                                                      |
+| Run sync                        | {baseUrl}/sync          | The baseUrl will be defined by where you deploy the plugin. HTTPS should be used for production                                                                                                      |
 
 ## Process
 

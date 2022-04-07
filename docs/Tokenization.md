@@ -6,101 +6,90 @@ The Customer update API extension will channel the request for Customer token up
 
 Use [API Extension Setup](API-Extension-Setup.md) guide for customizing the customer resource for saving tokens.
 
+Merchant can display the customer tokens by querying the Customer using Customer Id. <b>custom.fields.isv_tokens</b> from Customer object will have the tokens saved for that Customer. Use these data and display it to the customer in My Account section.
+
 The customer saved tokens can be viewed in:
 
-Merchant Centre → Customers → Customer list
-→ Custom Fields
+Merchant Centre → Customers → Customer list → Custom Fields
 
 ## Update Card Details
 
-1.  Navigate to the MyCards section, where you will see all the saved tokens for a customer
+1.  Update the customer with the new valid expiry date and month for the card by populating the following
 
-2.  Click on update card button available for the token which you are going to update
+    Note that isv_tokens data is a set of JSON object strings and update the required data for the intended token while the other tokens remain untouched.
 
-3.  Update the customer with the new valid expiry date and month for the card
+    A sample custom fields will look like this:
 
-        fields:{
-           isv_tokens:[
-               {
-                   alias:<value>,
-                   value:<value>,
-                   paymentToken:<value>,
-                   instrumentIdentifier:<value>,
-                   cardType:<value>,
-                   cardName:<value>,
-                   cardNumber:<value>,
-                   cardExpiryMonth:<value>,
-                   cardExpiryYear:<value>,
-                   oldExpiryMonth:<value>,
-                   oldExpiryYear:<value>,
-                   flag:<value>,
-               }
-           ]
+        "custom": {
+            "type": {
+                "typeId": "type",
+                "id": "e1a79a4a-49d6-4153-a0e7-d434712c4448"
+            },
+            "fields": {
+                "isv_tokens": [
+                    "{\"alias\":\"Card 4111\",\"value\":\"******************\",\"paymentToken\":\"******************\",\"instrumentIdentifier\":\"******************\",\"cardType\":\"001\",\"cardName\":\"001\",\"cardNumber\":\"411111XXXXXX1111\",\"cardExpiryMonth\":\"01\",\"cardExpiryYear\":\"2025\"}",
+                    "{\"alias\":\"Card 5444\",\"value\":\"******************\",\"paymentToken\":\"******************\",\"instrumentIdentifier\":\"******************\",\"cardType\":\"002\",\"cardName\":\"002\",\"cardNumber\":\"555555XXXXXX4444\",\"cardExpiryMonth\":\"03\",\"cardExpiryYear\":\"2025\"}"
+                ]
+            }
         }
 
-| Property             | Value                                                   | Required  | Notes                                                                              |
-| -------------------- | ------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------- |
-| alias                | Customer token alias                                    | See notes | This is the value which will represent a particular token data in general          |
-| value                | Customer token value/Subscription value                 | See notes | This is the subscription which the customer will create                            |
-| paymentToken         | Customer payment token                                  | See notes | This is the subscription which the customer will create                            |
-| instrumentIdentifier | Instrument identifier number for customer token         | See notes | Instrument identifier number returned by Cybersource while creating a subscription |
-| cardType             | Card type                                               | See notes | This value will be given by Cybersource during Subscription creation               |
-| cardName             | Card alias                                              | See notes | This value will be given by Cybersource during Subscription creation               |
-| cardNumber           | Card number                                             | See notes | This value will be given by Cybersource during Subscription creation               |
-| cardExpiryMonth      | Card expiry month                                       | See notes | This might be the new expiry month value that have to be updated for the token     |
-| cardExpiryYear       | Card expiry year                                        | See notes | Year might valid, otherwise token updation will fail                               |
-| oldExpiryMonth       | Card old expiry month                                   | See notes | This value will be the old expiry month that have to be updated for the token      |
-| oldExpiryYear        | Card old expiry year                                    | See notes | This value will be the old expiry year that have to be updated for the token       |
-| flag                 | String value which indicates the action to be performed | See notes | The value might be 'update'                                                        |
+    | Property             | Value                                                   | Required  | Notes                                                                              |
+    | -------------------- | ------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------- |
+    | custom.fields.isv_tokens[#].alias                | Customer token alias                                    | See notes | Value which will represent a particular token data in general          |
+    | custom.fields.isv_tokens[#].value                | Customer token value                 | See notes | Customer token returned by Cybersource while creating a token for the customer                           |
+    | custom.fields.isv_tokens[#].paymentToken         | Customer payment token                                  | See notes | Payment token returned by Cybersource while creating a token                            |
+    | custom.fields.isv_tokens[#].instrumentIdentifier | Instrument identifier for customer          | See notes | Instrument identifier returned by Cybersource while creating a token |
+    | custom.fields.isv_tokens[#].cardType             | Card type                                               | See notes | Card type of the token returned by Cybersource                |
+    | custom.fields.isv_tokens[#].cardName             | Card alias                                              |  |                |
+    | custom.fields.isv_tokens[#].cardNumber           | Card number                                             | See notes | Masked Pan returned by Cybersource                |
+    | custom.fields.isv_tokens[#].cardExpiryMonth      | Card expiry month                                       | See notes | New expiry month value that needs to be updated for the token     |
+    | custom.fields.isv_tokens[#].cardExpiryYear       | Card expiry year                                        | See notes | New expiry year value that needs to be updated for the token                               |
+    | custom.fields.isv_tokens[#].oldExpiryMonth       | Existing expiry month for the card. On updating, this field will be deleted by plugin                                   |  |       |
+    | custom.fields.isv_tokens[#].oldExpiryYear        | Existing expiry year for the card. On updating, this field will be deleted by plugin                                    |  |        |
+    | custom.fields.isv_tokens[#].flag                 | String value which indicates the action to be performed | See notes | The value should be 'update'                                                        |
 
-4. Make a call to Cybersource for updating the existing token and send back the response to the Commercetools if the token is updated
+2. The response will have updated data with the following fields
 
-The response sending to Commercetools might be having updated value for the following fields
-
-| Property        | Value                                                                                                                      |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| value           | The updated token value from Cybersource updateToken Response                                                              |
-| paymentToken    | The updated token value from Cybersource updateToken Response                                                              |
-| cardExpiryMonth | The updated expiry month for token from Cybersource updateToken Response                                                   |
-| cardExpiryYear  | The updated expiry year for token from Cybersource updateToken Response                                                    |
-| flag            | Will be a string value :`updated` if the token updation is successful and `update` if the token updation is not successful |
+    | Property        | Value                                                                                                                      |
+    | --------------- | -------------------------------------------------------------------------------------------------------------------------- |
+    | custom.fields.isv_tokens[#].value           | The updated token value from Cybersource updateToken response                                                              |
+    | custom.fields.isv_tokens[#].paymentToken    | The updated token value from Cybersource updateToken response                                                              |
+    | custom.fields.isv_tokens[#].cardExpiryMonth | The updated expiry month for token from Cybersource updateToken response                                                   |
+    | custom.fields.isv_tokens[#].cardExpiryYear  | The updated expiry year for token from Cybersource updateToken response                                                    |
+    | custom.fields.isv_tokens[#].flag            | Will be a string value :`updated` if the token is updated successfully and `update` if the token is not successfully updated |
 
 ## Delete Card
 
-1.  Navigate to the MyCards section, where you will see all the saved tokens for a customer
+1.  Update the customer by populating the following data
 
-2.  Click on delete card button available for the token which you are going to delete
+    Note that isv_tokens data is a set of JSON object strings and update the required data for the desired token while the other tokens remain untouched.
 
-3.  Update the customer by populating the following data
+    A sample custom fields will look like this:
 
-        fields:{
-           isv_tokens:[
-               {
-                   alias:<value>,
-                   value:<value>,
-                   paymentToken:<value>,
-                   instrumentIdentifier:<value>,
-                   cardType:<value>,
-                   cardName:<value>,
-                   cardNumber:<value>,
-                   cardExpiryMonth:<value>,
-                   cardExpiryYear:<value>,
-                   flag:<value>,
-               }
-           ]
+        "custom": {
+            "type": {
+                "typeId": "type",
+                "id": "e1a79a4a-49d6-4153-a0e7-d434712c4448"
+            },
+            "fields": {
+                "isv_tokens": [
+                    "{\"alias\":\"Card 4111\",\"value\":\"******************\",\"paymentToken\":\"******************\",\"instrumentIdentifier\":\"******************\",\"cardType\":\"001\",\"cardName\":\"001\",\"cardNumber\":\"411111XXXXXX1111\",\"cardExpiryMonth\":\"01\",\"cardExpiryYear\":\"2025\"}",
+                    "{\"alias\":\"Card 5444\",\"value\":\"******************\",\"paymentToken\":\"******************\",\"instrumentIdentifier\":\"******************\",\"cardType\":\"002\",\"cardName\":\"002\",\"cardNumber\":\"555555XXXXXX4444\",\"cardExpiryMonth\":\"03\",\"cardExpiryYear\":\"2025\"}"
+                ]
+            }
         }
 
-| Property             | Value                                                   | Required  | Notes                                                                              |
-| -------------------- | ------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------- |
-| alias                | Customer token alias                                    | See notes | This is the value which will represent a particular token data in general          |
-| value                | Customer token value/Subscription value                 | See notes | This is the subscription which the customer will create                            |
-| paymentToken         | Customer payment token                                  | See notes | This is the subscription which the customer will create                            |
-| instrumentIdentifier | Instrument identifier number for customer token         | See notes | Instrument identifier number returned by Cybersource while creating a subscription |
-| cardType             | Card type                                               | See notes | This value will be given by Cybersource during Subscription creation               |
-| cardName             | Card Name                                               | See notes | This value will be given by Cybersource during Subscription creation               |
-| cardNumber           | Card Number                                             | See notes | This value will be given by Cybersource during Subscription creation               |
-| cardExpiryMonth      | Card Expiry Month                                       | See notes | This value will be the expiry month given while saving the token                   |
-| cardExpiryYear       | Card Expiry Year                                        | See notes | This value will be the expiry year given while saving the token                    |
-| flag                 | String value which indicates the action to be performed | See notes | The value might be 'delete'                                                        |
+    | Property             | Value                                                   | Required  | Notes                                                                              |
+    | -------------------- | ------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------- |
+    | custom.fields.isv_tokens[#].alias                | Customer token alias                                    | See notes | Value which will represent a particular token data in general          |
+    | custom.fields.isv_tokens[#].value                | Customer token value                 | See notes | Customer token returned by Cybersource while creating a token for the customer                           |
+    | custom.fields.isv_tokens[#].paymentToken         | Customer payment token                                  | See notes | Payment token returned by Cybersource while creating a token                            |
+    | custom.fields.isv_tokens[#].instrumentIdentifier | Instrument identifier for customer          | See notes | Instrument identifier returned by Cybersource while creating a token |
+    | custom.fields.isv_tokens[#].cardType             | Card type                                               | See notes | Card type of the token returned by Cybersource                |
+    | custom.fields.isv_tokens[#].cardName             | Card alias                                              |  |                |
+    | custom.fields.isv_tokens[#].cardNumber           | Card number                                             | See notes | Masked Pan returned by Cybersource                |
+    | custom.fields.isv_tokens[#].cardExpiryMonth      | Card expiry month                                       | See notes | Expiry month value returned by Cybersource     |
+    | custom.fields.isv_tokens[#].cardExpiryYear       | Card expiry year                                        | See notes | New expiry year returned by Cybersource                               |
+    | custom.fields.isv_tokens[#].flag                 | String value which indicates the action to be performed | See notes | The value should be 'delete'                                                        |
 
-4. Make a request to Cybersource for deleting the token and update the customer resource back to Commercetools, by removing the particular token that you intended to delete if the response httpCode of Cybersource is 204. If there is an error from Cybersource end for deleting a token, then delete the `flag` element of the token array and update the Customer
+2. The response will have the updated data by removing the particular token that you intended to delete if the token is deleted sucessfullly. Else the token will still be available in the updated response.

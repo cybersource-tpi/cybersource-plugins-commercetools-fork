@@ -8,9 +8,13 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
   let cartData: any;
   let errorData: any;
   let exceptionData: any;
+  let selectedLocale: any;
+  let locale: any;
   let j = Constants.VAL_ZERO;
   let shippingCost = Constants.VAL_FLOAT_ZERO;
   let totalAmount = Constants.VAL_FLOAT_ZERO;
+  let unitPrice = Constants.VAL_FLOAT_ZERO;
+  let discountPrice = Constants.VAL_FLOAT_ZERO;
   let paymentResponse = {
     httpCode: null,
     transactionId: null,
@@ -21,24 +25,24 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
     if (null != authReversalId && null != payment) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.AuthReversalRequest();
-      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
-      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
+      if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
+        runEnvironment = Constants.PAYMENT_GATEWAY_TEST_ENVIRONMENT;
+      } else if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
+        runEnvironment = Constants.PAYMENT_GATEWAY_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
-        authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
+        authenticationType: Constants.PAYMENT_GATEWAY_AUTHENTICATION_TYPE,
         runEnvironment: runEnvironment,
-        merchantID: process.env.ISV_PAYMENT_MERCHANT_ID,
-        merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
-        merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
+        merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
+        merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
+        merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
       };
       var clientReferenceInformation = new restApi.Ptsv2paymentsidreversalsClientReferenceInformation();
       clientReferenceInformation.code = payment.id;
       requestObj.clientReferenceInformation = clientReferenceInformation;
 
       var clientReferenceInformationpartner = new restApi.Ptsv2paymentsidreversalsClientReferenceInformationPartner();
-      clientReferenceInformationpartner.solutionId = Constants.ISV_PAYMENT_PARTNER_SOLUTION_ID;
+      clientReferenceInformationpartner.solutionId = Constants.PAYMENT_GATEWAY_PARTNER_SOLUTION_ID;
       clientReferenceInformation.partner = clientReferenceInformationpartner;
       requestObj.clientReferenceInformation = clientReferenceInformation;
 
@@ -49,11 +53,11 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
         requestObj.processingInformation = processingInformation;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidreversalsProcessingInformation();
-        processingInformation.paymentSolution = Constants.ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION;
+        processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_GOOGLE_PAY_PAYMENT_SOLUTION;
         requestObj.processingInformation = processingInformation;
       } else if (Constants.APPLE_PAY == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidreversalsProcessingInformation();
-        processingInformation.paymentSolution = Constants.ISV_PAYMENT_APPLE_PAY_PAYMENT_SOLUTION;
+        processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_APPLE_PAY_PAYMENT_SOLUTION;
         requestObj.processingInformation = processingInformation;
       }
 
@@ -61,28 +65,114 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
 
       if (null != cart && Constants.VAL_ZERO < cart.count && Constants.STRING_RESULTS in cart) {
         cartData = cart.results[Constants.VAL_ZERO];
-        orderInformation.lineItems = [];
-        cartData.lineItems.forEach((lineItem) => {
-          var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
-          const unitPrice = paymentService.convertCentToAmount(lineItem.price.value.centAmount);
-          orderInformationLineItems.productName = lineItem.name.en;
-          orderInformationLineItems.quantity = lineItem.quantity;
-          orderInformationLineItems.productSku = lineItem.variant.sku;
-          orderInformationLineItems.productCode = lineItem.productId;
-          orderInformationLineItems.unitPrice = unitPrice;
-          orderInformation.lineItems[j] = orderInformationLineItems;
-          j++;
-        });
-        if (Constants.SHIPPING_INFO in cartData) {
-          var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
-          shippingCost = paymentService.convertCentToAmount(cartData.shippingInfo.price.centAmount);
-          orderInformationLineItems.productName = cartData.shippingInfo.shippingMethodName;
-          orderInformationLineItems.quantity = Constants.VAL_ONE;
-          orderInformationLineItems.productSku = Constants.SHIPPING_AND_HANDLING;
-          orderInformationLineItems.productCode = Constants.SHIPPING_AND_HANDLING;
-          orderInformationLineItems.unitPrice = shippingCost;
-          orderInformationLineItems.tax = cartData.shippingInfo.taxRate.amount;
-          orderInformation.lineItems[j] = orderInformationLineItems;
+        if (Constants.STRING_LOCALE in cartData && null != cartData.locale) {
+          selectedLocale = cartData.locale.split(Constants.REGEX_HYPHEN);
+          locale = selectedLocale[Constants.VAL_ZERO];
+          orderInformation.lineItems = [];
+          cartData.lineItems.forEach((lineItem) => {
+            if (Constants.STRING_DISCOUNTED_PRICE_PER_QUANTITY in lineItem && Constants.VAL_ZERO == lineItem.discountedPricePerQuantity.length) {
+              var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
+              if (Constants.STRING_DISCOUNTED in lineItem.price) {
+                unitPrice = paymentService.convertCentToAmount(lineItem.price.discounted.value.centAmount);
+              } else {
+                unitPrice = paymentService.convertCentToAmount(lineItem.price.value.centAmount);
+              }
+              orderInformationLineItems.productName = lineItem.name[locale];
+              orderInformationLineItems.quantity = lineItem.quantity;
+              orderInformationLineItems.productSku = lineItem.variant.sku;
+              orderInformationLineItems.productCode = lineItem.productId;
+              orderInformationLineItems.unitPrice = unitPrice;
+              if (Constants.STRING_TAX_RATE in lineItem && null != lineItem.taxRate && true === lineItem.taxRate.includedInPrice) {
+                orderInformationLineItems.tax = lineItem.taxRate.amount;
+              }
+              orderInformation.lineItems[j] = orderInformationLineItems;
+              j++;
+            } else if (Constants.STRING_DISCOUNTED_PRICE_PER_QUANTITY in lineItem && Constants.VAL_ZERO < lineItem.discountedPricePerQuantity.length) {
+              lineItem.discountedPricePerQuantity.forEach((item) => {
+                var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
+                unitPrice = paymentService.convertCentToAmount(item.discountedPrice.value.centAmount);
+                orderInformationLineItems.productName = lineItem.name[locale];
+                orderInformationLineItems.quantity = item.quantity;
+                orderInformationLineItems.productSku = lineItem.variant.sku;
+                orderInformationLineItems.productCode = lineItem.productId;
+                orderInformationLineItems.unitPrice = unitPrice;
+                item.discountedPrice.includedDiscounts.forEach((discount) => {
+                  discountPrice = discountPrice + paymentService.convertCentToAmount(discount.discountedAmount.centAmount) * item.quantity;
+                });
+                orderInformationLineItems.discountAmount = paymentService.roundOff(discountPrice);
+                if (Constants.STRING_TAX_RATE in lineItem && null != lineItem.taxRate && true === lineItem.taxRate.includedInPrice) {
+                  orderInformationLineItems.tax = lineItem.taxRate.amount;
+                }
+                orderInformation.lineItems[j] = orderInformationLineItems;
+                j++;
+                discountPrice = Constants.VAL_FLOAT_ZERO;
+              });
+            }
+          });
+          if (Constants.STRING_CUSTOM_LINE_ITEMS in cartData && Constants.VAL_ZERO < cartData.customLineItems.length) {
+            cartData.customLineItems.forEach((customLineItem) => {
+              if (Constants.STRING_DISCOUNTED_PRICE_PER_QUANTITY in customLineItem && Constants.VAL_ZERO == customLineItem.discountedPricePerQuantity.length) {
+                var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
+                unitPrice = paymentService.convertCentToAmount(customLineItem.money.centAmount);
+                orderInformationLineItems.productName = customLineItem.name[locale];
+                orderInformationLineItems.quantity = customLineItem.quantity;
+                orderInformationLineItems.productSku = customLineItem.slug;
+                orderInformationLineItems.productCode = customLineItem.id;
+                orderInformationLineItems.unitPrice = unitPrice;
+                if (Constants.STRING_TAX_RATE in customLineItem && null != customLineItem.taxRate && true === customLineItem.taxRate.includedInPrice) {
+                  orderInformationLineItems.tax = customLineItem.taxRate.amount;
+                }
+                orderInformation.lineItems[j] = orderInformationLineItems;
+                j++;
+              } else if (Constants.STRING_DISCOUNTED_PRICE_PER_QUANTITY in customLineItem && Constants.VAL_ZERO < customLineItem.discountedPricePerQuantity.length) {
+                customLineItem.discountedPricePerQuantity.forEach((customItem) => {
+                  var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
+                  unitPrice = paymentService.convertCentToAmount(customItem.discountedPrice.value.centAmount);
+                  orderInformationLineItems.productName = customLineItem.name[locale];
+                  orderInformationLineItems.quantity = customItem.quantity;
+                  orderInformationLineItems.productSku = customLineItem.slug;
+                  orderInformationLineItems.productCode = customLineItem.id;
+                  orderInformationLineItems.unitPrice = unitPrice;
+                  customItem.discountedPrice.includedDiscounts.forEach((discount) => {
+                    discountPrice = discountPrice + paymentService.convertCentToAmount(discount.discountedAmount.centAmount) * customItem.quantity;
+                  });
+                  orderInformationLineItems.discountAmount = paymentService.roundOff(discountPrice);
+                  if (Constants.STRING_TAX_RATE in customLineItem && null != customLineItem.taxRate && true === customLineItem.taxRate.includedInPrice) {
+                    orderInformationLineItems.tax = customLineItem.taxRate.amount;
+                  }
+                  orderInformation.lineItems[j] = orderInformationLineItems;
+                  j++;
+                  discountPrice = Constants.VAL_FLOAT_ZERO;
+                });
+              }
+            });
+          }
+          if (Constants.SHIPPING_INFO in cartData) {
+            var orderInformationLineItems = new restApi.Ptsv2paymentsidreversalsOrderInformationLineItems();
+            orderInformationLineItems.productName = cartData.shippingInfo.shippingMethodName;
+            orderInformationLineItems.quantity = Constants.VAL_ONE;
+            orderInformationLineItems.productSku = Constants.SHIPPING_AND_HANDLING;
+            orderInformationLineItems.productCode = Constants.SHIPPING_AND_HANDLING;
+            if (Constants.STRING_DISCOUNTED_PRICE in cartData.shippingInfo) {
+              shippingCost = paymentService.convertCentToAmount(cartData.shippingInfo.discountedPrice.value.centAmount);
+              if (Constants.STRING_INCLUDED_DISCOUNTS in cartData.shippingInfo.discountedPrice) {
+                cartData.shippingInfo.discountedPrice.includedDiscounts.forEach((discount) => {
+                  discountPrice += paymentService.convertCentToAmount(discount.discountedAmount.centAmount);
+                });
+                orderInformationLineItems.discountAmount = discountPrice;
+              }
+            } else {
+              shippingCost = paymentService.convertCentToAmount(cartData.shippingInfo.price.centAmount);
+            }
+            orderInformationLineItems.unitPrice = shippingCost;
+            if (Constants.STRING_TAX_RATE in cartData.shippingInfo && null != cartData.shippingInfo.taxRate && true === cartData.shippingInfo.taxRate.includedInPrice) {
+              orderInformationLineItems.tax = cartData.shippingInfo.taxRate.amount;
+            }
+            orderInformation.lineItems[j] = orderInformationLineItems;
+            j++;
+          }
+        } else {
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTH_REVERSAL_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_CART_LOCALE);
         }
       }
       requestObj.orderInformation = orderInformation;

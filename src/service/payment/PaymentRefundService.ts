@@ -17,24 +17,24 @@ const refundResponse = async (payment, captureId, updateTransactions) => {
     if (null != captureId && null != payment && null != updateTransactions) {
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.RefundPaymentRequest();
-      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
-      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
+      if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
+        runEnvironment = Constants.PAYMENT_GATEWAY_TEST_ENVIRONMENT;
+      } else if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
+        runEnvironment = Constants.PAYMENT_GATEWAY_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
-        authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
+        authenticationType: Constants.PAYMENT_GATEWAY_AUTHENTICATION_TYPE,
         runEnvironment: runEnvironment,
-        merchantID: process.env.ISV_PAYMENT_MERCHANT_ID,
-        merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
-        merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
+        merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
+        merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
+        merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
       };
       var clientReferenceInformation = new restApi.Ptsv2paymentsClientReferenceInformation();
       clientReferenceInformation.code = payment.id;
       requestObj.clientReferenceInformation = clientReferenceInformation;
 
       var clientReferenceInformationpartner = new restApi.Ptsv2paymentsidClientReferenceInformationPartner();
-      clientReferenceInformationpartner.solutionId = Constants.ISV_PAYMENT_PARTNER_SOLUTION_ID;
+      clientReferenceInformationpartner.solutionId = Constants.PAYMENT_GATEWAY_PARTNER_SOLUTION_ID;
       clientReferenceInformation.partner = clientReferenceInformationpartner;
       requestObj.clientReferenceInformation = clientReferenceInformation;
 
@@ -45,11 +45,11 @@ const refundResponse = async (payment, captureId, updateTransactions) => {
         requestObj.processingInformation = processingInformation;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidrefundsProcessingInformation();
-        processingInformation.paymentSolution = Constants.ISV_PAYMENT_GOOGLE_PAY_PAYMENT_SOLUTION;
+        processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_GOOGLE_PAY_PAYMENT_SOLUTION;
         requestObj.processingInformation = processingInformation;
       } else if (Constants.APPLE_PAY == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidrefundsProcessingInformation();
-        processingInformation.paymentSolution = Constants.ISV_PAYMENT_APPLE_PAY_PAYMENT_SOLUTION;
+        processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_APPLE_PAY_PAYMENT_SOLUTION;
         requestObj.processingInformation = processingInformation;
       }
 

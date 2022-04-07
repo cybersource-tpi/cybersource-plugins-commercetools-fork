@@ -14,24 +14,24 @@ const getTransactionSearchResponse = async (query, sort) => {
   };
   try {
     if (null != query && null != sort) {
-      if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
-        runEnvironment = Constants.ISV_PAYMENT_TEST_ENVIRONMENT;
-      } else if (process.env.ISV_PAYMENT_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
-        runEnvironment = Constants.ISV_PAYMENT_PRODUCTION_ENVIRONMENT;
+      if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.TEST_ENVIRONMENT) {
+        runEnvironment = Constants.PAYMENT_GATEWAY_TEST_ENVIRONMENT;
+      } else if (process.env.PAYMENT_GATEWAY_RUN_ENVIRONMENT?.toUpperCase() == Constants.LIVE_ENVIRONMENT) {
+        runEnvironment = Constants.PAYMENT_GATEWAY_PRODUCTION_ENVIRONMENT;
       }
       const configObject = {
-        authenticationType: Constants.ISV_PAYMENT_AUTHENTICATION_TYPE,
+        authenticationType: Constants.PAYMENT_GATEWAY_AUTHENTICATION_TYPE,
         runEnvironment: runEnvironment,
-        merchantID: process.env.ISV_PAYMENT_MERCHANT_ID,
-        merchantKeyId: process.env.ISV_PAYMENT_MERCHANT_KEY_ID,
-        merchantsecretKey: process.env.ISV_PAYMENT_MERCHANT_SECRET_KEY,
+        merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
+        merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
+        merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
       };
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CreateSearchRequest();
       requestObj.save = false;
       requestObj.query = query;
       requestObj.limit = Constants.VAL_FIFTY;
-      requestObj.offset = Constants.VAL_FIFTY;
+      requestObj.offset = Constants.VAL_ZERO;
       requestObj.sort = sort;
       const instance = new restApi.SearchTransactionsApi(configObject, apiClient);
       return await new Promise((resolve, reject) => {
