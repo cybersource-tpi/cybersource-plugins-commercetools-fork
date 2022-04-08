@@ -240,6 +240,9 @@ app.post('/api/extension/payment/update', async (req, res) => {
             paymentResponse.status = updatePaymentObj.custom.fields.isv_payerEnrollStatus;
             paymentResponse.transactionId = updatePaymentObj.custom.fields.isv_payerEnrollTransactionId;
             updateResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
+            if (null != paymentResponse && Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status) {
+              updateResponse = await paymentHandler.getPayerAuthEnrollAuthReversalHandler(updatePaymentObj, paymentResponse, updateTransactions, updateResponse);
+            }
           } else {
             updateResponse = await paymentHandler.authorizationHandler(updatePaymentObj, updateTransactions);
           }
