@@ -196,9 +196,8 @@ const retrievePaymentByCustomerId = async (paymentId, startTime, endTime) => {
           projectKey: process.env.CT_PROJECT_KEY,
         });
         uri = requestBuilder.payments
-          .byCustomerId(paymentId)
           .parse({
-            where: [`createdAt > "${startTime}" and createdAt < "${endTime}" and custom(fields(isv_tokenAlias is defined)) and custom(fields(isv_token is defined))`],
+            where: [`customer(id="${paymentId}")`, `createdAt > "${startTime}" and createdAt < "${endTime}"`, `custom(fields(isv_tokenAlias is defined))`, `custom(fields(isv_token is defined))`],
           })
           .build();
         channelsRequest = {
