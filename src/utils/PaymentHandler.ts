@@ -312,6 +312,55 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
   return enrollResponse;
 };
 
+const getPayerAuthEnrollAuthReversalHandler = async (updatePaymentObj, paymentResponse, updateTransactions, updateActions) => {
+  let authReversalResponse: any;
+  let stateChangeResponse: any;
+  let cartObj: any;
+  if (null != updatePaymentObj && null != updateTransactions && null != updateActions && null != paymentResponse && Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status) {
+    cartObj = await commercetoolsApi.retrieveCartByPaymentId(updatePaymentObj.id);
+    if (null == cartObj || (null != cartObj && Constants.VAL_ZERO == cartObj.count)) {
+      if (Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer) {
+        cartObj = await commercetoolsApi.retrieveCartByCustomerId(updatePaymentObj.customer.id);
+      } else {
+        cartObj = await commercetoolsApi.retrieveCartByAnonymousId(updatePaymentObj.anonymousId);
+      }
+    }
+    authReversalResponse = await paymentAuthReversal.authReversalResponse(updatePaymentObj, cartObj, paymentResponse.transactionId);
+    if (null != authReversalResponse && Constants.HTTP_CODE_TWO_HUNDRED_ONE == authReversalResponse.httpCode && Constants.API_STATUS_REVERSED == authReversalResponse.status) {
+      stateChangeResponse = await commercetoolsApi.retrievePayment(updatePaymentObj.id);
+      if (null != stateChangeResponse && Constants.STRING_AMOUNT_PLANNED in stateChangeResponse) {
+        updateActions.actions.push({
+          action: Constants.ADD_TRANSACTION,
+          transaction: {
+            type: Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION,
+            timestamp: new Date(Date.now()).toISOString(),
+            amount: stateChangeResponse.amountPlanned,
+            state: Constants.CT_TRANSACTION_STATE_SUCCESS,
+            interactionId: authReversalResponse.transactionId,
+          },
+        });
+      }
+    } else {
+      stateChangeResponse = await commercetoolsApi.retrievePayment(updatePaymentObj.id);
+      if (null != stateChangeResponse && Constants.STRING_AMOUNT_PLANNED in stateChangeResponse) {
+        updateActions.actions.push({
+          action: Constants.ADD_TRANSACTION,
+          transaction: {
+            type: Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION,
+            timestamp: new Date(Date.now()).toISOString(),
+            amount: stateChangeResponse.amountPlanned,
+            state: Constants.CT_TRANSACTION_STATE_FAILURE,
+            interactionId: authReversalResponse.transactionId,
+          },
+        });
+      }
+    }
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_AUTH_REVERSAL_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
+  }
+  return updateActions;
+};
+
 const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransactions, cardTokens) => {
   let authResponse: any;
   let paymentResponse: any;
@@ -1265,6 +1314,7 @@ export default {
   authorizationHandler,
   getPayerAuthSetUpResponse,
   getPayerAuthEnrollResponse,
+  getPayerAuthEnrollAuthReversalHandler,
   applePaySessionHandler,
   orderManagementHandler,
   updateCardHandler,

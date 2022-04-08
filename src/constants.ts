@@ -35,6 +35,7 @@ export abstract class Constants {
   static readonly FUNC_GET_CUSTOMER = 'FuncGetCustomer';
   static readonly FUNC_GET_TRANSACTION_SEARCH_RESPONSE = 'FuncGetTransactionSearchResponse';
   static readonly FUNC_GET_ORDERS = 'FuncGetOrders';
+  static readonly FUNC_GET_PAYER_AUTH_ENROLL_AUTH_REVERSAL_HANDLER = 'FuncGetPayerAuthEnrollAuthReversalHandler';
   static readonly FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE = 'FuncGetPayerAuthEnrollResponse';
   static readonly FUNC_GET_PAYER_AUTH_SETUP_RESPONSE = 'FuncGetPayerAuthSetUpResponse';
   static readonly FUNC_GET_SERVICE_RESPONSE = 'FuncGetOMServiceResponse';
