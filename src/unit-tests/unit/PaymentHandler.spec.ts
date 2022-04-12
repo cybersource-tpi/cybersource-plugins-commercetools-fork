@@ -17,6 +17,7 @@ import {orderManagementHandlerPaymentId,  orderManagementHandlerUpdateTransactio
 import {deleteCardHandlerUpdateCustomerObj, deleteCardHandlerCutsomerId} from '../const/PaymentHandlerConst';
 import {applePaySessionHandlerFields} from '../const/PaymentHandlerConst';
 import { authorizationHandlerAPUpdatePaymentObject,authorizationHandler3DSUpdatePaymentObject,authorizationHandlerCCUpdatePaymentObject, authoriationHandlerGPUpdatePaymentObject,authorizationHandlerVSUpdatePaymentObject, authorizationHandlerUpdateTransactions } from '../const/PaymentHandlerConst';
+import {getPayerAuthEnrollResponseUpdatePaymentObj} from '../const/PaymentHandlerConst';
 import CommercetoolsApi from '../../utils/api/CommercetoolsApi';
 
 
@@ -169,6 +170,25 @@ test.serial('Check the run sync ', async(t)=>{
     {
         t.is(result.message, '');
         t.is(result.error, 'There were no payment details found to update');
+    }
+})
+
+test.serial('Get Payer Auth Enroll Response', async(t)=>{
+    const result = await paymentHandler.getPayerAuthEnrollResponse(getPayerAuthEnrollResponseUpdatePaymentObj);
+    if(result.actions.length<=0)
+    {
+        t.deepEqual(result.actions, []);
+        t.is(result.errors[0].code, 'InvalidInput');
+        t.is(result.errors[0].message, 'Cannot process the payment due to invalid input');
+    }
+    else
+    {
+        t.is(result.actions[0].action, 'setCustomField');
+        t.is(result.actions[0].name, 'isv_payerEnrollTransactionId');
+        t.is(result.actions[1].name, 'isv_payerEnrollHttpCode');
+        t.is(result.actions[1].value, 201);
+        t.is(result.actions[2].name, 'isv_payerEnrollStatus');
+        t.is(result.actions[2].value, 'AUTHORIZED');
     }
 })
 
