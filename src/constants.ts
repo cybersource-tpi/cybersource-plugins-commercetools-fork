@@ -196,7 +196,6 @@ export abstract class Constants {
   static readonly STRING_TRANSACTIONS = 'transactions';
   static readonly STRING_TRUE = 'true';
   static readonly STRING_TEXT = 'text';
-  static readonly STRING_PAYER_AUTH_RETURN_URL = '/payerAuthReturnUrl';
   static readonly STRING_UPDATE = 'update';
   static readonly STRING_UPDATED = 'updated';
   static readonly STRING_VALUE = 'value';

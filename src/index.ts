@@ -310,7 +310,7 @@ app.post('/api/extension/customer/update', async (req, res) => {
       exceptionData = exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_CUSTOMER_UPDATE, Constants.LOG_ERROR, exceptionData);
-    response = paymentService.invalidOperationResponse();
+    response = paymentService.getUpdateTokenActions(req.body.resource.obj.custom.fields.isv_tokens);
   }
   res.send(response);
 });
