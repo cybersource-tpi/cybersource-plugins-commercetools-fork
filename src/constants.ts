@@ -264,6 +264,9 @@ export abstract class Constants {
   static readonly SET_CUSTOM_TYPE = 'setCustomType';
   static readonly SET_SHIPPING_ADDRESS = 'setShippingAddress';
   static readonly TYPE_ID_TYPE = 'type';
+  static readonly ISV_SALE_ENABLED = 'isv_saleEnabled';
+  static readonly STRING_MOTO = 'MOTO';
+  static readonly ISV_ENABLED_MOTO = 'isv_enabledMoto';
 
   //Success messages
   static readonly SUCCESS_MSG_CAPTURE_SERVICE = 'Capture is completed successfully';

@@ -1003,7 +1003,7 @@ const reportHandler = async () => {
           paymentDetails = await commercetoolsApi.retrievePayment(element.merchantReferenceNumber);
           if (null != paymentDetails) {
             latestTransaction = paymentDetails.transactions.pop();
-            if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == latestTransaction.type && Constants.CT_TRANSACTION_STATE_PENDING == latestTransaction.state) {
+            if ((Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == latestTransaction.type || Constants.CT_TRANSACTION_TYPE_CHARGE == latestTransaction.type) && Constants.CT_TRANSACTION_STATE_PENDING == latestTransaction.state) {
               conversionPresent = true;
               decisionUpdateObject.id = paymentDetails.id;
               decisionUpdateObject.version = paymentDetails.version;

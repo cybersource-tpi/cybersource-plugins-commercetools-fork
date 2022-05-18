@@ -226,7 +226,16 @@ app.post('/api/extension/payment/update', async (req, res) => {
       }
       if (Constants.VAL_ZERO < updatePaymentObj.transactions.length) {
         updateTransactions = updatePaymentObj.transactions.pop();
-        if (null != updateTransactions && Constants.TYPE_ID_TYPE in updateTransactions && Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == updateTransactions.type) {
+        if (
+          null != updateTransactions &&
+          Constants.TYPE_ID_TYPE in updateTransactions &&
+          (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == updateTransactions.type ||
+            (Constants.CT_TRANSACTION_TYPE_CHARGE == updateTransactions.type &&
+              Constants.STRING_CUSTOM in updatePaymentObj &&
+              Constants.STRING_FIELDS in updatePaymentObj.custom &&
+              Constants.ISV_SALE_ENABLED in updatePaymentObj.custom.fields &&
+              updatePaymentObj.custom.fields.isv_saleEnabled))
+        ) {
           if (Constants.CT_TRANSACTION_STATE_SUCCESS == updateTransactions.state || Constants.CT_TRANSACTION_STATE_FAILURE == updateTransactions.state || Constants.CT_TRANSACTION_STATE_PENDING == updateTransactions.state) {
             updateResponse = paymentService.getEmptyResponse();
           } else if (
