@@ -96,11 +96,11 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
       requestObj.orderInformation = orderInformation;
 
       requestObj.orderInformation = orderInformation;
-      /* var deviceInformation = new restApi.Ptsv2paymentsDeviceInformation();
+      var deviceInformation = new restApi.Ptsv2paymentsDeviceInformation();
       if (Constants.ISV_DEVICE_FINGERPRINT_ID in customerObj.custom.fields && Constants.STRING_EMPTY != customerObj.custom.fields.isv_deviceFingerprintId) {
         deviceInformation.fingerprintSessionId = customerObj.custom.fields.isv_deviceFingerprintId;
       } 
-      requestObj.deviceInformation = deviceInformation;*/
+      requestObj.deviceInformation = deviceInformation;
       const instance = new restApi.PaymentsApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.createPayment(requestObj, function (error, data, response) {

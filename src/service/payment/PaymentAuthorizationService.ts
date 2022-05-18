@@ -295,7 +295,6 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
         deviceInformation.userAgentBrowserValue = payment.custom.fields.isv_userAgentHeader;
       }
       requestObj.deviceInformation = deviceInformation;
-      console.log(JSON.stringify(requestObj));
       const instance = new restApi.PaymentsApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.createPayment(requestObj, function (error, data, response) {
