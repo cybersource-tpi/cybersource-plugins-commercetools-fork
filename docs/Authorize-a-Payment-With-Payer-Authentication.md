@@ -40,8 +40,10 @@ After authentication is complete, authorization of the payment can then be tri
     | ---------------------------------- | ----------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     | customer                           | Reference to Commercetools customer | See notes | Required for non-guest checkout. If using MyPayments API this will automatically be set to the logged in customer. One of customer or anonymousId must be populated |
     | anonymousId                        | Id for tracking guest checkout      | See notes | Required for guest checkout. If using MyPayments API this will automatically be set. One of customer or anonymousId must be populated                               |
+    | amountPlanned                      | Amount to authorize                 | Yes       | Should match cart gross total, unless split payments are being used                                                                                                 |
     | paymentMethodInfo.paymentInterface | cybersource                         | Yes       |                                                                                                                                                                     |
     | paymentMethodInfo.method           | creditCardWithPayerAuthentication   | Yes       |                                                                                                                                                                     |
+    | custom.type.key                    | isv_payment_data                    | Yes       |                                                                                                                                                                     |
 
     b. The response should have the `isv_tokenCaptureContextSignature` and `isv_tokenVerificationContext` custom fields, set the `isv_tokenCaptureContextSignature` custom field value to the captureContext of flex object which will load Cybersource Flex Microform
 
@@ -108,23 +110,34 @@ After authentication is complete, authorization of the payment can then be tri
         authenticationTransactionId
         stepUpURL
         accessToken
+        isv_payerEnrollHttpCode
+        isv_payerEnrollStatus
 
-10. Check the value of the isv_payerAuthenticationRequired field on the
+10. Check if the isv_payerEnrollHttpCode value is 201 and isv_payerEnrollStatus value "CUSTOMER_AUTHENTICATION_REQUIRED" from the updated response. If yes, repeat the steps from 6 else proceed to step 11.
+
+11. Check the value of the isv_payerAuthenticationRequired field on the
     updated payment. If the value is true, perform the following steps
 
-    submit the stepup form by using the `stepUpURL` & `accessToken`. See [Step-Up IFrame](https://docs.cybersource.com/content/dam/new-documentation/documentation/en/fraud-management/payer-auth/rest/payer-auth-rest.pdf) to get more details about step up Iframe
+    a. Submit the stepup form by using the `stepUpURL` & `accessToken`. See [Step-Up IFrame](https://docs.cybersource.com/content/dam/new-documentation/documentation/en/fraud-management/payer-auth/rest/payer-auth-rest.pdf) to get more details about step up Iframe
 
-    a. The payer authentication window will be displayed and when the user completes the process, the user is redirected back to the consumerAuthenticationInformation.returnUrl within the iframe
+    b. The payer authentication window will be displayed and when the user completes the process, the user is redirected back to the consumerAuthenticationInformation.returnUrl within the iframe
 
-    b. The response sent back to the return URL contains the following
+    c. The response sent back to the return URL contains the following
 
-         - Transaction ID: (consumerAuthenticationInformation.authenticationTransactionId response field)
+        - Transaction ID: (consumerAuthenticationInformation.authenticationTransactionId response field)
 
         - MD: merchant data returned if present in the POST to step-up URL; otherwise, null
 
     c. Update the commerce tools payment to set the value of custom.fields.isv_payerAuthenticationTransactionId to the value extracted from the return URL's Transaction ID
 
-11. Add a transaction to the payment with the following values populated
+12. Wait for the event to return back the following fields, verify the following fields from update response
+
+        isv_payerEnrollHttpCode
+        isv_payerEnrollStatus
+
+    Check if the isv_payerEnrollHttpCode value is 201 and isv_payerEnrollStatus value "CUSTOMER_AUTHENTICATION_REQUIRED" from the updated response. If yes, repeat the steps from 6 else proceed to step 13.
+
+13. Add a transaction to the payment with the following values populated
 
     | Property | Value               | Notes                                 |
     | -------- | ------------------- | ------------------------------------- |
@@ -132,8 +145,7 @@ After authentication is complete, authorization of the payment can then be tri
     | state    | Initial             |                                       |
     | amount   | Amount to authorize | Should match amountPlanned on payment |
 
-12. Verify the payment state and convey the payment result to the customer
-
+14. Verify the payment state and convey the payment result to the customer
 
     a. If the authorization was successful the transaction state is updated to **Success**, display the order confirmation page
 
