@@ -222,6 +222,18 @@ app.post('/api/extension/payment/update', async (req, res) => {
           Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_cardinalReferenceId
         ) {
           updateResponse = await paymentHandler.getPayerAuthEnrollResponse(updatePaymentObj);
+        } else if (
+          Constants.CC_PAYER_AUTHENTICATION == paymentMethod &&
+          Constants.STRING_CUSTOM in updatePaymentObj &&
+          Constants.STRING_FIELDS in updatePaymentObj.custom &&
+          Constants.ISV_PAYER_AUTHENTICATION_TRANSACTION_ID in updatePaymentObj.custom.fields &&
+          Constants.ISV_PAYER_AUTHENTICATION_REQUIRED in updatePaymentObj.custom.fields &&
+          updatePaymentObj.custom.fields.isv_payerAuthenticationRequired
+        ) {
+          paymentResponse.httpCode = updatePaymentObj.custom.fields.isv_payerEnrollHttpCode;
+          paymentResponse.status = updatePaymentObj.custom.fields.isv_payerEnrollStatus;
+          paymentResponse.transactionId = updatePaymentObj.custom.fields.isv_payerEnrollTransactionId;
+          updateResponse = await paymentHandler.getPayerAuthValidateResponse(updatePaymentObj);
         }
       }
       if (Constants.VAL_ZERO < updatePaymentObj.transactions.length) {
@@ -229,19 +241,13 @@ app.post('/api/extension/payment/update', async (req, res) => {
         if (null != updateTransactions && Constants.TYPE_ID_TYPE in updateTransactions && Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == updateTransactions.type) {
           if (Constants.CT_TRANSACTION_STATE_SUCCESS == updateTransactions.state || Constants.CT_TRANSACTION_STATE_FAILURE == updateTransactions.state || Constants.CT_TRANSACTION_STATE_PENDING == updateTransactions.state) {
             updateResponse = paymentService.getEmptyResponse();
-          } else if (
-            Constants.CC_PAYER_AUTHENTICATION == paymentMethod &&
-            Constants.STRING_CUSTOM in updatePaymentObj &&
-            Constants.STRING_FIELDS in updatePaymentObj.custom &&
-            Constants.ISV_PAYER_AUTHENTICATION_REQUIRED in updatePaymentObj.custom.fields &&
-            !updatePaymentObj.custom.fields.isv_payerAuthenticationRequired
-          ) {
+          } else if (Constants.CC_PAYER_AUTHENTICATION == paymentMethod && Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_PAYER_AUTHENTICATION_REQUIRED in updatePaymentObj.custom.fields) {
             paymentResponse.httpCode = updatePaymentObj.custom.fields.isv_payerEnrollHttpCode;
             paymentResponse.status = updatePaymentObj.custom.fields.isv_payerEnrollStatus;
             paymentResponse.transactionId = updatePaymentObj.custom.fields.isv_payerEnrollTransactionId;
             updateResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
             if (null != paymentResponse && Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status) {
-              updateResponse = await paymentHandler.getPayerAuthEnrollAuthReversalHandler(updatePaymentObj, paymentResponse, updateTransactions, updateResponse);
+              updateResponse = await paymentHandler.getPayerAuthReversalHandler(updatePaymentObj, paymentResponse, updateTransactions, updateResponse);
             }
           } else {
             updateResponse = await paymentHandler.authorizationHandler(updatePaymentObj, updateTransactions);
@@ -304,7 +310,7 @@ app.post('/api/extension/customer/update', async (req, res) => {
       exceptionData = exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_CUSTOMER_UPDATE, Constants.LOG_ERROR, exceptionData);
-    response = paymentService.invalidOperationResponse();
+    response = paymentService.getUpdateTokenActions(req.body.resource.obj.custom.fields.isv_tokens);
   }
   res.send(response);
 });

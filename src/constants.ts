@@ -25,19 +25,20 @@ export abstract class Constants {
   static readonly FUNC_DELETE_TOKEN = 'FunDeleteToken';
   static readonly FUNC_FAILURE_RESPONSE = 'FuncFailureResponse';
   static readonly FUNC_FIELD_MAPPER = 'FuncFieldMapper';
+  static readonly FUNC_FIELD_MAPPER_NULL = 'FuncFieldMapperNull';
   static readonly FUNC_GET_APPLICATIONS_PRESENT = 'FuncGetApplicationsPresent';
   static readonly FUNC_GET_AUTH_RESPONSE = 'FuncGetAuthResponse';
   static readonly FUNC_GET_CAPTURED_AMOUNT = 'FuncGetCapturedAmount';
-  static readonly FUNC_GET_CARD_WITH_3DS_RESPONSE = 'FuncGetCardWith3dsResponse';
-  static readonly FUNC_GET_CARD_WITHOUT_3DS_RESPONSE = 'FuncGetCardWithout3dsResponse';
+  static readonly FUNC_GET_CREDIT_CARD_RESPONSE = 'FuncGetCreditCardResponse';
   static readonly FUNC_GET_CART_DETAILS_BY_PAYMENT_ID = 'FuncGetCartDetailsByPaymentId';
   static readonly FUNC_GET_CLIENT = 'FuncGetClient';
   static readonly FUNC_GET_CUSTOMER = 'FuncGetCustomer';
   static readonly FUNC_GET_TRANSACTION_SEARCH_RESPONSE = 'FuncGetTransactionSearchResponse';
   static readonly FUNC_GET_ORDERS = 'FuncGetOrders';
-  static readonly FUNC_GET_PAYER_AUTH_ENROLL_AUTH_REVERSAL_HANDLER = 'FuncGetPayerAuthEnrollAuthReversalHandler';
+  static readonly FUNC_GET_PAYER_AUTH_REVERSAL_HANDLER = 'FuncGetPayerAuthReversalHandler';
   static readonly FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE = 'FuncGetPayerAuthEnrollResponse';
   static readonly FUNC_GET_PAYER_AUTH_SETUP_RESPONSE = 'FuncGetPayerAuthSetUpResponse';
+  static readonly FUNC_GET_PAYER_AUTH_VALIDATE_RESPONSE = 'FuncGetPayerAuthValidateResponse';
   static readonly FUNC_GET_SERVICE_RESPONSE = 'FuncGetOMServiceResponse';
   static readonly FUNC_GET_VISA_CHECKOUT_DATA = 'FuncGetVisaCheckoutData';
   static readonly FUNC_GOOGLE_PAY_RESPONSE = 'FuncGooglePayResponse';
@@ -98,6 +99,7 @@ export abstract class Constants {
   static readonly PAYMENT_GATEWAY_GOOGLE_PAY_PAYMENT_SOLUTION = '012';
   static readonly PAYMENT_GATEWAY_JWT_FORMAT = 'JWT';
   static readonly PAYMENT_GATEWAY_PARTNER_SOLUTION_ID = 'YBBY8SIG';
+  static readonly PAYMENT_GATEWAY_PAYER_AUTH_CHALLENGE_CODE = '04';
   static readonly PAYMENT_GATEWAY_TOKEN_ACTION_TYPES = 'customer,paymentInstrument,instrumentIdentifier';
   static readonly PAYMENT_GATEWAY_TOKEN_ACTION_TYPES_CUSTOMER_EXISTS = 'paymentInstrument,instrumentIdentifier';
   static readonly PAYMENT_GATEWAY_TOKEN_CREATE = 'TOKEN_CREATE';
@@ -116,6 +118,7 @@ export abstract class Constants {
   static readonly API_STATUS_AUTHORIZED = 'AUTHORIZED';
   static readonly API_STATUS_AUTHORIZED_RISK_DECLINED = 'AUTHORIZED_RISK_DECLINED';
   static readonly API_STATUS_COMPLETED = 'COMPLETED';
+  static readonly API_STATUS_CUSTOMER_AUTHENTICATION_REQUIRED = 'CUSTOMER_AUTHENTICATION_REQUIRED';
   static readonly API_STATUS_PENDING = 'PENDING';
   static readonly API_STATUS_PENDING_REVIEW = 'AUTHORIZED_PENDING_REVIEW';
   static readonly API_STATUS_PENDING_AUTHENTICATION = 'PENDING_AUTHENTICATION';
@@ -158,9 +161,12 @@ export abstract class Constants {
   static readonly STRING_CARD_EXPIRY_YEAR = 'cardExpiryYear';
   static readonly STRING_CART_STATE = 'Active';
   static readonly STATUS_CODE = 'statusCode';
+  static readonly STRING_CONSUMER_AUTHENTICATION = 'consumerAuthenticationInformation';
   static readonly STRING_CUSTOM = 'custom';
   static readonly STRING_CUSTOMER = 'customer';
+  static readonly STRING_DATA = 'data';
   static readonly STRING_DELETE = 'delete';
+  static readonly STRING_EMAIL = 'email';
   static readonly STRING_ENROLL_CHECK = 'enrollCheck';
   static readonly STRING_EXPIRATION_MONTH = 'expirationMonth';
   static readonly STRING_EXPIRATION_YEAR = 'expirationYear';
@@ -174,6 +180,7 @@ export abstract class Constants {
   static readonly STRING_PAYMENT_TOKEN = 'paymentToken';
   static readonly STRING_PREFIX = 'prefix';
   static readonly STRING_QUERY = 'query';
+  static readonly STRING_REASON = 'reason';
   static readonly STRING_RESOURCE = 'resource';
   static readonly STRING_RESPONSE = 'response';
   static readonly STRING_RESPONSE_STATUS = 'status';
@@ -189,13 +196,13 @@ export abstract class Constants {
   static readonly STRING_TRANSACTIONS = 'transactions';
   static readonly STRING_TRUE = 'true';
   static readonly STRING_TEXT = 'text';
-  static readonly STRING_PAYER_AUTH_RETURN_URL = '/payerAuthReturnUrl';
   static readonly STRING_UPDATE = 'update';
   static readonly STRING_UPDATED = 'updated';
   static readonly STRING_VALUE = 'value';
   static readonly STRING_VISA = 'visa';
 
   static readonly CARD_FIELD_GROUP = 'cardFieldGroup';
+  static readonly ERROR_INFORMATION = 'errorInformation';
   static readonly LOG_ERROR = 'error';
   static readonly LOG_INFO = 'info';
   static readonly TOKEN_INFORMATION = 'tokenInformation';

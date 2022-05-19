@@ -3,7 +3,7 @@ import path from 'path';
 import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
-const authorizationResponse = async (payment, cart, service, cardTokens, dontSaveTokenFlag) => {
+const authorizationResponse = async (payment, cart, service, cardTokens, dontSaveTokenFlag, payerAuthMandateFlag) => {
   let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
@@ -108,6 +108,16 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
           consumerAuthenticationInformation.referenceId = payment.custom.fields.isv_cardinalReferenceId;
           consumerAuthenticationInformation.acsWindowSize = Constants.PAYMENT_GATEWAY_ACS_WINDOW_SIZE;
           consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL;
+          if (
+            payerAuthMandateFlag ||
+            (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_SCA_CHALLENGE &&
+              (null == payment.custom.fields.isv_savedToken || Constants.STRING_EMPTY == payment.custom.fields.isv_savedToken) &&
+              Constants.ISV_TOKEN_ALIAS in payment.custom.fields &&
+              Constants.STRING_EMPTY != payment.custom.fields.isv_tokenAlias &&
+              !dontSaveTokenFlag)
+          ) {
+            consumerAuthenticationInformation.challengeCode = Constants.PAYMENT_GATEWAY_PAYER_AUTH_CHALLENGE_CODE;
+          }
           requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
       } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
@@ -292,14 +302,19 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
             paymentResponse.data = data;
             resolve(paymentResponse);
           } else if (error) {
-            if (Constants.STRING_RESPONSE in error && null != error.response && Constants.STRING_TEXT in error.response) {
+            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData.message);
               paymentResponse.transactionId = errorData.id;
               paymentResponse.status = errorData.status;
               paymentResponse.message = errorData.message;
             } else {
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, error);
+              if (typeof error === 'object') {
+                errorData = JSON.stringify(error);
+              } else {
+                errorData = error;
+              }
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData);
             }
             paymentResponse.httpCode = error.status;
             reject(paymentResponse);

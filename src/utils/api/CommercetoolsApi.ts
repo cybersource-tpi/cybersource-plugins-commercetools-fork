@@ -363,12 +363,14 @@ const getOrders = async () => {
   return orderResponse;
 };
 
-const updateCartByPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
+const updateCartByPaymentId = async (cartId, paymentId, cartVersion, visaCheckoutData) => {
   let orderResponse: any;
   let client: any;
   let requestBuilder: any;
   let channelsRequest: any;
   let exceptionData: any;
+  let cartData: any;
+  let shippingEmail: any;
   let uri: string;
   let actions = [] as any;
   try {
@@ -391,6 +393,12 @@ const updateCartByPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
         });
       }
       if (null != visaCheckoutData.shipToFieldGroup && Constants.VAL_ZERO != Object.keys(visaCheckoutData.shipToFieldGroup).length) {
+        if (visaCheckoutData.shipToFieldGroup.hasOwnProperty(Constants.STRING_EMAIL) === true && Constants.VAL_ZERO != Object.keys(visaCheckoutData.shipToFieldGroup.email).length) {
+          shippingEmail = visaCheckoutData.shipToFieldGroup.email;
+        } else {
+          cartData = await retrieveCartByPaymentId(paymentId);
+          shippingEmail = cartData.results[Constants.VAL_ZERO].shippingAddress.email;
+        }
         actions.push({
           action: Constants.SET_SHIPPING_ADDRESS,
           address: {
@@ -403,7 +411,7 @@ const updateCartByPaymentId = async (cartId, cartVersion, visaCheckoutData) => {
             region: visaCheckoutData.shipToFieldGroup.administrativeArea,
             country: visaCheckoutData.shipToFieldGroup.country,
             phone: visaCheckoutData.shipToFieldGroup.phoneNumber,
-            email: visaCheckoutData.shipToFieldGroup.email,
+            email: shippingEmail,
           },
         });
       }
