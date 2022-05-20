@@ -440,10 +440,16 @@ const getPayerAuthValidateResponse = async (updatePaymentObj) => {
   let cartObj: any;
   let cardTokens: any;
   let exceptionData: any;
+<<<<<<< HEAD
   let customerInfo: any;
   let dontSaveTokenFlag = false;
   let payerAuthMandateFlag = false;
   let paymentInstrumentToken = null;
+=======
+  let paymentInstrumentToken = null;
+  let dontSaveTokenFlag = false;
+  let payerAuthMandateFlag = false;
+>>>>>>> feature
   let errorFlag = false;
   try {
     if (
@@ -464,10 +470,14 @@ const getPayerAuthValidateResponse = async (updatePaymentObj) => {
           if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
             paymentInstrumentToken = updatePaymentObj.custom.fields.isv_savedToken;
           }
+<<<<<<< HEAD
           if (null != updatePaymentObj.customer.id) {
             customerInfo = await commercetoolsApi.getCustomer(updatePaymentObj.customer.id);
             cardTokens = await getCardTokens(customerInfo, paymentInstrumentToken);
           }
+=======
+          cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstrumentToken);
+>>>>>>> feature
         }
         if (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_ENABLE_RATE_LIMITER && Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer && null != updatePaymentObj.customer.id) {
           if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME) {
