@@ -38,12 +38,15 @@ const deleteCustomerToken = async (customerTokenObj) => {
             customerTokenDeleteResponse.deletedToken = paymentInstrumentTokenId;
             resolve(customerTokenDeleteResponse);
           } else if (error) {
-            if (Constants.STRING_RESPONSE in error && null != error.response && Constants.STRING_TEXT in error.response) {
-              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && null != error.response  &&  Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && null != error.response.text  &&  Constants.VAL_ZERO < Object.keys(error.response.text).length) {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_INFO, error.response.text);
+            }else {
+              if (typeof error === 'object') {
+                errorData = JSON.stringify(error);
+              } else {
+                errorData = error;
+              }
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_INFO, errorData);
-              customerTokenDeleteResponse.message = errorData.message;
-            } else {
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CUSTOMER_TOKEN, Constants.LOG_INFO, error);
             }
             customerTokenDeleteResponse.httpCode = response.status;
             reject(customerTokenDeleteResponse);
