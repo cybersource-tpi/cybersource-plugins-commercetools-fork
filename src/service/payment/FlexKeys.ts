@@ -27,6 +27,9 @@ const keys = async () => {
       merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
       merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
       merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+      logConfiguration: {
+        enableLog: false,
+      },
     };
     // eslint-disable-next-line no-var
     var requestObj = new restApi.GeneratePublicKeyRequest();

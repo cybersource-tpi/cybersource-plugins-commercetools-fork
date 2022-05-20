@@ -39,6 +39,9 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+        logConfiguration: {
+          enableLog: false,
+        },
       };
       var clientReferenceInformation = new restApi.Ptsv2paymentsClientReferenceInformation();
       clientReferenceInformation.code = payment.id;
@@ -107,7 +110,11 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
           var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
           consumerAuthenticationInformation.referenceId = payment.custom.fields.isv_cardinalReferenceId;
           consumerAuthenticationInformation.acsWindowSize = Constants.PAYMENT_GATEWAY_ACS_WINDOW_SIZE;
+<<<<<<< HEAD
+          consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL + Constants.STRING_PAYER_AUTH_RETURN_URL;
+=======
           consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL;
+>>>>>>> feature
           if (
             payerAuthMandateFlag ||
             (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_SCA_CHALLENGE &&
@@ -120,8 +127,8 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
           }
           requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
-      } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
-        processingInformation.paymentSolution = payment.paymentMethodInfo.method;
+      } else if (Constants.CLICK_TO_PAY == payment.paymentMethodInfo.method) {
+        processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_CLICK_TO_PAY_PAYMENT_SOLUTION;
         processingInformation.visaCheckoutId = payment.custom.fields.isv_token;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_GOOGLE_PAY_PAYMENT_SOLUTION;
@@ -136,6 +143,7 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
         paymentInformationFluidData.encoding = Constants.PAYMENT_GATEWAY_APPLE_PAY_ENCODING;
         paymentInformation.fluidData = paymentInformationFluidData;
       }
+
       requestObj.processingInformation = processingInformation;
       requestObj.paymentInformation = paymentInformation;
 

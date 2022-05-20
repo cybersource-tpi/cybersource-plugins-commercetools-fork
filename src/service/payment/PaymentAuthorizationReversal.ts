@@ -36,6 +36,9 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+        logConfiguration: {
+          enableLog: false,
+        },
       };
       var clientReferenceInformation = new restApi.Ptsv2paymentsidreversalsClientReferenceInformation();
       clientReferenceInformation.code = payment.id;
@@ -46,7 +49,7 @@ const authReversalResponse = async (payment, cart, authReversalId) => {
       clientReferenceInformation.partner = clientReferenceInformationpartner;
       requestObj.clientReferenceInformation = clientReferenceInformation;
 
-      if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
+      if (Constants.CLICK_TO_PAY == payment.paymentMethodInfo.method) {
         var processingInformation = new restApi.Ptsv2paymentsidreversalsProcessingInformation();
         processingInformation.paymentSolution = payment.paymentMethodInfo.method;
         processingInformation.visaCheckoutId = payment.custom.fields.isv_token;

@@ -8,7 +8,6 @@
   Customisations](#ResourceCustomisations)
   - [Payment Interactions](#PaymentInteractions)
     - [Customer tokens](#Paymentauthorisationfailed)
-    - [Line item data](#LineItemData)
     - [Payment data](#PaymentData)
     - [Payer authentication enrolment check](#PayerAuthenticationEnrolmentCheck)
     - [Payer authentication validate result](#PayerAuthenticationValidation)
@@ -83,19 +82,6 @@ Fields
 | Name       | Type   | Required |
 | ---------- | ------ | -------- |
 | isv_tokens | String | false    |
-
-### <a name="LineItemData"></a>Line Item Data
-
-| Type    | Key                         | Purpose                                                   |
-| ------- | --------------------------- | --------------------------------------------------------- |
-| payment | isv_payments_line_item_data | Custom data type for Cybersource custom line item fields. |
-
-Fields
-
-| Name            | Type | Required |
-| --------------- | ---- | -------- |
-| isv_productCode | Enum | false    |
-| isv_productRisk | Enum | false    |
 
 ### <a name="PaymentData"></a>Payment Data
 

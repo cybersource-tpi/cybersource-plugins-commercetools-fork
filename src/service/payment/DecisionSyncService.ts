@@ -31,6 +31,9 @@ const conversionDetails = async () => {
       merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
       merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
       merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+      logConfiguration: {
+        enableLog: false,
+      },
     };
     startTime = moment(Date.now()).subtract(Constants.VAL_TWENTY_THREE, Constants.STRING_HOURS).subtract(Constants.VAL_FIFTY_NINE).format(Constants.DATE_FORMAT);
     endTime = moment(Date.now()).format(Constants.DATE_FORMAT);

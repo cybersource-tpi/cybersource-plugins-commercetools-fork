@@ -423,24 +423,44 @@ const payerEnrollActions = (response, updatePaymentObj) => {
   return action;
 };
 
-const getUpdateTokenActions = (actions) => {
+const getUpdateTokenActions = (actions, errorFlag) => {
   let returnResponse: any;
   if (null != actions) {
-    returnResponse = {
-      actions: [
-        {
-          action: Constants.SET_CUSTOM_TYPE,
-          type: {
-            key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
-            typeId: Constants.TYPE_ID_TYPE,
+    if (errorFlag) {
+      returnResponse = {
+        actions: [
+          {
+            action: Constants.SET_CUSTOM_TYPE,
+            type: {
+              key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+              typeId: Constants.TYPE_ID_TYPE,
+            },
+            fields: {
+              isv_tokens: actions,
+              isv_tokenUpdated: false,
+            },
           },
-          fields: {
-            isv_tokens: actions,
+        ],
+        errors: [],
+      };
+    } else {
+      returnResponse = {
+        actions: [
+          {
+            action: Constants.SET_CUSTOM_TYPE,
+            type: {
+              key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+              typeId: Constants.TYPE_ID_TYPE,
+            },
+            fields: {
+              isv_tokens: actions,
+              isv_tokenUpdated: true,
+            },
           },
-        },
-      ],
-      errors: [],
-    };
+        ],
+        errors: [],
+      };
+    }
   }
   return returnResponse;
 };
@@ -639,35 +659,6 @@ const getCapturedAmount = (refundPaymentObj) => {
   return pendingCaptureAmount;
 };
 
-const deleteToken = async (tokenResponse, customerObj) => {
-  let isvTokensObj = new Array();
-  let parsedToken: any;
-  if (null != tokenResponse && null != customerObj && null != tokenResponse.httpCode) {
-    if (Constants.HTTP_CODE_TWO_HUNDRED_FOUR == tokenResponse.httpCode) {
-      customerObj.custom.fields.isv_tokens.forEach((element) => {
-        parsedToken = JSON.parse(element);
-        if (tokenResponse.deletedToken != parsedToken.paymentToken) {
-          isvTokensObj.push(element);
-        }
-      });
-    } else {
-      customerObj.custom.fields.isv_tokens.forEach((element) => {
-        parsedToken = JSON.parse(element);
-        if (Constants.STRING_FLAG in parsedToken) {
-          if (Constants.STRING_DELETE == parsedToken.flag) {
-            delete parsedToken.flag;
-          }
-        }
-        isvTokensObj.push(element);
-      });
-    }
-  } else {
-    isvTokensObj = customerObj.custom.fields.isv_tokens;
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_TOKEN, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
-  }
-  return isvTokensObj;
-};
-
 const convertCentToAmount = (num) => {
   let amount = Constants.VAL_ZERO;
   if (null != num) {
@@ -739,7 +730,6 @@ export default {
   getAuthResponse,
   getOMServiceResponse,
   getCapturedAmount,
-  deleteToken,
   convertCentToAmount,
   convertAmountToCent,
   getSubstring,

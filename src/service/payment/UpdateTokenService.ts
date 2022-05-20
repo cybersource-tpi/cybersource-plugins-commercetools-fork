@@ -3,7 +3,7 @@ import path from 'path';
 import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
-const updateTokenResponse = async (tokens) => {
+const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addressData) => {
   let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
@@ -32,15 +32,33 @@ const updateTokenResponse = async (tokens) => {
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+        logConfiguration: {
+          enableLog: false,
+        },
       };
 
       var card = new restApi.Tmsv2customersEmbeddedDefaultPaymentInstrumentCard();
-      card.expirationMonth = tokens.cardExpiryMonth;
-      card.expirationYear = tokens.cardExpiryYear;
+      card.expirationMonth = newExpiryMonth;
+      card.expirationYear = newExpiryYear;
       requestObj.card = card;
 
       var opts = [];
-
+      if (null != addressData) {
+        var billTo = new restApi.Tmsv2customersEmbeddedDefaultPaymentInstrumentBillTo();
+        billTo.firstName = addressData.firstName;
+        billTo.lastName = addressData.lastName;
+        billTo.address1 = addressData.streetName;
+        billTo.locality = addressData.city;
+        billTo.administrativeArea = addressData.region;
+        billTo.postalCode = addressData.postalCode;
+        billTo.country = addressData.country;
+        billTo.email = addressData.email;
+        billTo.phoneNumber = addressData.phone;
+        requestObj.billTo = billTo;
+      }
+      var instrumentIdentifier = new restApi.Tmsv2customersEmbeddedDefaultPaymentInstrumentInstrumentIdentifier();
+      instrumentIdentifier.id = tokens.instrumentIdentifier;
+      requestObj.instrumentIdentifier = instrumentIdentifier;
       const instance = new restApi.CustomerPaymentInstrumentApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.patchCustomersPaymentInstrument(customerTokenId, paymentInstrumentTokenId, requestObj, opts, function (error, data, response) {

@@ -33,6 +33,9 @@ const payerAuthSetupResponse = async (payment, cardTokens) => {
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+        logConfiguration: {
+          enableLog: false,
+        },
       };
       var clientReferenceInformation = new restApi.Riskv1decisionsClientReferenceInformation();
       clientReferenceInformation.code = payment.id;

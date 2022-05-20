@@ -29,6 +29,9 @@ const getVisaCheckoutData = async (paymentResponse) => {
           merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
           merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
           merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+          logConfiguration: {
+            enableLog: false,
+          },
         };
         const apiClient = new restApi.ApiClient();
         const instance = new restApi.TransactionDetailsApi(configObject, apiClient);
