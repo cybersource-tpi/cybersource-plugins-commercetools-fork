@@ -28,10 +28,9 @@ Alternatively, Cron job can be used to run the sync periodically. Below are the 
 
 ### Updating Pending Transactions
 
-#### Sequence Diagram 
+#### Sequence Diagram  (Synchronizing Decisions)
 
-TODO
-
+![Synchronizing Decisions](images/Synchronizing-Decisions.svg)
 ### Synchronizing Missing Transactions
 
 #### Sequence Diagram (Synchronizing Missing Transaction)

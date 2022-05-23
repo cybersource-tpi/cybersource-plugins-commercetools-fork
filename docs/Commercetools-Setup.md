@@ -7,7 +7,7 @@
 - [Resource
   Customisations](#ResourceCustomisations)
   - [Payment Interactions](#PaymentInteractions)
-    - [Customer tokens](#Paymentauthorisationfailed)
+    - [Customer tokens](#CustomerTokens)
     - [Payment data](#PaymentData)
     - [Payer authentication enrolment check](#PayerAuthenticationEnrolmentCheck)
     - [Payer authentication validate result](#PayerAuthenticationValidation)
@@ -26,12 +26,13 @@ Below is the Endpoint to run the script to load these API extension setup and cu
 
 > **_NOTE:_** Any errors occured while running the script or while processing the payments are logged in src/loggers folder of the plugin.
 
+
 # <a name="APIExtensionSetup"></a>API Extension Setup
 
 ## <a name="PaymentCreate"></a>Payment Create
 
-An extension triggered by payment create is required to process any
-actions on a payment.
+An extension triggered by payment create is required to process create
+action on a payment resource.
 
 | Property                   | Value                                  | Note                                                                                                  |
 | -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -46,8 +47,7 @@ actions on a payment.
 
 ## <a name="PaymentUpdate"></a>Payment Update
 
-An extension triggered by payment updates is required to process
-authorizations
+An extension triggered by payment updates is required to process any update actions on a payment resource
 
 | Property                   | Value                                  | Note                                                                                                  |
 | -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -62,7 +62,7 @@ authorizations
 
 ## <a name="CustomerUpdate"></a>Customer Update
 
-An extension triggered by customer update is required to process any action on customer token.
+An extension triggered by customer update is required to process any update actions on customer resource. 
 
 | Property                   | Value                                  | Note                                                                                                  |
 | -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -71,7 +71,7 @@ An extension triggered by customer update is required to process any action on c
 | url                        | {baseUrl}/api/extension/payment/update | The baseUrl will be defined by where you deploy the plugin. HTTPS should be used for production       |
 | authentication.type        | AuthorizationHeader                    |                                                                                                       |
 | authentication.headerValue | Basic {credentials}                    | Replace Base 64 encode value of the pair (username: password) of Commercetools with the {credentials} |
-| timeoutInMs                | 3000                                   | You will need Commercetools support to increase the allowable maximum value                           |
+| timeoutInMs                | 3000                                 | You will need Commercetools support to increase the allowable maximum value                           |
 | actions                    | Update                                 |                                                                                                       |
 | resourceTypeId             | customer                               |                                                                                                       |
 
@@ -145,6 +145,8 @@ Fields
 | isv_payerEnrollTransactionId         | String  | false    |
 | isv_payerEnrollStatus                | String  | false    |
 | isv_payerEnrollHttpCode              | Number  | false    |
+| isv_saleEnabled                      | Boolean | false    |
+| isv_enabledMoto                      | Boolean | false    |
 
 ### <a name="PayerAuthenticationEnrolmentCheck"></a>Payer authentication enrolment check
 

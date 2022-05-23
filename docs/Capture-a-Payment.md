@@ -2,7 +2,7 @@
 
 ## Capture Service Sequence Diagram
 
-![Capture service flow](images/Capture-Flow.svg)
+![Capture service flow](images/Flow-Diagram-Capture-a-Payment.svg)
 
 ## Process
 
