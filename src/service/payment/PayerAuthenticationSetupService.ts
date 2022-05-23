@@ -33,12 +33,9 @@ const payerAuthSetupResponse = async (payment, cardTokens) => {
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
-<<<<<<< HEAD
-=======
         logConfiguration: {
           enableLog: false,
         },
->>>>>>> feature
       };
       var clientReferenceInformation = new restApi.Riskv1decisionsClientReferenceInformation();
       clientReferenceInformation.code = payment.id;
@@ -74,20 +71,12 @@ const payerAuthSetupResponse = async (payment, cardTokens) => {
             paymentResponse.deviceDataCollectionUrl = data.consumerAuthenticationInformation.deviceDataCollectionUrl;
             resolve(paymentResponse);
           } else if (error) {
-<<<<<<< HEAD
             if (error.hasOwnProperty(Constants.STRING_RESPONSE) &&  null != error.response && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && null != error.response.text && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_SETUP_RESPONSE, Constants.LOG_INFO, error.response.text);
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
               paymentResponse.transactionId = errorData.id;
               paymentResponse.status = errorData.status;
-=======
-            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
-              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_SETUP_RESPONSE, Constants.LOG_INFO, errorData.message);
-              paymentResponse.transactionId = errorData.id;
-              paymentResponse.status = errorData.status;
               paymentResponse.message = errorData.message;
->>>>>>> feature
             } else {
               if (typeof error === 'object') {
                 errorData = JSON.stringify(error);

@@ -3,11 +3,7 @@ import path from 'path';
 import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
-<<<<<<< HEAD
-const updateTokenResponse = async (tokens) => {
-=======
 const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addressData) => {
->>>>>>> feature
   let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
@@ -36,17 +32,6 @@ const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addres
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
-<<<<<<< HEAD
-      };
-
-      var card = new restApi.Tmsv2customersEmbeddedDefaultPaymentInstrumentCard();
-      card.expirationMonth = tokens.cardExpiryMonth;
-      card.expirationYear = tokens.cardExpiryYear;
-      requestObj.card = card;
-
-      var opts = [];
-
-=======
         logConfiguration: {
           enableLog: false,
         },
@@ -74,7 +59,6 @@ const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addres
       var instrumentIdentifier = new restApi.Tmsv2customersEmbeddedDefaultPaymentInstrumentInstrumentIdentifier();
       instrumentIdentifier.id = tokens.instrumentIdentifier;
       requestObj.instrumentIdentifier = instrumentIdentifier;
->>>>>>> feature
       const instance = new restApi.CustomerPaymentInstrumentApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.patchCustomersPaymentInstrument(customerTokenId, paymentInstrumentTokenId, requestObj, opts, function (error, data, response) {
@@ -84,15 +68,8 @@ const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addres
             tokenResponse.card = data.card;
             resolve(tokenResponse);
           } else if (error) {
-<<<<<<< HEAD
             if (error.hasOwnProperty(Constants.STRING_RESPONSE) && null != error.response && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && null != error.response.text && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, error.response.text);
-=======
-            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
-              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, errorData.message);
-              tokenResponse.message = errorData.message;
->>>>>>> feature
             } else {
               if (typeof error === 'object') {
                 errorData = JSON.stringify(error);
