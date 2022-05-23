@@ -59,6 +59,6 @@ The shipping address should be acquired from Visa Click to Pay. This can be set 
 
     a. If the authorization was successful the transaction state is updated to **Success**, display the order confirmation page
 
-    b. If the state of the authorization transaction is updated to **Pending** which is due Fraud Check, display the order confirmation page
+    b. If the state of the authorization transaction is updated to **Pending** which is due to Fraud Check, display the order confirmation page
 
     C. If the state of the authorization transaction is updated to **Failure**, display the error page and See [Overview\#Errorhandling](Overview.md#Errorhandling) for handling errors or failures
