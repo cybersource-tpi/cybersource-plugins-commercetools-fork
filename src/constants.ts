@@ -70,6 +70,7 @@ export abstract class Constants {
   static readonly FUNC_SYNC_VISA_CARD_DETAILS = 'FuncSyncVisaCardDetails';
   static readonly FUNC_UPDATE_VISA_DETAILS = 'FuncUpdateVisaDetails';
   static readonly FUNC_VISA_CARD_DETAILS_ACTION = 'FuncVisaCardDetailsAction';
+  static readonly FUNC_ADD_TOKEN_RESPONSE = 'FuncAddTokenResponse'
 
   //Numbers
   static readonly VAL_NEGATIVE_ONE = -1;
