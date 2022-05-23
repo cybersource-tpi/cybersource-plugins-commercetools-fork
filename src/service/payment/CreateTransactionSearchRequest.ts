@@ -25,6 +25,12 @@ const getTransactionSearchResponse = async (query, sort) => {
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+<<<<<<< HEAD
+=======
+        logConfiguration: {
+          enableLog: false,
+        },
+>>>>>>> feature
       };
       const apiClient = new restApi.ApiClient();
       var requestObj = new restApi.CreateSearchRequest();
@@ -41,8 +47,15 @@ const getTransactionSearchResponse = async (query, sort) => {
             searchResponse.data = data;
             resolve(searchResponse);
           } else if (error) {
+<<<<<<< HEAD
             if (error.hasOwnProperty(Constants.STRING_RESPONSE) && null != error.response && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && null != error.response.text && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_TRANSACTION_SEARCH_RESPONSE, Constants.LOG_INFO, error.response.text);
+=======
+            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_TRANSACTION_SEARCH_RESPONSE, Constants.LOG_INFO, errorData.message);
+              searchResponse.message = errorData.message;
+>>>>>>> feature
             } else {
               if (typeof error === 'object') {
                 errorData = JSON.stringify(error);

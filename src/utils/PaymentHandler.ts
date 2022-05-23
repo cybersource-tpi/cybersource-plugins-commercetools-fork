@@ -15,6 +15,10 @@ import deleteToken from '../service/payment/DeleteTokenService';
 import conversion from '../service/payment/DecisionSyncService';
 import updateToken from '../service/payment/UpdateTokenService';
 import createSearchRequest from '../service/payment/CreateTransactionSearchRequest';
+<<<<<<< HEAD
+=======
+import addTokenService from '../service/payment/AddTokenService';
+>>>>>>> feature
 import { Constants } from '../constants';
 
 const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
@@ -27,6 +31,10 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
   let cardTokens: any;
   let authReversalResponse: any;
   let stateChangeResponse: any;
+<<<<<<< HEAD
+=======
+  let customerInfo: any;
+>>>>>>> feature
   let paymentInstrumentToken = null;
   let errorFlag = false;
   try {
@@ -44,17 +52,29 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
           if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
             paymentInstrumentToken = updatePaymentObj.custom.fields.isv_savedToken;
           }
+<<<<<<< HEAD
           cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstrumentToken);
+=======
+          if (null != updatePaymentObj.customer.id) {
+            customerInfo = await commercetoolsApi.getCustomer(updatePaymentObj.customer.id);
+            cardTokens = await getCardTokens(customerInfo, paymentInstrumentToken);
+          }
+>>>>>>> feature
         }
         paymentMethod = updatePaymentObj.paymentMethodInfo.method;
         switch (paymentMethod) {
           case Constants.CREDIT_CARD: {
+<<<<<<< HEAD
             serviceResponse = await getCardWithout3dsResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions, cardTokens);
+=======
+            serviceResponse = await getCreditCardResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions, cardTokens);
+>>>>>>> feature
             paymentResponse = serviceResponse.paymentResponse;
             authResponse = serviceResponse.authResponse;
             errorFlag = serviceResponse.errorFlag;
             break;
           }
+<<<<<<< HEAD
           case Constants.CC_PAYER_AUTHENTICATION: {
             serviceResponse = await getCardWith3dsResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions, cardTokens);
             paymentResponse = serviceResponse.paymentResponse;
@@ -63,6 +83,9 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
             break;
           }
           case Constants.VISA_CHECKOUT: {
+=======
+          case Constants.CLICK_TO_PAY: {
+>>>>>>> feature
             serviceResponse = await clickToPayResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions, cardTokens);
             paymentResponse = serviceResponse.paymentResponse;
             authResponse = serviceResponse.authResponse;
@@ -77,7 +100,11 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
             break;
           }
           case Constants.APPLE_PAY: {
+<<<<<<< HEAD
             serviceResponse = await getCardWithout3dsResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions, cardTokens);
+=======
+            serviceResponse = await getCreditCardResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], updateTransactions, cardTokens);
+>>>>>>> feature
             paymentResponse = serviceResponse.paymentResponse;
             authResponse = serviceResponse.authResponse;
             errorFlag = serviceResponse.errorFlag;
@@ -163,7 +190,10 @@ const authorizationHandler = async (updatePaymentObj, updateTransactions) => {
     } else {
       exceptionData = Constants.EXCEPTION_MSG_AUTHORIZING_PAYMENT + Constants.STRING_HYPHEN + exception;
     }
+<<<<<<< HEAD
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_HANDLER, Constants.LOG_ERROR, JSON.stringify(exception));
+=======
+>>>>>>> feature
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_HANDLER, Constants.LOG_ERROR, exceptionData);
     errorFlag = true;
   }
@@ -178,6 +208,10 @@ const getPayerAuthSetUpResponse = async (updatePaymentObj) => {
   let setUpActionResponse: any;
   let exceptionData: any;
   let cardTokens: any;
+<<<<<<< HEAD
+=======
+  let customerInfo: any;
+>>>>>>> feature
   let paymentInstrumentToken = null;
   let errorFlag = false;
   try {
@@ -189,7 +223,14 @@ const getPayerAuthSetUpResponse = async (updatePaymentObj) => {
         if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
           paymentInstrumentToken = updatePaymentObj.custom.fields.isv_savedToken;
         }
+<<<<<<< HEAD
         cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstrumentToken);
+=======
+        if (null != updatePaymentObj.customer.id) {
+          customerInfo = await commercetoolsApi.getCustomer(updatePaymentObj.customer.id);
+          cardTokens = await getCardTokens(customerInfo, paymentInstrumentToken);
+        }
+>>>>>>> feature
       }
       setUpServiceResponse = await paymentAuthSetUp.payerAuthSetupResponse(updatePaymentObj, cardTokens);
       if (null != setUpServiceResponse && null != setUpServiceResponse.httpCode) {
@@ -230,10 +271,18 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
   let limiterResponse: any;
   let cardRate: any;
   let cardRateCount: any;
+<<<<<<< HEAD
+=======
+  let customerInfo: any;
+>>>>>>> feature
   let cardinalReferenceId = null;
   let paymentInstrumentToken = null;
   let errorFlag = false;
   let dontSaveTokenFlag = false;
+<<<<<<< HEAD
+=======
+  let payerAuthMandateFlag = false;
+>>>>>>> feature
   try {
     if (
       null != updatePaymentObj &&
@@ -256,7 +305,14 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
           if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
             paymentInstrumentToken = updatePaymentObj.custom.fields.isv_savedToken;
           }
+<<<<<<< HEAD
           cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstrumentToken);
+=======
+          if (null != updatePaymentObj.customer.id) {
+            customerInfo = await commercetoolsApi.getCustomer(updatePaymentObj.customer.id);
+            cardTokens = await getCardTokens(customerInfo, paymentInstrumentToken);
+          }
+>>>>>>> feature
         }
         if (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_ENABLE_RATE_LIMITER && Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer && null != updatePaymentObj.customer.id) {
           if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME) {
@@ -272,6 +328,7 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_RATE_LIMITER);
           }
         }
+<<<<<<< HEAD
         enrollServiceResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], Constants.STRING_ENROLL_CHECK, cardTokens, dontSaveTokenFlag);
         if (null != enrollServiceResponse && null != enrollServiceResponse.httpCode) {
           enrollServiceResponse.cardinalReferenceId = cardinalReferenceId;
@@ -287,6 +344,21 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
           errorFlag = true;
         }
+=======
+        if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == updatePaymentObj.custom.fields.isv_payerEnrollHttpCode && Constants.API_STATUS_CUSTOMER_AUTHENTICATION_REQUIRED == updatePaymentObj.custom.fields.isv_payerEnrollStatus) {
+          payerAuthMandateFlag = true;
+        }
+        enrollServiceResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], Constants.STRING_ENROLL_CHECK, cardTokens, dontSaveTokenFlag, payerAuthMandateFlag);
+        enrollServiceResponse.cardinalReferenceId = cardinalReferenceId;
+        enrollResponse = paymentService.payerEnrollActions(enrollServiceResponse, updatePaymentObj);
+        enrollAuthResponse = paymentService.getAuthResponse(enrollServiceResponse, null);
+        if (null != enrollAuthResponse && Constants.VAL_ZERO < enrollAuthResponse.actions.length) {
+          enrollAuthResponse.actions.forEach((i) => {
+            enrollResponse.actions.push(i);
+          });
+        }
+        enrollResponse = await setCustomerTokenData(cardTokens, enrollServiceResponse, enrollResponse, false, updatePaymentObj.paymentMethodInfo.method, updatePaymentObj);
+>>>>>>> feature
       } else {
         paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_CART);
         errorFlag = true;
@@ -312,7 +384,11 @@ const getPayerAuthEnrollResponse = async (updatePaymentObj) => {
   return enrollResponse;
 };
 
+<<<<<<< HEAD
 const getPayerAuthEnrollAuthReversalHandler = async (updatePaymentObj, paymentResponse, updateTransactions, updateActions) => {
+=======
+const getPayerAuthReversalHandler = async (updatePaymentObj, paymentResponse, updateTransactions, updateActions) => {
+>>>>>>> feature
   let authReversalResponse: any;
   let stateChangeResponse: any;
   let cartObj: any;
@@ -356,12 +432,20 @@ const getPayerAuthEnrollAuthReversalHandler = async (updatePaymentObj, paymentRe
       }
     }
   } else {
+<<<<<<< HEAD
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_AUTH_REVERSAL_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
+=======
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_REVERSAL_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
+>>>>>>> feature
   }
   return updateActions;
 };
 
+<<<<<<< HEAD
 const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransactions, cardTokens) => {
+=======
+const getCreditCardResponse = async (updatePaymentObj, cartObj, updateTransactions, cardTokens) => {
+>>>>>>> feature
   let authResponse: any;
   let paymentResponse: any;
   let cardDetails: any;
@@ -371,6 +455,10 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
   let cardRate: any;
   let cardRateCount: any;
   let dontSaveTokenFlag = false;
+<<<<<<< HEAD
+=======
+  let payerAuthMandateFlag = false;
+>>>>>>> feature
   let returnResponse = {
     paymentResponse: null,
     authResponse: null,
@@ -387,10 +475,17 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
         dontSaveTokenFlag = true;
       }
     } else {
+<<<<<<< HEAD
       paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CARD_WITHOUT_3DS_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_RATE_LIMITER);
     }
   }
   paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_CARD, cardTokens, dontSaveTokenFlag);
+=======
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CREDIT_CARD_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_RATE_LIMITER);
+    }
+  }
+  paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_CARD, cardTokens, dontSaveTokenFlag, payerAuthMandateFlag);
+>>>>>>> feature
   if (null != updatePaymentObj && null != paymentResponse && null != paymentResponse.httpCode) {
     authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
     if (null != authResponse) {
@@ -413,11 +508,19 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
         }
       }
     } else {
+<<<<<<< HEAD
       paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CARD_WITHOUT_3DS_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
       returnResponse.errorFlag = true;
     }
   } else {
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CARD_WITHOUT_3DS_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+=======
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CREDIT_CARD_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+      returnResponse.errorFlag = true;
+    }
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CREDIT_CARD_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+>>>>>>> feature
     returnResponse.errorFlag = true;
   }
   returnResponse.paymentResponse = paymentResponse;
@@ -425,13 +528,18 @@ const getCardWithout3dsResponse = async (updatePaymentObj, cartObj, updateTransa
   return returnResponse;
 };
 
+<<<<<<< HEAD
 const getCardWith3dsResponse = async (updatePaymentObj, cartObj, updateTransactions, cardTokens) => {
+=======
+const getPayerAuthValidateResponse = async (updatePaymentObj) => {
+>>>>>>> feature
   let authResponse: any;
   let paymentResponse: any;
   let startTime: any;
   let limiterResponse: any;
   let cardRate: any;
   let cardRateCount: any;
+<<<<<<< HEAD
   let service: string;
   let dontSaveTokenFlag = false;
   let returnResponse = {
@@ -493,6 +601,141 @@ const getCardWith3dsResponse = async (updatePaymentObj, cartObj, updateTransacti
   returnResponse.paymentResponse = paymentResponse;
   returnResponse.authResponse = authResponse;
   return returnResponse;
+=======
+  let cartObj: any;
+  let cardTokens: any;
+  let exceptionData: any;
+<<<<<<< HEAD
+  let customerInfo: any;
+  let dontSaveTokenFlag = false;
+  let payerAuthMandateFlag = false;
+  let paymentInstrumentToken = null;
+=======
+  let paymentInstrumentToken = null;
+  let dontSaveTokenFlag = false;
+  let payerAuthMandateFlag = false;
+>>>>>>> feature
+  let errorFlag = false;
+  try {
+    if (
+      null != updatePaymentObj &&
+      Constants.STRING_CUSTOM in updatePaymentObj &&
+      ((Constants.ISV_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_token) || (Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken))
+    ) {
+      cartObj = await commercetoolsApi.retrieveCartByPaymentId(updatePaymentObj.id);
+      if (null == cartObj || (null != cartObj && Constants.VAL_ZERO == cartObj.count)) {
+        if (Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer) {
+          cartObj = await commercetoolsApi.retrieveCartByCustomerId(updatePaymentObj.customer.id);
+        } else {
+          cartObj = await commercetoolsApi.retrieveCartByAnonymousId(updatePaymentObj.anonymousId);
+        }
+      }
+      if (null != cartObj && Constants.VAL_ZERO < cartObj.count) {
+        if (Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer) {
+          if (Constants.STRING_CUSTOM in updatePaymentObj && Constants.STRING_FIELDS in updatePaymentObj.custom && Constants.ISV_SAVED_TOKEN in updatePaymentObj.custom.fields && Constants.STRING_EMPTY != updatePaymentObj.custom.fields.isv_savedToken) {
+            paymentInstrumentToken = updatePaymentObj.custom.fields.isv_savedToken;
+          }
+<<<<<<< HEAD
+          if (null != updatePaymentObj.customer.id) {
+            customerInfo = await commercetoolsApi.getCustomer(updatePaymentObj.customer.id);
+            cardTokens = await getCardTokens(customerInfo, paymentInstrumentToken);
+          }
+=======
+          cardTokens = await getCardTokens(updatePaymentObj.customer.id, paymentInstrumentToken);
+>>>>>>> feature
+        }
+        if (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_ENABLE_RATE_LIMITER && Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer && null != updatePaymentObj.customer.id) {
+          if (Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE && Constants.STRING_EMPTY != process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME) {
+            cardRate = process.env.PAYMENT_GATEWAY_SAVED_CARD_LIMIT_FRAME;
+            cardRateCount = process.env.PAYMENT_GATEWAY_LIMIT_SAVED_CARD_RATE;
+            startTime = new Date();
+            startTime.setHours(startTime.getHours() - cardRate);
+            limiterResponse = await commercetoolsApi.retrievePaymentByCustomerId(updatePaymentObj.customer.id, new Date(startTime).toISOString(), new Date(Date.now()).toISOString());
+            if (null != limiterResponse && limiterResponse.count > parseInt(cardRateCount)) {
+              dontSaveTokenFlag = true;
+            }
+          } else {
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_VALIDATE_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_RATE_LIMITER);
+          }
+        }
+        paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj.results[Constants.VAL_ZERO], Constants.VALIDATION, cardTokens, dontSaveTokenFlag, payerAuthMandateFlag);
+        if (null != paymentResponse && null != paymentResponse.httpCode) {
+          authResponse = paymentService.payerEnrollActions(paymentResponse, updatePaymentObj);
+          if (null != authResponse) {
+            if (paymentResponse.httpCode == Constants.HTTP_CODE_TWO_HUNDRED_ONE && !paymentResponse.data.hasOwnProperty(Constants.ERROR_INFORMATION)) {
+              authResponse.actions.push({
+                action: Constants.ADD_INTERFACE_INTERACTION,
+                type: {
+                  key: Constants.ISV_PAYER_AUTHENTICATION_VALIDATE_RESULT,
+                },
+                fields: {
+                  cavv: paymentResponse.data.consumerAuthenticationInformation.cavv,
+                  eciRaw: paymentResponse.data.consumerAuthenticationInformation.eciRaw,
+                  paresStatus: paymentResponse.data.consumerAuthenticationInformation.paresStatus,
+                  commerceIndicator: paymentResponse.data.consumerAuthenticationInformation.indicator,
+                  authenticationResult: paymentResponse.data.consumerAuthenticationInformation.authenticationResult,
+                  xid: paymentResponse.data.consumerAuthenticationInformation.xid,
+                  cavvAlgorithm: paymentResponse.data.consumerAuthenticationInformation.cavvAlgorithm,
+                  authenticationStatusMessage: paymentResponse.data.consumerAuthenticationInformation.authenticationStatusMessage,
+                  eci: paymentResponse.data.consumerAuthenticationInformation.eci,
+                  specificationVersion: paymentResponse.data.consumerAuthenticationInformation.specificationVersion,
+                },
+              });
+            }
+            if (
+              paymentResponse.httpCode == Constants.HTTP_CODE_TWO_HUNDRED_ONE &&
+              paymentResponse.data.hasOwnProperty(Constants.ERROR_INFORMATION) &&
+              Constants.VAL_ZERO < Object.keys(paymentResponse.data.errorInformation).length &&
+              paymentResponse.data.errorInformation.hasOwnProperty(Constants.STRING_REASON) &&
+              Constants.VAL_ZERO < Object.keys(paymentResponse.data.errorInformation.reason).length &&
+              Constants.API_STATUS_CUSTOMER_AUTHENTICATION_REQUIRED == paymentResponse.data.errorInformation.reason
+            ) {
+              authResponse.actions.push(
+                {
+                  action: Constants.SET_CUSTOM_FIELD,
+                  name: Constants.ISV_PAYER_AUTHENTICATION_ENROLL_STATUS,
+                  value: paymentResponse.data.errorInformation.reason,
+                },
+                {
+                  action: Constants.SET_CUSTOM_FIELD,
+                  name: Constants.ISV_PAYER_AUTHENTICATION_ENROLL_HTTP_CODE,
+                  value: paymentResponse.httpCode,
+                }
+              );
+            }
+          } else {
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_VALIDATE_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+            errorFlag = true;
+          }
+        } else {
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_VALIDATE_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+          errorFlag = true;
+        }
+        authResponse = await setCustomerTokenData(cardTokens, paymentResponse, authResponse, false, updatePaymentObj.paymentMethodInfo.method, updatePaymentObj);
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_NO_CARD_DETAILS);
+        errorFlag = true;
+      }
+    } else {
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_NO_CARD_DETAILS);
+      errorFlag = true;
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_AUTHORIZING_PAYMENT + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_AUTHORIZING_PAYMENT + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_AUTHORIZING_PAYMENT + Constants.STRING_HYPHEN + exception;
+    }
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_PAYER_AUTH_ENROLL_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    errorFlag = true;
+  }
+  if (errorFlag) {
+    authResponse = paymentService.invalidInputResponse();
+  }
+  return authResponse;
+>>>>>>> feature
 };
 
 const clickToPayResponse = async (updatePaymentObj, cartObj, updateTransactions, customerTokenId) => {
@@ -502,12 +745,20 @@ const clickToPayResponse = async (updatePaymentObj, cartObj, updateTransactions,
   let visaCheckoutData: any;
   let actions: any;
   let dontSaveTokenFlag = false;
+<<<<<<< HEAD
+=======
+  let payerAuthMandateFlag = false;
+>>>>>>> feature
   let returnResponse = {
     paymentResponse: null,
     authResponse: null,
     errorFlag: false,
   };
+<<<<<<< HEAD
   paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_VISA, customerTokenId, dontSaveTokenFlag);
+=======
+  paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_VISA, customerTokenId, dontSaveTokenFlag, payerAuthMandateFlag);
+>>>>>>> feature
   if (null != paymentResponse && null != paymentResponse.httpCode) {
     authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
     if (null != authResponse) {
@@ -524,7 +775,11 @@ const clickToPayResponse = async (updatePaymentObj, cartObj, updateTransactions,
             authResponse.actions.push(i);
           });
         }
+<<<<<<< HEAD
         cartUpdate = await commercetoolsApi.updateCartByPaymentId(cartObj.id, cartObj.version, visaCheckoutData);
+=======
+        cartUpdate = await commercetoolsApi.updateCartByPaymentId(cartObj.id, updatePaymentObj.id, cartObj.version, visaCheckoutData);
+>>>>>>> feature
         if (null != cartUpdate) {
           paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CLICK_TO_PAY, Constants.LOG_INFO, Constants.SUCCESS_MSG_UPDATE_CLICK_TO_PAY_CARD_DETAILS);
         }
@@ -549,6 +804,10 @@ const googlePayResponse = async (updatePaymentObj, cartObj, updateTransactions, 
   let paymentResponse: any;
   let actions: any;
   let dontSaveTokenFlag = false;
+<<<<<<< HEAD
+=======
+  let payerAuthMandateFlag = false;
+>>>>>>> feature
   let cardDetails = {
     cardFieldGroup: null,
   };
@@ -557,7 +816,11 @@ const googlePayResponse = async (updatePaymentObj, cartObj, updateTransactions, 
     authResponse: null,
     errorFlag: false,
   };
+<<<<<<< HEAD
   paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_GOOGLE, customerTokenId, dontSaveTokenFlag);
+=======
+  paymentResponse = await paymentAuthorization.authorizationResponse(updatePaymentObj, cartObj, Constants.STRING_GOOGLE, customerTokenId, dontSaveTokenFlag, payerAuthMandateFlag);
+>>>>>>> feature
   if (null != paymentResponse && null != paymentResponse.httpCode) {
     authResponse = paymentService.getAuthResponse(paymentResponse, updateTransactions);
     if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode) {
@@ -648,8 +911,98 @@ const applePaySessionHandler = async (fields) => {
   return serviceResponse;
 };
 
+<<<<<<< HEAD
 const getCardTokens = async (customerId, isvSavedToken) => {
   let customerInfo: any;
+=======
+const orderManagementHandler = async (paymentId, updatePaymentObj, updateTransactions) => {
+  let cartObj: any;
+  let orderResponse: any;
+  let serviceResponse: any;
+  let exceptionData: any;
+  let authReversalId = null;
+  let authId = null;
+  let captureId = null;
+  let errorFlag = false;
+  try {
+    if (null != updatePaymentObj && null != updateTransactions) {
+      cartObj = await commercetoolsApi.retrieveCartByPaymentId(paymentId);
+      if (null == cartObj || (null != cartObj && Constants.VAL_ZERO == cartObj.count)) {
+        if (Constants.STRING_CUSTOMER in updatePaymentObj && Constants.STRING_ID in updatePaymentObj.customer) {
+          cartObj = await commercetoolsApi.retrieveCartByCustomerId(updatePaymentObj.customer.id);
+        } else {
+          cartObj = await commercetoolsApi.retrieveCartByAnonymousId(updatePaymentObj.anonymousId);
+        }
+      }
+      if (Constants.CT_TRANSACTION_TYPE_CHARGE == updateTransactions.type && Constants.CT_TRANSACTION_STATE_INITIAL == updateTransactions.state) {
+        updatePaymentObj.transactions.forEach((transaction) => {
+          if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == transaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == transaction.state) {
+            authId = transaction.interactionId;
+          }
+        });
+        if (null != authId) {
+          orderResponse = await paymentCapture.captureResponse(updatePaymentObj, cartObj, authId);
+        } else {
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_CAPTURE_FAILURE);
+          errorFlag = true;
+        }
+      } else if (Constants.CT_TRANSACTION_TYPE_REFUND == updateTransactions.type && Constants.CT_TRANSACTION_STATE_INITIAL == updateTransactions.state) {
+        updatePaymentObj.transactions.forEach((transaction) => {
+          if (Constants.CT_TRANSACTION_TYPE_CHARGE == transaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == transaction.state) {
+            captureId = transaction.interactionId;
+          }
+        });
+        if (null != captureId) {
+          orderResponse = await paymentRefund.refundResponse(updatePaymentObj, captureId, updateTransactions);
+        } else {
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_REFUND_FAILURE);
+          errorFlag = true;
+        }
+      } else if (Constants.CT_TRANSACTION_TYPE_CANCEL_AUTHORIZATION == updateTransactions.type && Constants.CT_TRANSACTION_STATE_INITIAL == updateTransactions.state) {
+        updatePaymentObj.transactions.forEach((transaction) => {
+          if (Constants.CT_TRANSACTION_TYPE_AUTHORIZATION == transaction.type && Constants.CT_TRANSACTION_STATE_SUCCESS == transaction.state) {
+            authReversalId = transaction.interactionId;
+          }
+        });
+        if (null != authReversalId) {
+          orderResponse = await paymentAuthReversal.authReversalResponse(updatePaymentObj, cartObj, authReversalId);
+        } else {
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_REVERSAL_FAILURE);
+          errorFlag = true;
+        }
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_NO_TRANSACTION);
+        errorFlag = true;
+      }
+      if (null != orderResponse && null != orderResponse.httpCode) {
+        serviceResponse = paymentService.getOMServiceResponse(orderResponse, updateTransactions);
+      } else {
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+        errorFlag = true;
+      }
+    } else {
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+      errorFlag = true;
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_SERVICE_PROCESS + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_SERVICE_PROCESS + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_SERVICE_PROCESS + Constants.STRING_HYPHEN + exception;
+    }
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ORDER_MANAGEMENT_HANDLER, Constants.LOG_ERROR, exceptionData);
+    errorFlag = true;
+  }
+  if (errorFlag) {
+    serviceResponse = paymentService.invalidInputResponse();
+  }
+  return serviceResponse;
+};
+
+const getCardTokens = async (customerInfo, isvSavedToken) => {
+>>>>>>> feature
   let existingTokens: any;
   let existingTokensMap: any;
   let newToken: any;
@@ -659,6 +1012,7 @@ const getCardTokens = async (customerId, isvSavedToken) => {
     customerTokenId: null,
     paymentInstrumentId: null,
   };
+<<<<<<< HEAD
   if (null != customerId) {
     customerInfo = await commercetoolsApi.getCustomer(customerId);
     if (
@@ -684,6 +1038,30 @@ const getCardTokens = async (customerId, isvSavedToken) => {
         }
       });
     }
+=======
+  if (
+    null != customerInfo &&
+    Constants.STRING_CUSTOM in customerInfo &&
+    Constants.STRING_FIELDS in customerInfo.custom &&
+    Constants.ISV_TOKENS in customerInfo.custom.fields &&
+    Constants.STRING_EMPTY != customerInfo.custom.fields.isv_tokens &&
+    Constants.VAL_ZERO < customerInfo.custom.fields.isv_tokens.length
+  ) {
+    existingTokens = customerInfo.custom.fields.isv_tokens;
+    existingTokensMap = existingTokens.map((item) => item);
+    tokenLength = customerInfo.custom.fields.isv_tokens.length;
+    existingTokensMap.forEach((token, index) => {
+      newToken = JSON.parse(token);
+      currentIndex++;
+      if (newToken.paymentToken == isvSavedToken) {
+        cardTokens.customerTokenId = newToken.value;
+        cardTokens.paymentInstrumentId = newToken.paymentToken;
+      }
+      if (tokenLength == currentIndex && null == cardTokens.customerTokenId) {
+        cardTokens.customerTokenId = newToken.value;
+      }
+    });
+>>>>>>> feature
   }
   return cardTokens;
 };
@@ -776,6 +1154,7 @@ const processTokens = async (customerTokenId, paymentInstrumentId, instrumentIde
   return updateTokenResponse;
 };
 
+<<<<<<< HEAD
 const orderManagementHandler = async (paymentId, updatePaymentObj, updateTransactions) => {
   let cartObj: any;
   let orderResponse: any;
@@ -871,6 +1250,35 @@ const updateCardHandler = async (tokens, customerId) => {
       updateServiceResponse = await updateToken.updateTokenResponse(tokens);
       if (
         null != updateServiceResponse &&
+=======
+const updateCardHandler = async (tokens, customerId, customerObj) => {
+  let updateServiceResponse: any;
+  let returnResponse: any;
+  let exceptionData: any;
+  let existingTokens: any;
+  let existingTokensMap: any;
+  let newToken: any;
+  let parsedTokens: any;
+  let customerInfo: any;
+  let addressData: any;
+  let newExpiryMonth = null;
+  let newExpiryYear = null;
+  let errorFlag = false;
+  let length = Constants.VAL_NEGATIVE_ONE;
+  try {
+    if (null != customerId) {
+      customerObj.addresses.forEach((address) => {
+        if (tokens.addressId == address.id) {
+          addressData = address;
+        }
+      });
+      newExpiryMonth = customerObj.custom.fields.isv_cardNewExpiryMonth;
+      newExpiryYear = customerObj.custom.fields.isv_cardNewExpiryYear;
+      updateServiceResponse = await updateToken.updateTokenResponse(tokens, newExpiryMonth, newExpiryYear, addressData);
+      if (
+        null != updateServiceResponse &&
+        Constants.HTTP_CODE_TWO_HUNDRED == updateServiceResponse.httpCode &&
+>>>>>>> feature
         updateServiceResponse.hasOwnProperty(Constants.STRING_CARD) &&
         Constants.VAL_ZERO < Object.keys(updateServiceResponse.card).length &&
         updateServiceResponse.card.hasOwnProperty(Constants.STRING_EXPIRATION_MONTH) &&
@@ -878,10 +1286,52 @@ const updateCardHandler = async (tokens, customerId) => {
         updateServiceResponse.card.hasOwnProperty(Constants.STRING_EXPIRATION_YEAR) &&
         null != updateServiceResponse.card.expirationYear
       ) {
+<<<<<<< HEAD
         returnResponse = await updateTokenData(customerId, tokens, updateServiceResponse, Constants.STRING_SUCCESS);
       } else {
         paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CARD_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
       }
+=======
+        customerInfo = await commercetoolsApi.getCustomer(customerId);
+        if (
+          null != customerInfo &&
+          Constants.STRING_CUSTOM in customerInfo &&
+          Constants.STRING_FIELDS in customerInfo.custom &&
+          Constants.ISV_TOKENS in customerInfo.custom.fields &&
+          Constants.STRING_EMPTY != customerInfo.custom.fields.isv_tokens &&
+          Constants.VAL_ZERO < customerInfo.custom.fields.isv_tokens.length
+        ) {
+          existingTokens = customerInfo.custom.fields.isv_tokens;
+          existingTokensMap = existingTokens.map((item) => item);
+          existingTokensMap.forEach((token, index) => {
+            newToken = JSON.parse(token);
+            if (newToken.paymentToken == tokens.paymentToken) {
+              length = index;
+            }
+          });
+          if (Constants.VAL_NEGATIVE_ONE < length) {
+            parsedTokens = JSON.parse(existingTokensMap[length]);
+          } else {
+            errorFlag = true;
+          }
+        } else {
+          parsedTokens = tokens;
+        }
+        if (!errorFlag) {
+          parsedTokens.cardExpiryMonth = updateServiceResponse.card.expirationMonth;
+          parsedTokens.cardExpiryYear = updateServiceResponse.card.expirationYear;
+          parsedTokens.addressId = tokens.addressId;
+        }
+        existingTokensMap.set(length, JSON.stringify(parsedTokens));
+      } else {
+        errorFlag = true;
+      }
+      if (errorFlag) {
+        existingTokensMap = [JSON.stringify(tokens)];
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CARD_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_SERVICE_PROCESS);
+      }
+      returnResponse = paymentService.getUpdateTokenActions(existingTokensMap, errorFlag);
+>>>>>>> feature
     } else {
       paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CARD_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_NO_TOKENS);
     }
@@ -895,6 +1345,7 @@ const updateCardHandler = async (tokens, customerId) => {
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_CARD_HANDLER, Constants.LOG_ERROR, exceptionData);
   }
+<<<<<<< HEAD
   if (null == returnResponse) {
     returnResponse = await updateTokenData(customerId, tokens, updateServiceResponse, Constants.LOG_ERROR);
   }
@@ -903,10 +1354,62 @@ const updateCardHandler = async (tokens, customerId) => {
 
 const updateTokenData = async (customerId, tokens, updateServiceResponse, type) => {
   let customerInfo: any;
+=======
+  return returnResponse;
+};
+
+const deleteCardHandler = async (updateCustomerObj, customerId) => {
+  let tokenManagementResponse: any;
+  let customerTokenHandlerResponse: any;
+  let customerObj: any;
+  let parsedToken: any;
+  let isvTokensObj = new Array();
+  if (null != customerId && null != updateCustomerObj) {
+    customerObj = await commercetoolsApi.getCustomer(customerId);
+    tokenManagementResponse = await deleteToken.deleteCustomerToken(updateCustomerObj);
+    if (null != tokenManagementResponse && null != tokenManagementResponse.httpCode && Constants.HTTP_CODE_TWO_HUNDRED_FOUR == tokenManagementResponse.httpCode) {
+      if (null != customerObj) {
+        customerObj.custom.fields.isv_tokens.forEach((element) => {
+          parsedToken = JSON.parse(element);
+          if (tokenManagementResponse.deletedToken != parsedToken.paymentToken) {
+            isvTokensObj.push(element);
+          }
+        });
+      }
+    } else {
+      if (null != customerObj) {
+        customerObj.custom.fields.isv_tokens.forEach((element) => {
+          parsedToken = JSON.parse(element);
+          if (Constants.STRING_FLAG in parsedToken) {
+            if (Constants.STRING_DELETE == parsedToken.flag) {
+              delete parsedToken.flag;
+            }
+          }
+          isvTokensObj.push(element);
+        });
+      } else {
+        isvTokensObj = updateCustomerObj;
+      }
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CARD_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_CUSTOMER_INPUT);
+    }
+    customerTokenHandlerResponse = paymentService.getUpdateTokenActions(isvTokensObj, true);
+  } else {
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CARD_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_CUSTOMER_DETAILS);
+  }
+  return customerTokenHandlerResponse;
+};
+
+const addCardHandler = async (customerId, addressObj, customerObj) => {
+  let addressData: any;
+  let cardTokens: any;
+  let cardResponse: any;
+  let customerTokenResponse: any;
+>>>>>>> feature
   let existingTokens: any;
   let existingTokensMap: any;
   let newToken: any;
   let parsedTokens: any;
+<<<<<<< HEAD
   let updateTokenResponse: any;
   let length = Constants.VAL_NEGATIVE_ONE;
   if (null != customerId) {
@@ -975,6 +1478,103 @@ const deleteCardHandler = async (updateCustomerObj, customerId) => {
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DELETE_CARD_HANDLER, Constants.LOG_INFO, Constants.ERROR_MSG_CUSTOMER_DETAILS);
   }
   return customerTokenHandlerResponse;
+=======
+  let tokenData: any;
+  let exceptionData: any;
+  let paymentInstrumentId = null;
+  let instrumentIdentifier = null;
+  let customerTokenId = null;
+  let newTokenFlag = false;
+  let tokensExists = false;
+  let length = Constants.VAL_NEGATIVE_ONE;
+  try {
+    if (
+      null != customerId &&
+      null != customerObj &&
+      Constants.STRING_CUSTOM in customerObj &&
+      Constants.STRING_FIELDS in customerObj.custom &&
+      Constants.ISV_ADDRESS_ID in customerObj.custom.fields &&
+      Constants.STRING_EMPTY != customerObj.custom.fields.isv_addressId &&
+      Constants.ISV_TOKEN in customerObj.custom.fields &&
+      Constants.STRING_EMPTY != customerObj.custom.fields.isv_token
+    ) {
+      cardTokens = await getCardTokens(customerObj, null);
+      addressObj.forEach((address) => {
+        if (customerObj.custom.fields.isv_addressId == address.id) {
+          addressData = address;
+        }
+      });
+      cardResponse = await addTokenService.addTokenResponse(customerId, customerObj, addressData, cardTokens);
+      if (
+        Constants.HTTP_CODE_TWO_HUNDRED_ONE == cardResponse.httpCode &&
+        Constants.API_STATUS_AUTHORIZED == cardResponse.status &&
+        cardResponse.data.hasOwnProperty(Constants.TOKEN_INFORMATION) &&
+        Constants.VAL_ZERO < Object.keys(cardResponse.data.tokenInformation).length &&
+        cardResponse.data.tokenInformation.hasOwnProperty(Constants.PAYMENT_INSTRUMENT) &&
+        Constants.VAL_ZERO < Object.keys(cardResponse.data.tokenInformation.paymentInstrument).length
+      ) {
+        customerTokenId = cardResponse.data.tokenInformation.hasOwnProperty(Constants.STRING_CUSTOMER) && Constants.VAL_ZERO < Object.keys(cardResponse.data.tokenInformation.customer).length ? cardResponse.data.tokenInformation.customer.id : cardTokens.customerTokenId;
+        paymentInstrumentId = cardResponse.data.tokenInformation.paymentInstrument.id;
+        instrumentIdentifier = cardResponse.data.tokenInformation.instrumentIdentifier.id;
+        if (Constants.ISV_TOKENS in customerObj.custom.fields && null != customerObj.custom.fields.isv_tokens) {
+          existingTokens = customerObj.custom.fields.isv_tokens;
+          existingTokensMap = existingTokens.map((item) => item);
+          existingTokensMap.forEach((token, index) => {
+            newToken = JSON.parse(token);
+            if (newToken.cardNumber == customerObj.custom.fields.isv_maskedPan && newToken.value == customerTokenId && newToken.instrumentIdentifier == instrumentIdentifier) {
+              length = index;
+            }
+          });
+          if (Constants.VAL_NEGATIVE_ONE < length) {
+            parsedTokens = JSON.parse(existingTokensMap[length]);
+            parsedTokens.alias = customerObj.custom.fields.isv_tokenAlias;
+            parsedTokens.value = customerTokenId;
+            parsedTokens.paymentToken = paymentInstrumentId;
+            parsedTokens.cardExpiryMonth = customerObj.custom.fields.isv_cardExpiryMonth;
+            parsedTokens.cardExpiryYear = customerObj.custom.fields.isv_cardExpiryYear;
+            existingTokensMap.set(length, JSON.stringify(parsedTokens));
+          } else {
+            newTokenFlag = true;
+            tokensExists = true;
+          }
+        } else {
+          newTokenFlag = true;
+        }
+        if (newTokenFlag) {
+          tokenData = {
+            alias: customerObj.custom.fields.isv_tokenAlias,
+            value: customerTokenId,
+            paymentToken: paymentInstrumentId,
+            instrumentIdentifier: instrumentIdentifier,
+            cardType: customerObj.custom.fields.isv_cardType,
+            cardName: customerObj.custom.fields.isv_cardType,
+            cardNumber: customerObj.custom.fields.isv_maskedPan,
+            cardExpiryMonth: customerObj.custom.fields.isv_cardExpiryMonth,
+            cardExpiryYear: customerObj.custom.fields.isv_cardExpiryYear,
+            addressId: customerObj.custom.fields.isv_addressId,
+          };
+          if (tokensExists) {
+            length = existingTokensMap.length;
+            existingTokensMap.set(length, JSON.stringify(tokenData));
+          } else {
+            existingTokensMap = [JSON.stringify(tokenData)];
+          }
+        }
+        customerTokenResponse = await paymentService.getUpdateTokenActions(existingTokensMap, true);
+      }
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = Constants.EXCEPTION_MSG_CONVERSION_DETAILS + Constants.STRING_HYPHEN + exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = Constants.EXCEPTION_MSG_CONVERSION_DETAILS + Constants.STRING_HYPHEN + exception.message;
+    } else {
+      exceptionData = Constants.EXCEPTION_MSG_CONVERSION_DETAILS + Constants.STRING_HYPHEN + exception;
+    }
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_REPORT_HANDLER, Constants.LOG_ERROR, exceptionData);
+  }
+  return customerTokenResponse;
+>>>>>>> feature
 };
 
 const reportHandler = async () => {
@@ -1115,7 +1715,11 @@ const syncHandler = async () => {
                   if (applicationResponse.authPresent) {
                     syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_AUTHORIZATION;
                     updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
+<<<<<<< HEAD
                     if (null != updateSyncResponse && paymentDetails.paymentMethodInfo.method == Constants.VISA_CHECKOUT) {
+=======
+                    if (null != updateSyncResponse && paymentDetails.paymentMethodInfo.method == Constants.CLICK_TO_PAY) {
+>>>>>>> feature
                       await updateVisaDetails(paymentDetails.id, updateSyncResponse.version, element.id);
                     }
                   } else if (applicationResponse.capturePresent) {
@@ -1147,7 +1751,11 @@ const syncHandler = async () => {
                 }
                 syncUpdateObject.type = Constants.CT_TRANSACTION_TYPE_AUTHORIZATION;
                 updateSyncResponse = await runSyncAddTransaction(syncUpdateObject, element.applicationInformation.reasonCode, applicationResponse.authPresent, applicationResponse.authReasonCodePresent);
+<<<<<<< HEAD
                 if (null != updateSyncResponse && paymentDetails.paymentMethodInfo.method == Constants.VISA_CHECKOUT) {
+=======
+                if (null != updateSyncResponse && paymentDetails.paymentMethodInfo.method == Constants.CLICK_TO_PAY) {
+>>>>>>> feature
                   await updateVisaDetails(paymentDetails.id, updateSyncResponse.version, element.id);
                 }
               }
@@ -1233,7 +1841,11 @@ const updateVisaDetails = async (paymentId, paymentVersion, transactionId) => {
     if (null != visaCheckoutData) {
       cartDetails = await getCartDetailsByPaymentId(paymentId);
       if (null != cartDetails && Constants.STRING_CART_STATE == cartDetails.cartState) {
+<<<<<<< HEAD
         visaResponse = await commercetoolsApi.updateCartByPaymentId(cartDetails.id, cartDetails.version, visaCheckoutData);
+=======
+        visaResponse = await commercetoolsApi.updateCartByPaymentId(cartDetails.id, paymentId, cartDetails.version, visaCheckoutData);
+>>>>>>> feature
         if (null != visaResponse) {
           updateResponse.cartVersion = visaResponse.version;
           actions = await paymentService.visaCardDetailsAction(visaCheckoutData);
@@ -1314,11 +1926,20 @@ export default {
   authorizationHandler,
   getPayerAuthSetUpResponse,
   getPayerAuthEnrollResponse,
+<<<<<<< HEAD
   getPayerAuthEnrollAuthReversalHandler,
+=======
+  getPayerAuthValidateResponse,
+  getPayerAuthReversalHandler,
+>>>>>>> feature
   applePaySessionHandler,
   orderManagementHandler,
   updateCardHandler,
   deleteCardHandler,
   reportHandler,
   syncHandler,
+<<<<<<< HEAD
+=======
+  addCardHandler,
+>>>>>>> feature
 };

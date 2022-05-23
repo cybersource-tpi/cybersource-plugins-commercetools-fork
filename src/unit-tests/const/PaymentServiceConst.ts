@@ -470,6 +470,7 @@ export const fieldMapperFieldObject =   {
         { type: [Object], fields: [Object] },
         { type: [Object], fields: [Object] }
       ]
+<<<<<<< HEAD
     }
 
 export const changeStateTransactionDetail = 
@@ -756,3 +757,6 @@ export const deleteTokenCustomerObj =
   "stores": [],
   "authenticationMode": "Password"
 }
+=======
+    }
+>>>>>>> feature

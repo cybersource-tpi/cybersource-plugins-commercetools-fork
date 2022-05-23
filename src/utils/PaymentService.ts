@@ -61,6 +61,39 @@ const fieldMapper = (fields) => {
   return actions;
 };
 
+<<<<<<< HEAD
+=======
+const fieldMapperNull = (fields) => {
+  let actions = [] as any;
+  let keys: any;
+  let exceptionData: any;
+  try {
+    keys = Object.keys(fields);
+    if (null != keys) {
+      keys.forEach((key, index) => {
+        actions.push({
+          action: Constants.SET_CUSTOM_FIELD,
+          name: key,
+          value: null,
+        });
+      });
+    } else {
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER_NULL, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_CUSTOM_FIELDS);
+    }
+  } catch (exception) {
+    if (typeof exception === 'string') {
+      exceptionData = exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = exception.message;
+    } else {
+      exceptionData = exception;
+    }
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER_NULL, Constants.LOG_ERROR, exceptionData);
+  }
+  return actions;
+};
+
+>>>>>>> feature
 function setTransactionId(paymentResponse, transactionDetail) {
   let exceptionData: any;
   let transactionIdData = {
@@ -275,7 +308,18 @@ const payerAuthActions = (response) => {
 const payerEnrollActions = (response, updatePaymentObj) => {
   let action: any;
   let exceptionData: any;
+<<<<<<< HEAD
   let isv_payerAuthenticationTransactionId = null;
+=======
+  let consumerErrorData: any;
+  let isv_payerAuthenticationTransactionId = null;
+  let isv_cardinalReferenceId = null;
+  let isv_deviceDataCollectionUrl = null;
+  let isv_requestJwt = null;
+  let isv_responseJwt = null;
+  let isv_stepUpUrl = null;
+  let isv_payerAuthenticationPaReq = null;
+>>>>>>> feature
   let isv_payerAuthenticationRequired = false;
   try {
     if (null != response) {
@@ -327,12 +371,57 @@ const payerEnrollActions = (response, updatePaymentObj) => {
           value: null,
         });
       }
+<<<<<<< HEAD
       if (Constants.API_STATUS_PENDING_AUTHENTICATION != response.status) {
         action.actions.push({
           action: Constants.SET_CUSTOM_FIELD,
           name: Constants.ISV_PAYER_AUTHENTICATION_REQUIRED,
           value: isv_payerAuthenticationRequired,
         });
+=======
+      isv_payerAuthenticationRequired = Constants.API_STATUS_PENDING_AUTHENTICATION == response.status ? true : updatePaymentObj.custom.fields.isv_payerAuthenticationRequired ? true : false;
+      action.actions.push({
+        action: Constants.SET_CUSTOM_FIELD,
+        name: Constants.ISV_PAYER_AUTHENTICATION_REQUIRED,
+        value: isv_payerAuthenticationRequired,
+      });
+      if (
+        response.httpCode == Constants.HTTP_CODE_TWO_HUNDRED_ONE &&
+        response.data.hasOwnProperty(Constants.ERROR_INFORMATION) &&
+        Constants.VAL_ZERO < Object.keys(response.data.errorInformation).length &&
+        response.data.errorInformation.hasOwnProperty(Constants.STRING_REASON) &&
+        Constants.VAL_ZERO < Object.keys(response.data.errorInformation.reason).length &&
+        Constants.API_STATUS_CUSTOMER_AUTHENTICATION_REQUIRED == response.data.errorInformation.reason
+      ) {
+        action.actions.push({
+          action: Constants.SET_CUSTOM_FIELD,
+          name: Constants.ISV_PAYER_AUTHENTICATION_ENROLL_STATUS,
+          value: response.data.errorInformation.reason,
+        });
+        if (updatePaymentObj.custom.fields.isv_payerAuthenticationRequired) {
+          consumerErrorData = fieldMapperNull({
+            isv_payerAuthenticationTransactionId,
+            isv_cardinalReferenceId,
+            isv_deviceDataCollectionUrl,
+            isv_requestJwt,
+            isv_responseJwt,
+            isv_stepUpUrl,
+            isv_payerAuthenticationPaReq,
+          });
+          consumerErrorData.forEach((i) => {
+            action.actions.push(i);
+          });
+        } else {
+          consumerErrorData = fieldMapperNull({
+            isv_cardinalReferenceId,
+            isv_deviceDataCollectionUrl,
+            isv_requestJwt,
+          });
+          consumerErrorData.forEach((i) => {
+            action.actions.push(i);
+          });
+        }
+>>>>>>> feature
       }
     } else {
       logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_ENROLL_ACTIONS, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
@@ -350,6 +439,7 @@ const payerEnrollActions = (response, updatePaymentObj) => {
   return action;
 };
 
+<<<<<<< HEAD
 const getUpdateTokenActions = (actions) => {
   let returnResponse: any;
   if (null != actions) {
@@ -368,6 +458,46 @@ const getUpdateTokenActions = (actions) => {
       ],
       errors: [],
     };
+=======
+const getUpdateTokenActions = (actions, errorFlag) => {
+  let returnResponse: any;
+  if (null != actions) {
+    if (errorFlag) {
+      returnResponse = {
+        actions: [
+          {
+            action: Constants.SET_CUSTOM_TYPE,
+            type: {
+              key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+              typeId: Constants.TYPE_ID_TYPE,
+            },
+            fields: {
+              isv_tokens: actions,
+              isv_tokenUpdated: false,
+            },
+          },
+        ],
+        errors: [],
+      };
+    } else {
+      returnResponse = {
+        actions: [
+          {
+            action: Constants.SET_CUSTOM_TYPE,
+            type: {
+              key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+              typeId: Constants.TYPE_ID_TYPE,
+            },
+            fields: {
+              isv_tokens: actions,
+              isv_tokenUpdated: true,
+            },
+          },
+        ],
+        errors: [],
+      };
+    }
+>>>>>>> feature
   }
   return returnResponse;
 };
@@ -406,7 +536,18 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
           actions: actions,
           errors: [],
         };
+<<<<<<< HEAD
       } else if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_AUTHENTICATION == paymentResponse.status) {
+=======
+      } else if (
+        Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode &&
+        Constants.API_STATUS_PENDING_AUTHENTICATION == paymentResponse.status &&
+        paymentResponse.hasOwnProperty(Constants.STRING_DATA) &&
+        Constants.VAL_ZERO < Object.keys(paymentResponse.data).length &&
+        paymentResponse.data.hasOwnProperty(Constants.STRING_CONSUMER_AUTHENTICATION) &&
+        Constants.VAL_ZERO < Object.keys(paymentResponse.data.consumerAuthenticationInformation).length
+      ) {
+>>>>>>> feature
         payerAuthenticationData = {
           isv_payerAuthenticationPaReq: paymentResponse.data.consumerAuthenticationInformation.pareq,
           isv_payerAuthenticationTransactionId: paymentResponse.data.consumerAuthenticationInformation.authenticationTransactionId,
@@ -559,6 +700,7 @@ const getCapturedAmount = (refundPaymentObj) => {
   return pendingCaptureAmount;
 };
 
+<<<<<<< HEAD
 const deleteToken = async (tokenResponse, customerObj) => {
   let isvTokensObj = new Array();
   let parsedToken: any;
@@ -588,6 +730,8 @@ const deleteToken = async (tokenResponse, customerObj) => {
   return isvTokensObj;
 };
 
+=======
+>>>>>>> feature
 const convertCentToAmount = (num) => {
   let amount = Constants.VAL_ZERO;
   if (null != num) {
@@ -659,7 +803,10 @@ export default {
   getAuthResponse,
   getOMServiceResponse,
   getCapturedAmount,
+<<<<<<< HEAD
   deleteToken,
+=======
+>>>>>>> feature
   convertCentToAmount,
   convertAmountToCent,
   getSubstring,
