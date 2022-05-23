@@ -769,6 +769,28 @@ export abstract class Constants {
         },
         inputHint: 'SingleLine',
       },
+      {
+        name: 'isv_saleEnabled',
+        label: {
+          en: 'Flag indicating sale transaction',
+        },
+        required: false,
+        type: {
+          name: 'Boolean',
+        },
+        inputHint: 'SingleLine',
+      },
+      {
+        name: 'isv_enabledMoto',
+        label: {
+          en: 'Flag indicating MOTO transaction',
+        },
+        required: false,
+        type: {
+          name: 'Boolean',
+        },
+        inputHint: 'SingleLine',
+      },
     ],
   };
   static readonly ISV_PAYMENT_CUSTOM_TYPE_CUSTOMER_TOKENS = {
