@@ -31,13 +31,6 @@ app.listen(port, () => {
 app.set('views', path.join(__dirname, 'views/'));
 app.set('view engine', 'ejs');
 
-app.post('/payerAuthReturnUrl', (req, res) => {
-  res.send(`<script>window.parent.postMessage({
-    'messageType': 'validationCallback',
-    'message': '${req.body.TransactionId}'
-}, "*");</script>`);
-});
-
 app.get('/orders', async (req, res) => {
   let orderResult: any;
   let ordersList: any;
@@ -356,7 +349,6 @@ app.post('/api/extension/customer/update', async (req, res) => {
       exceptionData = exception;
     }
     paymentService.logData(path.parse(path.basename(__filename)).name, Constants.POST_CUSTOMER_UPDATE, Constants.LOG_ERROR, exceptionData);
-<<<<<<< HEAD
   }
   if (null == response) {
     customerInfo = await commercetoolsApi.getCustomer(req.body.resource.id);
@@ -370,9 +362,6 @@ app.post('/api/extension/customer/update', async (req, res) => {
     ) {
       response = paymentService.getUpdateTokenActions(customerInfo.custom.fields.isv_tokens, true);
     }
-=======
-    response = paymentService.getUpdateTokenActions(req.body.resource.obj.custom.fields.isv_tokens);
->>>>>>> feature
   }
   res.send(response);
 });

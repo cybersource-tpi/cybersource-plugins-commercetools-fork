@@ -62,10 +62,6 @@ const captureResponse = async (payment, cart, authId) => {
         processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_APPLE_PAY_PAYMENT_SOLUTION;
         requestObj.processingInformation = processingInformation;
       }
-<<<<<<< HEAD
-=======
-      
->>>>>>> feature
       const totalAmount = paymentService.convertCentToAmount(payment.amountPlanned.centAmount);
 
       var orderInformation = new restApi.Ptsv2paymentsidcapturesOrderInformation();
