@@ -205,6 +205,7 @@ export abstract class Constants {
   static readonly STRING_UPDATED = 'updated';
   static readonly STRING_VALUE = 'value';
   static readonly STRING_VISA = 'visa';
+  static readonly STRING_MOTO = 'MOTO';
 
   static readonly CARD_FIELD_GROUP = 'cardFieldGroup';
   static readonly ERROR_INFORMATION = 'errorInformation';
@@ -275,6 +276,8 @@ export abstract class Constants {
   static readonly ISV_USER_AGENT_HEADER = 'isv_userAgentHeader';
   static readonly PAYMENT_CREATE_KEY = 'isv_payment_create_extension';
   static readonly PAYMENT_UPDATE_KEY = 'isv_payment_update_extension';
+  static readonly ISV_SALE_ENABLED = 'isv_saleEnabled';
+  static readonly ISV_ENABLED_MOTO = 'isv_enabledMoto';
   static readonly SET_BILLING_ADDRESS = 'setBillingAddress';
   static readonly SET_CUSTOM_FIELD = 'setCustomField';
   static readonly SET_CUSTOM_TYPE = 'setCustomType';
@@ -671,6 +674,28 @@ export abstract class Constants {
         required: false,
         type: {
           name: 'String',
+        },
+        inputHint: 'SingleLine',
+      },
+      {
+        name: 'isv_saleEnabled',
+        label: {
+          en: 'Flag indicating sale transaction',
+        },
+        required: false,
+        type: {
+          name: 'Boolean',
+        },
+        inputHint: 'SingleLine',
+      },
+      {
+        name: 'isv_enabledMoto',
+        label: {
+          en: 'Flag indicating MOTO transaction',
+        },
+        required: false,
+        type: {
+          name: 'Boolean',
         },
         inputHint: 'SingleLine',
       },
