@@ -6,10 +6,13 @@ dotenv.config();
 import paymentService from '../../utils/PaymentService';
 import {fieldMapperFields, fieldMapperFieldObject,getOMServiceResponsePaymentResponse,getOMServiceResponsePaymentResponseObject,getOMServiceResponseTransactionDetail,visaCardDetailsActionVisaCheckoutData, getCapturedAmountRefundPaymentObj} from '../const/PaymentServiceConst';
 import {getAuthResponsePaymentPendingResponse,getAuthResponsePaymentCompleteResponse,  getAuthResponsePaymentResponse, getAuthResponsePaymentDeclinedResponse,getAuthResponsePaymentResponseObject,getAuthResponseTransactionDetail} from '../const/PaymentServiceConst';
+<<<<<<< HEAD
 import {successState, failureState, changeStateTransactionDetail, changeStateFailureTransactionDetail} from '../const/PaymentServiceConst';
 import {payerAuthActionsResponse, payerEnrollActionsUpdatePaymentObj, payerEnrollActionsResponse} from '../const/PaymentServiceConst'
 import {getUpdateTokenActionsActions, failurePaymentResponse, failureResponseTransactionDetail} from '../const/PaymentServiceConst';
 import {deleteTokenResponse, deleteTokenCustomerObj} from '../const/PaymentServiceConst'
+=======
+>>>>>>> feature
 
 test.serial('Field mapping for flex keys', async(t)=>{
     const result = await paymentService.fieldMapper(fieldMapperFields);
@@ -100,11 +103,16 @@ test.serial('Get captured amount', async(t)=>{
 })
 
 test.serial('Convert cent to amount ', async(t)=>{
+<<<<<<< HEAD
     const result =await paymentService.convertCentToAmount(6970);
+=======
+    const result = paymentService.convertCentToAmount(6970);
+>>>>>>> feature
     t.is(result, 69.70);
 })
 
 test.serial('Convert amount to cent', async(t)=>{
+<<<<<<< HEAD
     const result =await paymentService.convertAmountToCent(69.70);
     t.is(result, 6970);
 })
@@ -163,4 +171,8 @@ test.serial('Get delete token response ', async(t)=>{
     const result = await paymentService.deleteToken(deleteTokenResponse, deleteTokenCustomerObj);
     t.not(result, null);
 
+=======
+    const result = paymentService.convertAmountToCent(69.70);
+    t.is(result, 6970);
+>>>>>>> feature
 })

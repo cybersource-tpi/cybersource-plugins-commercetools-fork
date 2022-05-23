@@ -27,6 +27,12 @@ const keys = async () => {
       merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
       merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
       merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+<<<<<<< HEAD
+=======
+      logConfiguration: {
+        enableLog: false,
+      },
+>>>>>>> feature
     };
     // eslint-disable-next-line no-var
     var requestObj = new restApi.GeneratePublicKeyRequest();
@@ -45,11 +51,24 @@ const keys = async () => {
             isv_tokenVerificationContext,
           });
         } else if (error) {
+<<<<<<< HEAD
           if (Constants.STRING_RESPONSE in error && null != error.response && Constants.STRING_TEXT in error.response) {
             errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_KEYS, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS + Constants.STRING_HYPHEN + errorData);
           } else {
             paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_KEYS, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS + Constants.STRING_HYPHEN + error);
+=======
+          if (error.hasOwnProperty(Constants.STRING_RESPONSE) && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
+            errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_KEYS, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS + Constants.STRING_HYPHEN + errorData.message);
+          } else {
+            if (typeof error === 'object') {
+              errorData = JSON.stringify(error);
+            } else {
+              errorData = error;
+            }
+            paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_KEYS, Constants.LOG_INFO, Constants.ERROR_MSG_FLEX_TOKEN_KEYS + Constants.STRING_HYPHEN + errorData);
+>>>>>>> feature
           }
           isv_tokenCaptureContextSignature = Constants.STRING_EMPTY;
           isv_tokenVerificationContext = Constants.STRING_EMPTY;

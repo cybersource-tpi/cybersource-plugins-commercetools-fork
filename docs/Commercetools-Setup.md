@@ -8,7 +8,10 @@
   Customisations](#ResourceCustomisations)
   - [Payment Interactions](#PaymentInteractions)
     - [Customer tokens](#Paymentauthorisationfailed)
+<<<<<<< HEAD
     - [Line item data](#LineItemData)
+=======
+>>>>>>> feature
     - [Payment data](#PaymentData)
     - [Payer authentication enrolment check](#PayerAuthenticationEnrolmentCheck)
     - [Payer authentication validate result](#PayerAuthenticationValidation)
@@ -84,6 +87,7 @@ Fields
 | ---------- | ------ | -------- |
 | isv_tokens | String | false    |
 
+<<<<<<< HEAD
 ### <a name="LineItemData"></a>Line Item Data
 
 | Type    | Key                         | Purpose                                                   |
@@ -97,6 +101,8 @@ Fields
 | isv_productCode | Enum | false    |
 | isv_productRisk | Enum | false    |
 
+=======
+>>>>>>> feature
 ### <a name="PaymentData"></a>Payment Data
 
 | Type    | Key              | Purpose                                                                                            |

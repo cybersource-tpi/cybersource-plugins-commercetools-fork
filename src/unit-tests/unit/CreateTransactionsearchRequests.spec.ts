@@ -7,5 +7,9 @@ import {Constants} from '../../constants';
 
 test('Run sync ', async(t)=>{
     const result:any  = await createSearchRequest.getTransactionSearchResponse(Constants.STRING_SYNC_QUERY, Constants.STRING_SYNC_SORT);
+<<<<<<< HEAD
+=======
+    t.pass();
+>>>>>>> feature
     t.is(result.httpCode, 201);
 })

@@ -3,7 +3,11 @@ import path from 'path';
 import paymentService from '../../utils/PaymentService';
 import { Constants } from '../../constants';
 
+<<<<<<< HEAD
 const authorizationResponse = async (payment, cart, service, cardTokens, dontSaveTokenFlag) => {
+=======
+const authorizationResponse = async (payment, cart, service, cardTokens, dontSaveTokenFlag, payerAuthMandateFlag) => {
+>>>>>>> feature
   let runEnvironment: any;
   let errorData: any;
   let exceptionData: any;
@@ -39,6 +43,12 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
         merchantID: process.env.PAYMENT_GATEWAY_MERCHANT_ID,
         merchantKeyId: process.env.PAYMENT_GATEWAY_MERCHANT_KEY_ID,
         merchantsecretKey: process.env.PAYMENT_GATEWAY_MERCHANT_SECRET_KEY,
+<<<<<<< HEAD
+=======
+        logConfiguration: {
+          enableLog: false,
+        },
+>>>>>>> feature
       };
       var clientReferenceInformation = new restApi.Ptsv2paymentsClientReferenceInformation();
       clientReferenceInformation.code = payment.id;
@@ -50,12 +60,15 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
       requestObj.clientReferenceInformation = clientReferenceInformation;
 
       var processingInformation = new restApi.Ptsv2paymentsProcessingInformation();
+<<<<<<< HEAD
       if (Constants.STRING_CUSTOM in payment && Constants.STRING_FIELDS in payment.custom && Constants.ISV_ENABLED_MOTO in payment.custom.fields && payment.custom.fields.isv_enabledMoto) {
         processingInformation.commerceIndicator = Constants.STRING_MOTO;
       }
       if (Constants.STRING_CUSTOM in payment && Constants.STRING_FIELDS in payment.custom && Constants.ISV_SALE_ENABLED in payment.custom.fields && payment.custom.fields.isv_saleEnabled) {
         processingInformation.capture = true;
       }
+=======
+>>>>>>> feature
       if (Constants.STRING_FALSE == process.env.PAYMENT_GATEWAY_DECISION_MANAGER) {
         actionList.push(Constants.PAYMENT_GATEWAY_DECISION_SKIP);
       } else {
@@ -113,11 +126,33 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
           var consumerAuthenticationInformation = new restApi.Ptsv2paymentsConsumerAuthenticationInformation();
           consumerAuthenticationInformation.referenceId = payment.custom.fields.isv_cardinalReferenceId;
           consumerAuthenticationInformation.acsWindowSize = Constants.PAYMENT_GATEWAY_ACS_WINDOW_SIZE;
+<<<<<<< HEAD
           consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL;
           requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
         }
       } else if (Constants.VISA_CHECKOUT == payment.paymentMethodInfo.method) {
         processingInformation.paymentSolution = payment.paymentMethodInfo.method;
+=======
+<<<<<<< HEAD
+          consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL + Constants.STRING_PAYER_AUTH_RETURN_URL;
+=======
+          consumerAuthenticationInformation.returnUrl = process.env.PAYMENT_GATEWAY_3DS_RETURN_URL;
+>>>>>>> feature
+          if (
+            payerAuthMandateFlag ||
+            (Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_SCA_CHALLENGE &&
+              (null == payment.custom.fields.isv_savedToken || Constants.STRING_EMPTY == payment.custom.fields.isv_savedToken) &&
+              Constants.ISV_TOKEN_ALIAS in payment.custom.fields &&
+              Constants.STRING_EMPTY != payment.custom.fields.isv_tokenAlias &&
+              !dontSaveTokenFlag)
+          ) {
+            consumerAuthenticationInformation.challengeCode = Constants.PAYMENT_GATEWAY_PAYER_AUTH_CHALLENGE_CODE;
+          }
+          requestObj.consumerAuthenticationInformation = consumerAuthenticationInformation;
+        }
+      } else if (Constants.CLICK_TO_PAY == payment.paymentMethodInfo.method) {
+        processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_CLICK_TO_PAY_PAYMENT_SOLUTION;
+>>>>>>> feature
         processingInformation.visaCheckoutId = payment.custom.fields.isv_token;
       } else if (Constants.GOOGLE_PAY == payment.paymentMethodInfo.method) {
         processingInformation.paymentSolution = Constants.PAYMENT_GATEWAY_GOOGLE_PAY_PAYMENT_SOLUTION;
@@ -132,6 +167,10 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
         paymentInformationFluidData.encoding = Constants.PAYMENT_GATEWAY_APPLE_PAY_ENCODING;
         paymentInformation.fluidData = paymentInformationFluidData;
       }
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature
       requestObj.processingInformation = processingInformation;
       requestObj.paymentInformation = paymentInformation;
 
@@ -298,14 +337,29 @@ const authorizationResponse = async (payment, cart, service, cardTokens, dontSav
             paymentResponse.data = data;
             resolve(paymentResponse);
           } else if (error) {
+<<<<<<< HEAD
             if (Constants.STRING_RESPONSE in error && null != error.response && Constants.STRING_TEXT in error.response) {
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData);
+=======
+            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
+              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData.message);
+>>>>>>> feature
               paymentResponse.transactionId = errorData.id;
               paymentResponse.status = errorData.status;
               paymentResponse.message = errorData.message;
             } else {
+<<<<<<< HEAD
               paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, error);
+=======
+              if (typeof error === 'object') {
+                errorData = JSON.stringify(error);
+              } else {
+                errorData = error;
+              }
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_AUTHORIZATION_RESPONSE, Constants.LOG_INFO, errorData);
+>>>>>>> feature
             }
             paymentResponse.httpCode = error.status;
             reject(paymentResponse);
