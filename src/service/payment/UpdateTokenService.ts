@@ -13,7 +13,6 @@ const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addres
     httpCode: null,
     default: null,
     card: null,
-    message: null,
   };
   try {
     if (null != tokens && Constants.STRING_VALUE in tokens && Constants.STRING_PAYMENT_TOKEN in tokens && Constants.STRING_CARD_EXPIRY_MONTH in tokens && Constants.STRING_CARD_EXPIRY_YEAR in tokens) {

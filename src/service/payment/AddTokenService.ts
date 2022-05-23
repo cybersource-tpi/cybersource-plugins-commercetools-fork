@@ -117,7 +117,6 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
               paymentResponse.transactionId = errorData.id;
               paymentResponse.status = errorData.status;
-              paymentResponse.message = errorData.message;
             } else {
               if (typeof error === 'object') {
                 errorData = JSON.stringify(error);
