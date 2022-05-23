@@ -13,7 +13,6 @@ const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addres
     httpCode: null,
     default: null,
     card: null,
-    message: null,
   };
   try {
     if (null != tokens && Constants.STRING_VALUE in tokens && Constants.STRING_PAYMENT_TOKEN in tokens && Constants.STRING_CARD_EXPIRY_MONTH in tokens && Constants.STRING_CARD_EXPIRY_YEAR in tokens) {
@@ -68,10 +67,8 @@ const updateTokenResponse = async (tokens, newExpiryMonth, newExpiryYear, addres
             tokenResponse.card = data.card;
             resolve(tokenResponse);
           } else if (error) {
-            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
-              errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, errorData.message);
-              tokenResponse.message = errorData.message;
+            if (error.hasOwnProperty(Constants.STRING_RESPONSE) && null != error.response && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && null != error.response.text && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_UPDATE_TOKEN_RESPONSE, Constants.LOG_INFO, error.response.text);
             } else {
               if (typeof error === 'object') {
                 errorData = JSON.stringify(error);
