@@ -74,7 +74,7 @@ export const  updateTransaction = {
     amount: {
       type: 'centPrecision',
       currencyCode: 'USD',
-      centAmount: 1000,
+      centAmount: 100,
       fractionDigits: 2
     },
     state: 'Initial'

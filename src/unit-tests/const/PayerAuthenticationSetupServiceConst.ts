@@ -51,8 +51,8 @@ export const payments = {
   }
 
   export const cardTokensObject = {
-    customerTokenId: creditCard.savedTokenId,
-    paymentInstrumentId: creditCard.savedToken
+    customerTokenId: creditCard.savedToken,
+    paymentInstrumentId: creditCard.savedTokenId
   } 
 
   export const cardTokensInvalidCustomerObject = {
@@ -161,7 +161,7 @@ export const paymentSavedTokens  = {
   };
 export const cardTokensObjects = {
     customerTokenId: creditCard.savedTokenId,
-    paymentInstrumentId: creditCard.savedToken
+    paymentInstrumentId: null
   } 
 
 export const cardTokensInvalidCustomerObjects = {

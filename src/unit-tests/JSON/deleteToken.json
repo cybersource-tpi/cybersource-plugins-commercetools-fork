@@ -1,11 +1,11 @@
 {
-    "alias": "deleting",
-    "value": "D605360941117CECE053AF598E0A6EEC",
+    "alias": "1091card",
+    "value": "DFD30371B90D8BE8E053AF598E0A30E8",
     "cardType": "001",
     "cardName": "001",
-    "cardNumber": "411111XXXXXX1111",
-    "cardExpiryMonth": "06",
-    "cardExpiryYear": "2026",
-    "paymentToken": "D7923004A7FA0950E053AF598E0A3B5D",
-    "instrumentIdentifier": "7010000000121591111"
+    "cardNumber": "400000XXXXXX1091",
+    "cardExpiryMonth": "01",
+    "cardExpiryYear": "2025",
+    "paymentToken": "DFD49BAED08151CBE053AF598E0AA744",
+    "instrumentIdentifier": "7020000000005531091"
 }

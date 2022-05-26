@@ -1,3 +1,5 @@
+
+/* eslint-disable import/order */
 import test from 'ava';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -7,6 +9,5 @@ import {Constants} from '../../constants';
 
 test('Run sync ', async(t)=>{
     const result:any  = await createSearchRequest.getTransactionSearchResponse(Constants.STRING_SYNC_QUERY, Constants.STRING_SYNC_SORT);
-    t.pass();
     t.is(result.httpCode, 201);
 })
