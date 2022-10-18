@@ -12,7 +12,6 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
     httpCode: null,
     transactionId: null,
     status: null,
-    message: null,
     data: null,
   };
   try {
@@ -46,8 +45,6 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
       var processingInformation = new restApi.Ptsv2paymentsProcessingInformation();
       if (Constants.STRING_FALSE == process.env.PAYMENT_GATEWAY_DECISION_MANAGER) {
         actionList.push(Constants.PAYMENT_GATEWAY_DECISION_SKIP);
-      } else {
-        processingInformation.actionList = actionList;
       }
       actionList.push(Constants.PAYMENT_GATEWAY_TOKEN_CREATE);
       var initiator = new restApi.Ptsv2paymentsProcessingInformationAuthorizationOptionsInitiator();
@@ -79,7 +76,7 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
       var orderInformation = new restApi.Ptsv2paymentsOrderInformation();
       var orderInformationAmountDetails = new restApi.Ptsv2paymentsOrderInformationAmountDetails();
       orderInformationAmountDetails.totalAmount = Constants.VAL_FLOAT_ZERO;
-      orderInformationAmountDetails.currency = 'USD';
+      orderInformationAmountDetails.currency = customerObj.custom.fields.isv_currencyCode;
       orderInformation.amountDetails = orderInformationAmountDetails;
 
       var orderInformationBillTo = new restApi.Ptsv2paymentsOrderInformationBillTo();
@@ -99,21 +96,26 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
       var deviceInformation = new restApi.Ptsv2paymentsDeviceInformation();
       if (Constants.ISV_DEVICE_FINGERPRINT_ID in customerObj.custom.fields && Constants.STRING_EMPTY != customerObj.custom.fields.isv_deviceFingerprintId) {
         deviceInformation.fingerprintSessionId = customerObj.custom.fields.isv_deviceFingerprintId;
-      } 
+      }
       requestObj.deviceInformation = deviceInformation;
+
+      if(Constants.STRING_TRUE == process.env.PAYMENT_GATEWAY_ENABLE_DEBUG){
+        paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_DEBUG, Constants.LOG_CUSTOMER_ID + customerId, Constants.ADD_TOKEN_REQUEST + JSON.stringify(requestObj));
+      }
+
       const instance = new restApi.PaymentsApi(configObject, apiClient);
       return await new Promise(function (resolve, reject) {
         instance.createPayment(requestObj, function (error, data, response) {
+          paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_INFO, Constants.LOG_CUSTOMER_ID + customerId, Constants.ADD_TOKEN_RESPONSE + JSON.stringify(response));
           if (data) {
             paymentResponse.httpCode = response[Constants.STATUS_CODE];
             paymentResponse.transactionId = data.id;
             paymentResponse.status = data.status;
-            paymentResponse.message = data.message;
             paymentResponse.data = data;
             resolve(paymentResponse);
           } else if (error) {
             if (error.hasOwnProperty(Constants.STRING_RESPONSE) && null != error.response && Constants.VAL_ZERO < Object.keys(error.response).length && error.response.hasOwnProperty(Constants.STRING_TEXT) && null != error.response.text && Constants.VAL_ZERO < Object.keys(error.response.text).length) {
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_INFO, error.response.text);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_ERROR, Constants.LOG_CUSTOMER_ID + customerId, error.response.text);
               errorData = JSON.parse(error.response.text.replace(Constants.REGEX_DOUBLE_SLASH, Constants.STRING_EMPTY));
               paymentResponse.transactionId = errorData.id;
               paymentResponse.status = errorData.status;
@@ -123,7 +125,7 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
               } else {
                 errorData = error;
               }
-              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_INFO, errorData);
+              paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_ERROR, Constants.LOG_CUSTOMER_ID + customerId, errorData);
             }
             paymentResponse.httpCode = error.status;
             reject(paymentResponse);
@@ -135,7 +137,7 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
         return paymentResponse;
       });
     } else {
-      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+      paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_INFO, Constants.LOG_CUSTOMER_ID + customerId, Constants.ERROR_MSG_INVALID_INPUT);
       return paymentResponse;
     }
   } catch (exception) {
@@ -146,7 +148,7 @@ const addTokenResponse = async (customerId, customerObj, address, cardTokens) =>
     } else {
       exceptionData = exception;
     }
-    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    paymentService.logData(path.parse(path.basename(__filename)).name, Constants.FUNC_ADD_TOKEN_RESPONSE, Constants.LOG_ERROR, Constants.LOG_CUSTOMER_ID + customerId, exceptionData);
     return paymentResponse;
   }
 };

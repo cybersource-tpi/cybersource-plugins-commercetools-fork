@@ -4,11 +4,13 @@ To create a payment, you must first decide which payment method you would like t
 
 | Payment Method                    | Explanation                                                                                                          |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| creditCard                        | Processes credit cards without any 3DS checks.                                                                       |
-| clickToPay                      | Processes payments using information from Visa Click to Pay                                                          |
-| creditCardWithPayerAuthentication | Processes credit cards with 3DS checks. This requires some extra values on Payment Create which are listed below.    |
-| googlePay                         | Processes the payment using payment network tokenization to make Web payments and mobile payments on Android devices |
-| applePay                          | Processes the payment using payment network tokenization to make Web payments and mobile payments on Apple devices   |
+| creditCard                        | Processes credit cards without any 3DS checks                                                                       |
+| clickToPay                      | Processes payment using payment network tokenization to make Web payments and mobile payments on Android devices using Visa Click to Pay                                                          |
+| creditCardWithPayerAuthentication | Processes credit cards with 3DS checks. This requires some extra values on Payment Create which are listed below    |
+| googlePay                         | Processes the payment using payment network tokenization to make Web payments and mobile payments on Android devices using Google Pay |
+| applePay                          | Processes the payment using payment network tokenization to make Web payments and mobile payments on Apple devices using Apple Pay   |
+
+
 
 When creating a payment, the following fields are validated
 
@@ -21,7 +23,9 @@ When creating a payment, the following fields are validated
 | payment.amountPlanned                      | Must not be a negative value                | Always |
 | payment.custom.type.key                    | isv_payment_data                            | Always |
 | payment.custom.isv_token                   | Must exist                                  | Always |
+| payment.custom.isv_accountNumber           | Must exist                                  | payment.paymentMethodInfo.method == eCheck                            |
+| payment.custom.isv_accountType             | Must exist                                  | payment.paymentMethodInfo.method == eCheck                            |
+| payment.custom.isv_routingNumber           | Must exist                                  | payment.paymentMethodInfo.method == eCheck                            |
 | payment.custom.isv_acceptHeader            | Must exist                                  | payment.paymentMethodInfo.method == creditCardWithPayerAuthentication |
 | payment.custom.isv_userAgentHeader         | Must exist                                  | payment.paymentMethodInfo.method == creditCardWithPayerAuthentication |
 
-Once a payment has been created, you can continue on to the further steps.

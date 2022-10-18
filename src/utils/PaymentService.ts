@@ -1,28 +1,60 @@
+import crypto from 'crypto';
 import path from 'path';
 import winston from 'winston';
+import WinstonCloudwatch from 'winston-cloudwatch';
 import { format } from 'winston';
 import 'winston-daily-rotate-file';
 import { Constants } from '../constants';
 
 const { combine, printf } = format;
 
-const logData = (fileName, methodName, type, message) => {
-  const loggingFormat = printf(({ label, methodName, level, message }) => {
-    return `[${label}] [${methodName}] [${level.toUpperCase()}]  : ${message}`;
-  });
-  const logger = winston.createLogger({
-    level: type,
-    format: combine(loggingFormat),
-    transports: [
-      new winston.transports.DailyRotateFile({
-        filename: 'src/loggers/application-%DATE%.log',
-        datePattern: 'YYYY-MM-DD',
-        zippedArchive: true,
-        maxSize: '20m',
-        maxFiles: '14d',
-      }),
-    ],
-  });
+const logData = (fileName, methodName, type, id, message) => {
+  let loggingFormat;
+  let logger;
+  if(null != id && Constants.STRING_EMPTY != id){
+    loggingFormat = printf(({ label, methodName, level, message }) => {
+      return `[${new Date(Date.now()).toISOString()}] [${label}] [${methodName}] [${level.toUpperCase()}] [${id}] : ${message}`;
+    });
+  }
+  else{
+    loggingFormat = printf(({ label, methodName, level, message }) => {
+      return `[${new Date(Date.now()).toISOString()}] [${label}] [${methodName}] [${level.toUpperCase()}]  : ${message}`;
+    });
+  }
+  if(process.env.PAYMENT_GATEWAY_ENABLE_CLOUD_LOGS == Constants.STRING_TRUE){
+    logger = winston.createLogger({
+      level: type,
+      format: combine(loggingFormat),
+      transports: [
+        new WinstonCloudwatch({
+          awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID_VALUE,
+          awsSecretKey: process.env.AWS_SECRET_KEY_VALUE,
+          logGroupName: Constants.STRING_MY_APPLICATION,
+          logStreamName: function () {
+            let date = new Date().toISOString().split('T')[Constants.VAL_ZERO]
+            return Constants.STRING_MY_REQUESTS + date
+          },
+          awsRegion: process.env.AWS_REGION_NAME,
+          jsonMessage: true
+        })
+      ],
+    });
+  }
+  else{
+    logger = winston.createLogger({
+      level: type,
+      format: combine(loggingFormat),
+      transports: [
+        new winston.transports.DailyRotateFile({
+          filename: 'src/loggers/application-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
+        }),
+      ],
+    });
+  }
   logger.log({
     label: fileName,
     methodName: methodName,
@@ -46,7 +78,7 @@ const fieldMapper = (fields) => {
         });
       });
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_CUSTOM_FIELDS);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER, Constants.LOG_INFO, null, Constants.ERROR_MSG_EMPTY_CUSTOM_FIELDS);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -56,7 +88,7 @@ const fieldMapper = (fields) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER, Constants.LOG_ERROR, null, exceptionData);
   }
   return actions;
 };
@@ -76,7 +108,7 @@ const fieldMapperNull = (fields) => {
         });
       });
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER_NULL, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_CUSTOM_FIELDS);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER_NULL, Constants.LOG_INFO, null, Constants.ERROR_MSG_EMPTY_CUSTOM_FIELDS);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -86,7 +118,7 @@ const fieldMapperNull = (fields) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER_NULL, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FIELD_MAPPER_NULL, Constants.LOG_ERROR, null, exceptionData);
   }
   return actions;
 };
@@ -103,7 +135,7 @@ function setTransactionId(paymentResponse, transactionDetail) {
       transactionIdData.interactionId = paymentResponse.transactionId;
       transactionIdData.transactionId = transactionDetail.id;
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_TRANSACTION_ID, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_TRANSACTION_ID, Constants.LOG_INFO, null, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -113,7 +145,7 @@ function setTransactionId(paymentResponse, transactionDetail) {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_TRANSACTION_ID, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_SET_TRANSACTION_ID, Constants.LOG_ERROR, null, exceptionData);
   }
   return transactionIdData;
 }
@@ -130,7 +162,7 @@ function changeState(transactionDetail, state) {
       changeStateData.state = state;
       changeStateData.transactionId = transactionDetail.id;
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CHANGE_STATE, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CHANGE_STATE, Constants.LOG_INFO, null, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -140,7 +172,7 @@ function changeState(transactionDetail, state) {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CHANGE_STATE, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CHANGE_STATE, Constants.LOG_ERROR, null, exceptionData);
   }
   return changeStateData;
 }
@@ -162,7 +194,7 @@ const failureResponse = (paymentResponse, transactionDetail) => {
       failureResponseData.fields.reasonCode = `${paymentResponse.httpCode}`;
       failureResponseData.fields.transactionId = transactionDetail.id;
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FAILURE_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FAILURE_RESPONSE, Constants.LOG_INFO, null, Constants.ERROR_MSG_EMPTY_TRANSACTION_DETAILS);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -172,7 +204,7 @@ const failureResponse = (paymentResponse, transactionDetail) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FAILURE_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_FAILURE_RESPONSE, Constants.LOG_ERROR, null, exceptionData);
   }
   return failureResponseData;
 };
@@ -217,7 +249,7 @@ const visaCardDetailsAction = (visaCheckoutData) => {
         });
       }
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_VISA_CARD_DETAILS_ACTION, Constants.LOG_INFO, Constants.ERROR_MSG_CLICK_TO_PAY_DATA);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_VISA_CARD_DETAILS_ACTION, Constants.LOG_INFO, null, Constants.ERROR_MSG_CLICK_TO_PAY_DATA);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -227,7 +259,7 @@ const visaCardDetailsAction = (visaCheckoutData) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_VISA_CARD_DETAILS_ACTION, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_VISA_CARD_DETAILS_ACTION, Constants.LOG_ERROR, null, exceptionData);
   }
   return actions;
 };
@@ -287,7 +319,7 @@ const payerAuthActions = (response) => {
         },
       ];
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_ACTIONS, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_ACTIONS, Constants.LOG_INFO, null, Constants.ERROR_MSG_INVALID_INPUT);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -297,7 +329,7 @@ const payerAuthActions = (response) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_ACTIONS, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_AUTH_ACTIONS, Constants.LOG_ERROR, null, exceptionData);
   }
   return action;
 };
@@ -408,7 +440,7 @@ const payerEnrollActions = (response, updatePaymentObj) => {
         }
       }
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_ENROLL_ACTIONS, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_ENROLL_ACTIONS, Constants.LOG_INFO, null, Constants.ERROR_MSG_INVALID_INPUT);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -418,49 +450,49 @@ const payerEnrollActions = (response, updatePaymentObj) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_ENROLL_ACTIONS, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_PAYER_ENROLL_ACTIONS, Constants.LOG_ERROR, null, exceptionData);
   }
   return action;
 };
 
-const getUpdateTokenActions = (actions, errorFlag) => {
+const getUpdateTokenActions = (actions, existingFailedTokensMap, errorFlag) => {
   let returnResponse: any;
-  if (null != actions) {
-    if (errorFlag) {
-      returnResponse = {
-        actions: [
-          {
-            action: Constants.SET_CUSTOM_TYPE,
-            type: {
-              key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
-              typeId: Constants.TYPE_ID_TYPE,
-            },
-            fields: {
-              isv_tokens: actions,
-              isv_tokenUpdated: false,
-            },
+  if (errorFlag) {
+    returnResponse = {
+      actions: [
+        {
+          action: Constants.SET_CUSTOM_TYPE,
+          type: {
+            key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+            typeId: Constants.TYPE_ID_TYPE,
           },
-        ],
-        errors: [],
-      };
-    } else {
-      returnResponse = {
-        actions: [
-          {
-            action: Constants.SET_CUSTOM_TYPE,
-            type: {
-              key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
-              typeId: Constants.TYPE_ID_TYPE,
-            },
-            fields: {
-              isv_tokens: actions,
-              isv_tokenUpdated: true,
-            },
+          fields: {
+            isv_tokens: actions,
+            isv_tokenUpdated: false,
+            isv_failedTokens: existingFailedTokensMap,
           },
-        ],
-        errors: [],
-      };
-    }
+        },
+      ],
+      errors: [],
+    };
+  } else {
+    returnResponse = {
+      actions: [
+        {
+          action: Constants.SET_CUSTOM_TYPE,
+          type: {
+            key: Constants.ISV_PAYMENTS_CUSTOMER_TOKENS,
+            typeId: Constants.TYPE_ID_TYPE,
+          },
+          fields: {
+            isv_tokens: actions,
+            isv_tokenUpdated: true,
+            isv_failedTokens: existingFailedTokensMap,
+          },
+        },
+      ],
+      errors: [],
+    };
   }
   return returnResponse;
 };
@@ -478,11 +510,19 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
   let isv_deviceDataCollectionUrl = Constants.STRING_EMPTY;
   try {
     if (null != paymentResponse) {
-      if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && null != transactionDetail && (Constants.API_STATUS_AUTHORIZED == paymentResponse.status || Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status)) {
+      if (
+        Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode &&
+        null != transactionDetail &&
+        (Constants.API_STATUS_AUTHORIZED == paymentResponse.status || Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status || Constants.API_STATUS_PENDING == paymentResponse.status)
+      ) {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
-        setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_SUCCESS);
+        if (Constants.CT_TRANSACTION_TYPE_CHARGE == transactionDetail.type && Constants.API_STATUS_AUTHORIZED_RISK_DECLINED == paymentResponse.status) {
+          setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_FAILURE);
+        } else {
+          setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_SUCCESS);
+        }
         response = createResponse(setTransaction, setCustomField, null);
-      } else if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status && null != transactionDetail) {
+      } else if (Constants.HTTP_CODE_TWO_HUNDRED_ONE == paymentResponse.httpCode && (Constants.API_STATUS_AUTHORIZED_PENDING_REVIEW == paymentResponse.status || Constants.API_STATUS_PENDING_REVIEW == paymentResponse.status) && null != transactionDetail) {
         setTransaction = setTransactionId(paymentResponse, transactionDetail);
         setCustomField = changeState(transactionDetail, Constants.CT_TRANSACTION_STATE_PENDING);
         response = createResponse(setTransaction, setCustomField, null);
@@ -539,7 +579,7 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
         }
       }
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_AUTH_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_INPUT);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_AUTH_RESPONSE, Constants.LOG_INFO, null, Constants.ERROR_MSG_INVALID_INPUT);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -549,7 +589,7 @@ const getAuthResponse = (paymentResponse, transactionDetail) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_AUTH_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_AUTH_RESPONSE, Constants.LOG_ERROR, null, exceptionData);
   }
   return response;
 };
@@ -574,7 +614,7 @@ function createResponse(setTransaction, setCustomField, paymentFailure) {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CREATE_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_CREATE_RESPONSE, Constants.LOG_ERROR, null, exceptionData);
   }
   returnResponse = {
     actions: actions,
@@ -601,7 +641,7 @@ const getOMServiceResponse = (paymentResponse, transactionDetail) => {
       setTransaction = setTransactionId(paymentResponse, transactionDetail);
       response = createResponse(setTransaction, setCustomField, paymentFailure);
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_SERVICE_RESPONSE, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_OPERATION);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_SERVICE_RESPONSE, Constants.LOG_INFO, null, Constants.ERROR_MSG_INVALID_OPERATION);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -611,7 +651,7 @@ const getOMServiceResponse = (paymentResponse, transactionDetail) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_SERVICE_RESPONSE, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_SERVICE_RESPONSE, Constants.LOG_ERROR, null, exceptionData);
   }
   return response;
 };
@@ -644,7 +684,7 @@ const getCapturedAmount = (refundPaymentObj) => {
         pendingCaptureAmount = convertCentToAmount(pendingCaptureAmount);
       }
     } else {
-      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CAPTURED_AMOUNT, Constants.LOG_INFO, Constants.ERROR_MSG_INVALID_OPERATION);
+      logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CAPTURED_AMOUNT, Constants.LOG_INFO, null, Constants.ERROR_MSG_INVALID_OPERATION);
     }
   } catch (exception) {
     if (typeof exception === 'string') {
@@ -654,7 +694,7 @@ const getCapturedAmount = (refundPaymentObj) => {
     } else {
       exceptionData = exception;
     }
-    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CAPTURED_AMOUNT, Constants.LOG_ERROR, exceptionData);
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_GET_CAPTURED_AMOUNT, Constants.LOG_ERROR, null, exceptionData);
   }
   return pendingCaptureAmount;
 };
@@ -717,6 +757,70 @@ const invalidInputResponse = () => {
     ],
   };
 };
+const encryption = (data) => {
+  let key:any;
+  let baseEncodedData:any;
+  let exceptionData:any;
+  let encryption:any
+  let encryptStringData:any;
+  try{
+    if(data){
+      key = process.env.CT_CLIENT_SECRET;
+      const iv = crypto.randomBytes(Constants.VAL_TWELVE);
+      const cipher = crypto.createCipheriv(Constants.HEADER_ENCRYPTION_ALGORITHM, key, iv);
+      encryption = cipher.update(data, Constants.UNICODE_ENCODING_SYSTEM, Constants.ENCODING_BASE_SIXTY_FOUR);
+      encryption += cipher.final(Constants.ENCODING_BASE_SIXTY_FOUR);
+      const authTag = cipher.getAuthTag();
+      encryptStringData = iv.toString(Constants.HEX)+Constants.STRING_FULLCOLON+encryption.toString()+Constants.STRING_FULLCOLON+authTag.toString(Constants.HEX);
+      baseEncodedData = (Buffer.from(encryptStringData)).toString(Constants.ENCODING_BASE_SIXTY_FOUR);
+    }
+  }catch(exception){
+    baseEncodedData = null;
+    if (typeof exception === 'string') {
+      exceptionData = exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = exception.message;
+    } else {
+      exceptionData = exception;
+    }
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DECRYPTION, Constants.LOG_ERROR, null, exceptionData);
+  }
+  return baseEncodedData;
+};
+
+const decryption = (encodedCredentials) => {
+  let key:any;
+  let data:any;
+  let decryptedData:any;
+  let encryptedData:any;
+  let exceptionData:any;
+  let ivBuff:any;
+  let authTagBuff:any;
+  try{
+    if(encodedCredentials){
+      key = process.env.CT_CLIENT_SECRET;
+      data = (Buffer.from(encodedCredentials, Constants.ENCODING_BASE_SIXTY_FOUR)).toString(Constants.ASCII);
+      ivBuff = Buffer.from(data.split(Constants.STRING_FULLCOLON)[Constants.VAL_ZERO], Constants.HEX);
+      encryptedData = data.split(Constants.STRING_FULLCOLON)[Constants.VAL_ONE];
+      authTagBuff = Buffer.from(data.split(Constants.STRING_FULLCOLON)[Constants.VAL_TWO], Constants.HEX);
+      const decipher = crypto.createDecipheriv(Constants.HEADER_ENCRYPTION_ALGORITHM, key, ivBuff);
+      decipher.setAuthTag(authTagBuff);
+      decryptedData = decipher.update(encryptedData, Constants.ENCODING_BASE_SIXTY_FOUR, Constants.UNICODE_ENCODING_SYSTEM);
+      decryptedData += decipher.final(Constants.UNICODE_ENCODING_SYSTEM);
+    }
+  }catch(exception){
+    decryptedData = null;
+    if (typeof exception === 'string') {
+      exceptionData = exception.toUpperCase();
+    } else if (exception instanceof Error) {
+      exceptionData = exception.message;
+    } else {
+      exceptionData = exception;
+    }
+    logData(path.parse(path.basename(__filename)).name, Constants.FUNC_DECRYPTION, Constants.LOG_ERROR, null, exceptionData);
+  }
+  return decryptedData;
+};
 
 export default {
   logData,
@@ -737,4 +841,6 @@ export default {
   invalidOperationResponse,
   invalidInputResponse,
   roundOff,
+  encryption,
+  decryption
 };
