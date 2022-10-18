@@ -18,7 +18,9 @@ The customizations below are required for the API Extension to work correctly. J
 
 > **_NOTE:_** <ul><li>The extension timeout of 10000ms is required for Payment create and update API</li><li>Commercetools by default will have 2000ms for Customer update API, contact Commercetools support team to increase the timeout to 3000ms</li></ul>
 
-The customizations below are required for the API Extension to work correctly. JSON versions of these definitions are available in the plugin and can be run as a script to load them to Commercetools.
+# <a name="APIExtensionSetup"></a>API Extension Setup
+
+## <a name="PaymentCreate"></a>Payment Create
 
 An extension triggered by payment create is required to process any
 actions on a payment resource.
@@ -34,6 +36,32 @@ actions on a payment resource.
 | actions                    | Create                                 |                                                                                                    |
 | resourceTypeId             | payment                                |                                                                                                    |
 
+| Name                             | Type           | Required |
+| -------------------------------- | -------------- | -------- |
+| isv_tokens                       | Set of Strings | false    |
+| isv_token                        | String         | false    |
+| isv_tokenAlias                   | String         | false    |
+| isv_savedToken                   | String         | false    |
+| isv_tokenVerificationContext     | String         | false    |
+| isv_tokenCaptureContextSignature | String         | false    |
+| isv_cardType                     | String         | false    |
+| isv_maskedPan                    | String         | false    |
+| isv_cardExpiryMonth              | String         | false    |
+| isv_cardExpiryYear               | String         | false    |
+| isv_addressId                    | String         | false    |
+| isv_currencyCode                 | String         | false    |
+| isv_deviceFingerprintId          | String         | false    |
+| isv_cardNewExpiryMonth           | String         | false    |
+| isv_cardNewExpiryYear            | String         | false    |
+| isv_tokenAction                  | String         | false    |
+| isv_tokenUpdated                 | Boolean        | false    |
+| isv_failedTokens                 | Set of Strings | false    |
+
+### <a name="PaymentData"></a>Payment Data
+
+| Type    | Key              | Purpose                                                                                            |
+| ------- | ---------------- | -------------------------------------------------------------------------------------------------- |
+| payment | isv_payment_data | Custom Cybersource payment data such as tokens, card details used to trigger Cybersource services. |
 
 An extension triggered by payment updates is required to process any update actions on a payment resource
 
@@ -65,16 +93,7 @@ An extension triggered by customer update is required to process any update acti
 
 # <a name="ResourceCustomizations"></a>Resource Customizations
 
-| Property                   | Value                                  | Note                                                                                                  |
-| -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| key                        | isv_payment_create_extension           |                                                                                                       |
-| type                       | HTTP                                   | The plugin only supports HTTP Destinations                                                            |
-| url                        | {baseUrl}/api/extension/payment/create | The baseUrl will be defined by where you deploy the plugin. HTTPS should be used for production       |
-| authentication.type        | AuthorizationHeader                    |                                                                                                       |
-| authentication.headerValue | Basic {credentials}                    | Replace Base 64 encode value of the pair (username: password) of Commercetools with the {credentials} |
-| timeoutInMs                | 10000                                  | You will need Commercetools support to increase the allowable maximum value                           |
-| actions                    | Create                                 |                                                                                                       |
-| resourceTypeId             | payment                                |                                                                                                       |
+## <a name="PaymentInteractions"></a>Payment Interactions
 
 ### <a name="CustomerTokens"></a>Customer Tokens
 
@@ -179,16 +198,7 @@ Fields
 | ----------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | payment-interface-interaction | isv_payments_payer_authentication_validate_result | Stores values from response of payer authentication validation. These values can also be returned from the enrolment check for 3D Secure 2.x frictionless payments. These values are saved for record keeping purposes only. |
 
-| Property                   | Value                                  | Note                                                                                                  |
-| -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| key                        | isv_customer_update_extension          |                                                                                                       |
-| type                       | HTTP                                   | The plugin only supports HTTP Destinations                                                            |
-| url                        | {baseUrl}/api/extension/payment/update | The baseUrl will be defined by where you deploy the plugin. HTTPS should be used for production       |
-| authentication.type        | AuthorizationHeader                    |                                                                                                       |
-| authentication.headerValue | Basic {credentials}                    | Replace Base 64 encode value of the pair (username: password) of Commercetools with the {credentials} |
-| timeoutInMs                | 3000                                 | You will need Commercetools support to increase the allowable maximum value                           |
-| actions                    | Update                                 |                                                                                                       |
-| resourceTypeId             | customer                               |                                                                                                       |
+Fields
 
 | Name                         | Type   | Required | Source                                                   |
 | ---------------------------- | ------ | -------- | -------------------------------------------------------- |
@@ -214,7 +224,10 @@ Fields
 
 Fields
 
-## <a name="PaymentInteractions"></a>Payment Interactions
+| Name          | Type   | Required |
+| ------------- | ------ | -------- |
+| reason        | String | true     |
+| transactionId | String | false    |
 
 ### <a name="PaymentFailure"></a>Payment Failure
 
