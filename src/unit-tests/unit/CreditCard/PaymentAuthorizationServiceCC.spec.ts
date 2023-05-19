@@ -193,3 +193,4 @@ test.serial('Check status of payment authorization with multiple shipping mode',
     }
   }
 });
+
