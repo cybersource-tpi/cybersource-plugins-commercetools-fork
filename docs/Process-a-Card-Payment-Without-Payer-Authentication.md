@@ -89,8 +89,9 @@ Processing of a payment is triggered by adding an initial transaction to a Comme
     | custom.fields.isv_deviceFingerprintId | Customer device fingerprint Id | Yes       | Should pass this field to extension, if Decision Manager is enabled.Refer [Device Fingerprinting](./Decision-Manager.md#device-fingerprinting) to generate this value |
     | custom.fields.isv_customerIpAddress   | Customer IP address            | No        | Populated from client-side libraries                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
     | custom.fields.isv_saleEnabled         | false                         | Yes       | Set the value to true if sale is enabled                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+    | custom.fields.isv_shippingMethod | Shipping method for the order                                                                                         | No    | Possible values: <ul> <li> `lowcost`: Lowest-cost service  </li> <li>`sameday`: Courier or same-day service </li> <li>`oneday`: Next-day or overnight service </li> <li>`twoday`: Two-day service </li> <li>`threeday`: Three-day service.</li> <li> `pickup`: Store pick-up </li> <li> `other`: Other shipping method </li> <li> `none`: No shipping method because product is a service or subscription </li>  |
 
-6.  Add a transaction to the payment with the following values populated
+7.  Add a transaction to the payment with the following values populated
 
         If only Authorization is required, populate the following fields to the payment
 
@@ -108,7 +109,7 @@ Processing of a payment is triggered by adding an initial transaction to a Comme
     | state    | Initial             |                                       |
     | amount   | Amount to be processed | Should match amountPlanned on payment |
 
-7.  Verify the payment state and convey the payment result to the customer
+8.  Verify the payment state and convey the payment result to the customer
 
     a. If the transaction is successful, transaction state will be updated to **Success**, display the order confirmation page
 

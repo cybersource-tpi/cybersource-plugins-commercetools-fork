@@ -90,6 +90,7 @@ After authentication is complete, authorization of the payment can then be tri
     | custom.fields.isv_cardExpiryYear      | Card expiry year               | No        | Can be obtained from the token parameter passed into the callback for the microform.createToken call. The token is a JWT which when decoded has a `flexData.content.paymentInformation.card.expirationYear.value` field containing the card type <br><br> Not required by the extension but used for display                                                                                                                                                                                                                                                                                                                                                                                                                                           |
     | custom.fields.isv_deviceFingerprintId | Customer device fingerprint Id | Yes       | Refer [Device Fingerprinting](./Decision-Manager.md#device-fingerprinting) to generate this value |
     | custom.fields.isv_saleEnabled         | false                         | Yes       | Set the value to true if sale is enabled                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+    | custom.fields.isv_shippingMethod | Shipping method for the order                                                                                         | No    | Possible values: <ul> <li> `lowcost`: Lowest-cost service  </li> <li>`sameday`: Courier or same-day service </li> <li>`oneday`: Next-day or overnight service </li> <li>`twoday`: Two-day service </li> <li>`threeday`: Three-day service.</li> <li> `pickup`: Store pick-up </li> <li> `other`: Other shipping method </li> <li> `none`: No shipping method because product is a service or subscription </li>   |
 
 
     c. For saved token, when the payment is being updated, the extension will do a Payer Auth Setup call to get reference_id for Digital Wallets to use in place of BIN number in Cardinal.
@@ -101,15 +102,16 @@ After authentication is complete, authorization of the payment can then be tri
     | custom.fields.isv_cardExpiryMonth     | Card expiry month              | No       | custom.fields.isv_tokens's "cardExpiryMonth" value from Customer object <br>Not required by the extension but used for display                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
     | custom.fields.isv_cardExpiryYear      | Card expiry year               | No       | custom.fields.isv_tokens's "cardExpiryYear" value from Customer object <br>Not required by the extension but used for display                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
     | custom.fields.isv_deviceFingerprintId | Customer device fingerprint Id | Yes      | Refer [Device Fingerprinting](./Decision-Manager.md#device-fingerprinting) to generate this value |
+    | custom.fields.isv_shippingMethod | Shipping method for the order                                                                                         | No    | Possible values: <ul> <li> `lowcost`: Lowest-cost service  </li> <li>`sameday`: Courier or same-day service </li> <li>`oneday`: Next-day or overnight service </li> <li>`twoday`: Two-day service </li> <li>`threeday`: Three-day service.</li> <li> `pickup`: Store pick-up </li> <li> `other`: Other shipping method </li> <li> `none`: No shipping method because product is a service or subscription </li> |
 
 
-6.  Wait for the event to return back the following fields, verify them from update response. If the data exists for below fields, submit the device data collection form using below data, else throw error to the user. See [Device Data Collection](https://developer.cybersource.com/docs/cybs/en-us/payer-authentication/developer/all/rest/payer-auth/pa2-ccdc-ddc-intro.html) to get more details about device data collection Iframe
+7.  Wait for the event to return back the following fields, verify them from update response. If the data exists for below fields, submit the device data collection form using below data, else throw error to the user. See [Device Data Collection](https://developer.cybersource.com/docs/cybs/en-us/payer-authentication/developer/all/rest/payer-auth/pa2-ccdc-ddc-intro.html) to get more details about device data collection Iframe
 
         accessToken
         referenceId
         deviceDataCollectionURL
 
-7.  Wait for the successful response from the deviceDataCollection and then initialize the enrollment check by updating the payment with the following:
+8.  Wait for the successful response from the deviceDataCollection and then initialize the enrollment check by updating the payment with the following:
 
     | Property                            | Value                                   | Required | Notes                                                     |
     | ----------------------------------- | --------------------------------------- | -------- | --------------------------------------------------------- |
@@ -120,7 +122,7 @@ After authentication is complete, authorization of the payment can then be tri
     | custom.fields.isv_screenHeight   | Screen height of Customer browser | Yes      | Used by 3DS process, populated from client-side libraries |
 
 
-8.  wait for the response from ddc form and if successful, then proceed with enrolment, verify the following fields from update response
+9.  wait for the response from ddc form and if successful, then proceed with enrolment, verify the following fields from update response
 
         authenticationTransactionId
         stepUpURL
@@ -128,9 +130,9 @@ After authentication is complete, authorization of the payment can then be tri
         isv_payerEnrollHttpCode
         isv_payerEnrollStatus
 
-9.  Check if the `isv_payerEnrollHttpCode` value is 201 and `isv_payerEnrollStatus` value "CUSTOMER_AUTHENTICATION_REQUIRED" from the updated response. If yes, repeat the steps from 5 else proceed to step 10. Refer the [DMPA](./Decision-Manager.md#payer-authentication-with-decision-manager) section to know more about the DMPA
+10.  Check if the `isv_payerEnrollHttpCode` value is 201 and `isv_payerEnrollStatus` value "CUSTOMER_AUTHENTICATION_REQUIRED" from the updated response. If yes, repeat the steps from 5 else proceed to step 10. Refer the [DMPA](./Decision-Manager.md#payer-authentication-with-decision-manager) section to know more about the DMPA
 
-10. Check the value of the isv_payerAuthenticationRequired field on the
+11. Check the value of the isv_payerAuthenticationRequired field on the
     updated payment. If the value is true, perform the following steps
 
     a. Submit the stepup form by using the `stepUpURL` & `accessToken`. See [Step-Up IFrame](https://developer.cybersource.com/docs/cybs/en-us/payer-authentication/developer/all/rest/payer-auth/pa2-ccdc-stepup-frame-intro.html) to get more details about step up Iframe
@@ -145,14 +147,14 @@ After authentication is complete, authorization of the payment can then be tri
 
     d. Update the Commercetools payment to set the value of custom.fields.isv_payerAuthenticationTransactionId to the value extracted from the return URL's Transaction ID
 
-11. Wait for the event to return back the following fields, verify the following fields from update response
+12. Wait for the event to return back the following fields, verify the following fields from update response
 
         isv_payerEnrollHttpCode
         isv_payerEnrollStatus
 
     Check if the isv_payerEnrollHttpCode value is 201 and isv_payerEnrollStatus value "CUSTOMER_AUTHENTICATION_REQUIRED" from the updated response. If yes, repeat the steps from 5 else proceed to step 12.
 
-12. Add a transaction to the payment 
+13. Add a transaction to the payment 
 
             If only Authorization is required, populate the following fields to the payment
 
@@ -173,7 +175,7 @@ After authentication is complete, authorization of the payment can then be tri
     | amount   | Amount to be processed | Should match amountPlanned on payment |
 
 
-13. Verify the payment state and convey the payment result to the customer
+14. Verify the payment state and convey the payment result to the customer
 
     a. If the transaction is successful, transaction state will be updated to **Success**, display the order confirmation page
 

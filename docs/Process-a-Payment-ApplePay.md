@@ -58,10 +58,11 @@
     | custom.fields.isv_customerIpAddress   | Customer IP address            | Yes      | Populated from client-side libraries                                                                                                                                                                                                                                                                                                   |
     | custom.fields.isv_saleEnabled               | false             | Yes       | Set the value to true if sale is enabled                                                                                                                                                                                                    |
     | custom.fields.isv_walletType                | Wallet type | No  |   This value is required if walletType is to be passed in authorization. Refer [Cybersource Processing a Payment](https://developer.cybersource.com/api-reference-assets/index.html#payments_payments_process-a-payment) for more information about the wallet type value to be passed. It is supported only for ApplePay, ClicktoPay and GooglePay payment methods|
+    |custom.fields.isv_shippingMethod | Shipping method for the order                                                                                         | No    | Possible values: <ul> <li> `lowcost`: Lowest-cost service  </li> <li>`sameday`: Courier or same-day service </li> <li>`oneday`: Next-day or overnight service </li> <li>`twoday`: Two-day service </li> <li>`threeday`: Three-day service.</li> <li> `pickup`: Store pick-up </li> <li> `other`: Other shipping method </li> <li> `none`: No shipping method because product is a service or subscription </li>  |
 
-4.  Add the payment to the cart
+5.  Add the payment to the cart
 
-5.  Add a transaction to the payment 
+6.  Add a transaction to the payment 
 
         If only Authorization is required, populate the following fields to the payment
 
@@ -82,7 +83,7 @@
     | amount   | Amount to be processed | Should match amountPlanned on payment |
     
 
-6.  Verify the payment state and convey the payment result to the customer
+7.  Verify the payment state and convey the payment result to the customer
 
     a. If the transaction is successful, transaction state will be updated to **Success**, display the order confirmation page 
 
