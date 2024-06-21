@@ -50,9 +50,9 @@ The shipping address should be acquired from Visa Click to Pay. This can be set 
     | custom.fields.isv_merchantId   | Merchant Id used for the transaction                 | No       | Required when you want to support Multi-Mid functionality. Populate this field with the value of merchant Id in which the transaction should happen. When this field is empty, default mid configuration will be considered for the transaction. The same mid will be used for the follow-on transactions.                                                                                         |
     | custom.fields.isv_shippingMethod | Shipping method for the order                                                                                         | No    | Possible values: <ul> <li> `lowcost`: Lowest-cost service  </li> <li>`sameday`: Courier or same-day service </li> <li>`oneday`: Next-day or overnight service </li> <li>`twoday`: Two-day service </li> <li>`threeday`: Three-day service.</li> <li> `pickup`: Store pick-up </li> <li> `other`: Other shipping method </li> <li> `none`: No shipping method because product is a service or subscription </li>   |
     
-4.  Add the payment to the cart
+3.  Add the payment to the cart
 
-5.  Add a transaction to the payment 
+4.  Add a transaction to the payment 
 
         If only Authorization is required, populate the following fields to the payment
 
@@ -72,7 +72,7 @@ The shipping address should be acquired from Visa Click to Pay. This can be set 
     | state    | Initial             |                                       |
     | amount   | Amount to be processed | Should match amountPlanned on payment |
 
-6.  Verify the payment state and convey the payment result to the customer
+5.  Verify the payment state and convey the payment result to the customer
 
     a. If the transaction is successful, transaction state will be updated to **Success**, display the order confirmation page 
 

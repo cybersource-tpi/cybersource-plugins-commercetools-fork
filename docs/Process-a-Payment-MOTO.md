@@ -72,7 +72,7 @@ For the Commercetools Extension to support MOTO transaction, follow the steps me
 
     Also see [Decision Manager](Decision-Manager.md) for additional fields to be populated if you are using Decision Manager
 
-5.  For Visa Click to Pay, Google Pay, Apple Pay and eCheck create a Commercetools payment (https://docs.commercetools.com/api/projects/payments) and populate the required fields mentioned in the respective documents
+4.  For Visa Click to Pay, Google Pay, Apple Pay and eCheck create a Commercetools payment (https://docs.commercetools.com/api/projects/payments) and populate the required fields mentioned in the respective documents
 
     - [Process a Payment With Click to Pay](Process-a-Payment-ClicktoPay.md)
     - [Process a Payment With Google Pay](Process-a-Payment-GooglePay.md)
@@ -86,15 +86,15 @@ For the Commercetools Extension to support MOTO transaction, follow the steps me
     | ----------------------------- | -------------------------------- | -------- | ------------------------------------------------------------------------------------------------------- |
     | custom.fields.isv_enabledMoto | Flag Indicating MOTO transaction | Yes      | Boolean value. Used by the extention to identify whether it is a normal transaction or MOTO transaction |
 
-6.  Add the payment to the cart
+5.  Add the payment to the cart
 
-7.  Update the Commercetools payment (<https://docs.commercetools.com/api/projects/payments>) with the fields mentioned in the step 5 of [Process a Card Payment Without Payer Authentication](./Process-a-Card-Payment-Without-Payer-Authentication.md) along with the below data
+6.  Update the Commercetools payment (<https://docs.commercetools.com/api/projects/payments>) with the fields mentioned in the step 5 of [Process a Card Payment Without Payer Authentication](./Process-a-Card-Payment-Without-Payer-Authentication.md) along with the below data
 
     | Property                      | Value                            | Required | Notes                                                                                                   |
     | ----------------------------- | -------------------------------- | -------- | ------------------------------------------------------------------------------------------------------- |
     | custom.fields.isv_enabledMoto | Flag Indicating MOTO transaction | Yes      | Boolean value. Used by the extention to identify whether it is a normal transaction or MOTO transaction |
 
-8.  Add a transaction to the payment
+7.  Add a transaction to the payment
 
         If only Authorization is required, populate the following fields to the payment.
 
@@ -112,7 +112,7 @@ For the Commercetools Extension to support MOTO transaction, follow the steps me
     | state    | Initial                |                                       |
     | amount   | Amount to be processed | Should match amountPlanned on payment |
 
-9.  Verify the payment state and convey the payment result to the Merchant
+8.  Verify the payment state and convey the payment result to the Merchant
 
     a. If the processing is successful, transaction state will be updated to **Success**, create an order in commercetools and display the order confirmation page. Use this document for order creation - <https://docs.commercetools.com/api/projects/orders#create-order>
 
